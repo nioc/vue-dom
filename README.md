@@ -18,7 +18,7 @@ Vue-Jeedom is a web front end for the home automation software [Jeedom](https://
 ## Installation
 
 For basic use, you just have to:
--    download [latest release](https://github.com/nioc/xmpp-web/releases/latest) archive,
+-    download [latest release](https://github.com/nioc/vue-jeedom/releases/latest) tar.gz archive,
 -    unarchive in `/var/www/vue-jeedom/`,
 -    add following lines in Apache virtual hosts `/etc/apache2/sites-enabled/default-ssl.conf` and `/etc/apache2/sites-enabled/000-default.conf`, inside `<VirtualHost>` section:
       ``` conf
@@ -42,7 +42,7 @@ See the [releases](https://github.com/nioc/vue-jeedom/releases) on this reposito
 
 ## Contributing
 
-If you have a suggestion for a feature you think would enhance this product, please create a [ticket](https://github.com/nioc/vue-jeedom/issues).
+If you have a suggestion for a feature you think would enhance this product, please submit a [feature request](https://github.com/nioc/vue-jeedom/issues/new?labels=enhancement&template=feature_request.md).
 Pull requests are welcomed. See [contributing](CONTRIBUTING.md).
 
 ## Credits
