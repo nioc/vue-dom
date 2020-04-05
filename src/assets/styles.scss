@@ -1,0 +1,65 @@
+@charset "utf-8";
+
+@import "~bulma/sass/utilities/initial-variables";
+
+$primary: #96c927;
+$breadcrumb-item-color: $primary;
+$link: $primary;
+
+@import "~bulma/bulma.sass";
+@import "~buefy/src/scss/buefy";
+
+.breadcrumb ul {
+  flex-wrap: nowrap;
+  overflow: auto;
+}
+.breadcrumb li:first-child::before {
+  content: "\00a0";
+}
+@media screen and (max-width: 768px) {
+  .breadcrumb >:not(:last-child) .icon:first-child {
+    margin-right: initial;
+  }
+}
+
+$indexSizes: ( 1, 2, 3, 4, 5, 6, 7, 8);
+$bulmaSizes: ( $size-1, $size-2, $size-3, $size-4, $size-5, $size-6, $size-7, 0.5em );
+$positions: ( "top", "left", "bottom", "right" );
+$i: 1;
+@each $size in $indexSizes {
+	$sizeem: nth($bulmaSizes, $i);
+	$i: $i+1;
+	.has-margin-#{$size} {
+		margin: $sizeem !important;
+	}
+	.has-negative-margin-#{$size} {
+		margin: -$sizeem !important;
+	}
+	.has-padding-#{$size} {
+		padding: $sizeem !important;
+	}
+	@each $position in $positions {
+		.has-margin-#{$position}-#{$size} {
+			margin-#{$position}: $sizeem !important;
+		}
+		.has-padding-#{$position}-#{$size} {
+			padding-#{$position}: $sizeem !important;
+		}
+		.has-negative-margin-#{$position}-#{$size} {
+			margin-#{$position}: -$sizeem !important;
+		}
+	}
+}
+
+.fa-ml {
+  margin-left: 0.4em;
+}
+.fa-mr {
+  margin-right: 0.4em;
+}
+
+.sync-mobile {
+  margin-left: auto;
+  flex-direction: row-reverse;
+  flex-grow: 2 !important;
+}

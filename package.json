@@ -1,0 +1,63 @@
+{
+  "name": "vue-jeedom",
+  "version": "0.1.0",
+  "description": "Vue-Jeedom is a VueJS front end for the home automation software Jeedom",
+  "keywords": [
+    "Jeedom",
+    "VueJS"
+  ],
+  "author": {
+    "name": "nioc",
+    "email": "dev@nioc.eu"
+  },
+  "homepage": "https://github.com/nioc/vue-jeedom",
+  "bugs": {
+    "url": "https://github.com/nioc/vue-jeedom/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nioc/vue-jeedom.git"
+  },
+  "license": "AGPL-3.0-or-later",
+  "private": true,
+  "vueJeedom": {
+    "name": "Vue Jeedom",
+    "description": "<p><b>Vue Jeedom</b> est un client web pour la solution domotique <a href='https://www.jeedom.com' target='_blank' rel='noreferrer'>Jeedom</a>.</p><p>Il s'appuie sur les composants open-sources suivants :</p><ul><li>VueJS</li><li>Bulma</li></ul><p>En cas de problème ou pour toute suggestion, merci de créer un <a href='https://github.com/nioc/vue-jeedom/issues' target='_blank' rel='noreferrer'>ticket</a>.</p>",
+    "latestReleaseUrl": "https://api.github.com/repos/nioc/vue-jeedom/releases/latest"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "lint-no-fix": "vue-cli-service lint --no-fix"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "buefy": "^0.8.15",
+    "bulma": "^0.8.1",
+    "font-awesome": "^4.7.0",
+    "normalizr": "^3.6.0",
+    "register-service-worker": "^1.6.2",
+    "spdx-license-list": "^6.1.0",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.6",
+    "vuex": "^3.1.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.3.0",
+    "@vue/cli-plugin-eslint": "^4.3.0",
+    "@vue/cli-plugin-pwa": "^4.3.0",
+    "@vue/cli-service": "^4.3.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.2.1",
+    "node-sass": "^4.13.1",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}
