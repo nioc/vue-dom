@@ -2,7 +2,7 @@
   <article class="card has-margin-bottom-6">
     <header class="card-header">
       <p class="card-header-title">{{ eqLogic.name }}</p>
-      <span class="card-header-icon"><span v-if="cmdBattery">{{ cmdBattery.currentValue }}%<i :class="'fa fa-ml fa-battery-' + cmdBattery.level" /></span></span>
+      <span class="card-header-icon"><span v-if="cmdBattery">{{ cmdBattery.currentValue }}%<i class="fa-ml" :class="cmdBattery.level" /></span></span>
     </header>
     <component :is="getEqLogicComponent(eqLogic.eqType_name)" v-if="isEqLogicHandled(eqLogic.eqType_name)" :eq-logic="eqLogic" class="card-content" />
     <div v-else class="card-content">
@@ -42,15 +42,15 @@ export default {
     cmdBattery: function () {
       const battery = this.eqLogic.status.battery
       if (battery) {
-        let level = '4'
+        let level = 'fa fa-battery-full'
         if (battery < 20) {
-          level = '0'
+          level = 'fa fa-battery-empty'
         } else if (battery < 40) {
-          level = '1'
+          level = 'fa fa-battery-quarter'
         } else if (battery < 60) {
-          level = '2'
+          level = 'fa fa-battery-half'
         } else if (battery < 80) {
-          level = '3'
+          level = 'fa fa-battery-three-quarters'
         }
         return {
           currentValue: battery,

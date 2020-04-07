@@ -34,7 +34,7 @@ export default {
           return 'fa-bullseye'
         case 'VOLTAGE':
         case 'POWER':
-          return 'fa-flash'
+          return 'fa-bolt'
       }
       return 'fa-question'
     },

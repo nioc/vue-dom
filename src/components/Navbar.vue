@@ -22,7 +22,7 @@
             <router-link class="navbar-item" to="/about"><i class="fa fa-info-circle fa-fw fa-mr" />A propos</router-link>
             <a class="navbar-item" :href="bugUrl" target="_blank" rel="noreferrer"><i class="fa fa-bug fa-fw fa-mr" />Bug</a>
             <hr class="navbar-divider">
-            <a class="navbar-item" @click="logout()"><i class="fa fa-sign-out fa-fw fa-mr" />Logout</a>
+            <a class="navbar-item" @click="logout()"><i class="fa fa-sign-out-alt fa-fw fa-mr" />Logout</a>
           </div>
         </div>
       </div>

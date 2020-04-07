@@ -1,6 +1,6 @@
 <template>
   <button v-if="cmd.subType === 'other'" class="button is-rounded" @click="action">
-    <span class="icon"><i class="fa" :class="iconClass" /></span><span>{{ cmd.name }}</span>
+    <span class="icon"><i :class="iconClass" /></span><span>{{ cmd.name }}</span>
   </button>
   <b-slider v-else-if="cmd.subType === 'slider'" v-model="value" lazy @change="actionSlider" />
   <span v-else>{{ cmd }}</span>
@@ -24,19 +24,19 @@ export default {
     iconClass () {
       switch (this.cmd.logicalId) {
         case 'refresh':
-          return 'fa-refresh'
+          return 'fa fa-sync-alt'
         case 'wol':
-          return 'fa-flash'
+          return 'fa fa-bolt'
       }
       switch (this.cmd.generic_type) {
         case 'FLAP_DOWN':
-          return 'fa-arrow-down'
+          return 'fa fa-angle-double-down'
         case 'FLAP_STOP':
-          return 'fa-stop'
+          return 'fa fa-stop'
         case 'FLAP_UP':
-          return 'fa-arrow-up'
+          return 'fa fa-angle-double-up'
         default:
-          return 'fa-arrow-up'
+          return 'fa fa-arrow-up'
       }
     },
     ...mapGetters(['cmdById']),

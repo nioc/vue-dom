@@ -5,7 +5,7 @@ import router from '@/services/Router'
 import Auth from '@/services/Auth'
 import Buefy from 'buefy'
 import App from '@/App'
-import 'font-awesome/css/font-awesome.min.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 import '@/assets/styles.scss'
 import '@/registerServiceWorker'
 

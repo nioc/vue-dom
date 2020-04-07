@@ -19,7 +19,7 @@
                 <div class="control has-icons-left">
                   <input v-model="credentials.password" class="input is-medium" type="password" name="password" placeholder="Password">
                   <span class="icon is-small is-left">
-                    <i class="fa fa-lock" />
+                    <i class="fa fa-key" />
                   </span>
                 </div>
               </div>
@@ -29,7 +29,7 @@
                 </b-checkbox>
               </div>
               <div class="field">
-                <button type="submit" class="button is-block is-primary is-medium is-fullwidth" :class="{'is-loading': isLoading}" :disabled="isDisabled"><span class="fa fa-sign-in fa-fw has-margin-right-7" aria-hidden="true" />Login</button>
+                <button type="submit" class="button is-block is-primary is-medium is-fullwidth" :class="{'is-loading': isLoading}" :disabled="isDisabled"><span class="fa fa-sign-in-alt fa-fw has-margin-right-7" aria-hidden="true" />Login</button>
               </div>
               <div v-if="error" class="message is-danger">
                 <div class="message-body has-text-danger">{{ error }}</div>

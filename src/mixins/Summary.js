@@ -10,7 +10,7 @@ export const SummaryMixin = {
       let html = ''
       if (summary.keys) {
         summary.keys.forEach((info) => {
-          html += '<span><i class="fa fa-fw ' + this.summaryIconClass(info.key) + '"></i>' + info.value + this.summaryUnit(info.key) + '</span>'
+          html += '<span><i class="fa-fw ' + this.summaryIconClass(info.key) + '"></i>' + info.value + this.summaryUnit(info.key) + '</span>'
         })
       }
       return html
@@ -18,13 +18,13 @@ export const SummaryMixin = {
     summaryIconClass (key) {
       switch (key) {
         case 'humidity':
-          return 'fa-tint'
+          return 'fa fa-tint'
         case 'temperature':
-          return 'fa-thermometer-half'
+          return 'fa fa-thermometer-half'
         case 'light':
-          return 'fa-lightbulb-o'
+          return 'fa fa-lightbulb'
         case 'power':
-          return 'fa-flash'
+          return 'fa fa-bolt'
       }
       return ''
     },
