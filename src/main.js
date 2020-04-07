@@ -3,9 +3,11 @@ import store from '@/services/Store'
 import JeedomApi from '@/services/JeedomApi'
 import router from '@/services/Router'
 import Auth from '@/services/Auth'
-import Buefy from 'buefy'
+import { Switch, Slider, Checkbox, Toast } from 'buefy'
 import App from '@/App'
-import '@fortawesome/fontawesome-free/css/all.css'
+import '@fortawesome/fontawesome-free/css/fontawesome.css'
+import '@fortawesome/fontawesome-free/css/regular.css'
+import '@fortawesome/fontawesome-free/css/solid.css'
 import '@/assets/styles.scss'
 import '@/registerServiceWorker'
 
@@ -17,9 +19,10 @@ Vue.use(JeedomApi, {
   store,
 })
 
-Vue.use(Buefy, {
-  defaultIconPack: 'fa',
-})
+Vue.use(Switch)
+Vue.use(Slider)
+Vue.use(Checkbox)
+Vue.use(Toast)
 
 Vue.config.productionTip = false
 
