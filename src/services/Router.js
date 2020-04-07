@@ -6,6 +6,7 @@ import store from '@/services/Store'
 import Login from '@/components/Login'
 import Objects from '@/components/Objects'
 import ObjectDetail from '@/components/ObjectDetail'
+import Scenarios from '@/components/Scenarios'
 import About from '@/components/About'
 
 Vue.use(Router)
@@ -37,6 +38,14 @@ const routes = [
     props: true,
     meta: {
       title: 'Objet',
+    },
+  },
+  {
+    path: '/scenarios',
+    name: 'scenarios',
+    component: Scenarios,
+    meta: {
+      title: 'Scénarios',
     },
   },
   {

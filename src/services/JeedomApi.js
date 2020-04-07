@@ -240,6 +240,17 @@ export default {
         }
       },
 
+      // request all scenarios and returns only visible ones
+      async getScenarios () {
+        try {
+          const scenarios = await jsonRpcCall('scenario::all')
+          return scenarios.filter((scenario) => scenario.isVisible === '1')
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
     }
   },
 }
