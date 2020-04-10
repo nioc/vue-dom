@@ -5,6 +5,12 @@
     </div>
     <div class="hero-body">
       <div class="container">
+        <div class="field">
+          <p class="control has-icons-left">
+            <input v-model="search" class="input" type="text" placeholder="Rechercher un objet">
+            <span class="icon is-small is-left"><i class="fas fa-search" /></span>
+          </p>
+        </div>
         <div class="columns is-multiline">
           <object-tile v-for="object in ordered" :id="object.id" :key="object.id" />
         </div>
@@ -43,8 +49,13 @@ export default {
     ObjectTile,
   },
   mixins: [ObjectsMixin, SummaryMixin],
+  data () {
+    return {
+      search: '',
+    }
+  },
   computed: {
-    ordered () { return findChild(this.objectsRaw, [], { id: null }) },
+    ordered () { return findChild(this.objectsRaw, [], { id: null }).filter((object) => object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     summary () { return this.getObjectSummaryById(0) },
   },
 }
