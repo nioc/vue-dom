@@ -181,7 +181,7 @@ export default new Vuex.Store({
             }
           }
         }, (error) => {
-          commit('setInformation', { type: 'is-danger', message: 'Erreur sur l\'appel d\'API' + error.message })
+          commit('setInformation', { type: 'is-danger', message: `Erreur lors de la récupération du résumé global<br>${error.message}` })
         })
         // get all objects
         const objects = await vue.$JeedomApi.getObjects()
@@ -204,7 +204,7 @@ export default new Vuex.Store({
           }
         })
       } catch (error) {
-        commit('setInformation', { type: 'is-danger', message: 'Erreur sur l\'appel d\'API' })
+        commit('setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des objets<br>${error.message}` })
       }
     },
 
@@ -217,7 +217,7 @@ export default new Vuex.Store({
         const object = await vue.$JeedomApi.getObject(id)
         commit('saveObject', object)
       } catch (error) {
-        commit('setInformation', { type: 'is-danger', message: 'Erreur sur l\'appel d\'API' })
+        commit('setInformation', { type: 'is-danger', message: `Erreur lors de la récupération de l'objet<br>${error.message}` })
       }
     },
 
@@ -227,7 +227,7 @@ export default new Vuex.Store({
         await vue.$JeedomApi.cmd(cmd.id, cmd.options)
       } catch (error) {
         console.error(error)
-        commit('setInformation', { type: 'is-danger', message: 'Erreur sur l\'appel d\'API' + error.message })
+        commit('setInformation', { type: 'is-danger', message: `Erreur lors de la requête d'exécution de la commande<br>${error.message}` })
       }
     },
   },

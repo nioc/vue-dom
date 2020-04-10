@@ -199,7 +199,11 @@ export default {
         try {
           const object = await jsonRpcCall('object::fullById', { id: objectId })
           object.eqLogics = object.eqLogics.filter((eqLogic) => eqLogic.isVisible === '1').map((eqLogic) => {
-            eqLogic.cmds = eqLogic.cmds.filter((cmd) => cmd.isVisible === '1').sort((a, b) => a.order - b.order)
+            delete (eqLogic.display)
+            eqLogic.cmds = eqLogic.cmds.filter((cmd) => cmd.isVisible === '1').sort((a, b) => a.order - b.order).map((cmd) => {
+              delete (cmd.display)
+              return cmd
+            })
             return eqLogic
           })
           return object

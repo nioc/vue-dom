@@ -46,6 +46,13 @@ $i: 1;
 	}
 }
 
+@media screen and (max-width: 768px) {
+  .button .is-icon-mobile:first-child:not(:last-child) {
+    margin-left: unset;
+    margin-right: unset;
+  }
+}
+
 .fa-ml {
   margin-left: 0.4em;
 }

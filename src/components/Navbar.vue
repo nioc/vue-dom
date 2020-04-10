@@ -15,7 +15,7 @@
         <router-link class="navbar-item" to="/scenarios"><i class="fa fa-book fa-fw fa-mr" />Scénarios</router-link>
       </div>
       <div class="navbar-end">
-        <div class="navbar-item is-flex-tablet"><sync /></div>
+        <div class="navbar-item is-hidden-touch"><sync /></div>
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link"><i class="fa fa-user fa-fw fa-mr" />{{ login }}</a>
           <div class="navbar-dropdown is-right">

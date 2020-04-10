@@ -41,7 +41,7 @@ export default {
     try {
       this.scenarios = await this.$JeedomApi.getScenarios()
     } catch (error) {
-      const message = `Erreur sur l'appel d'API<br>${error.message}`
+      const message = `Erreur lors de la requête de récupération des scénarios<br>${error.message}`
       this.$store.commit('setInformation', { type: 'is-danger', message })
     }
   },
