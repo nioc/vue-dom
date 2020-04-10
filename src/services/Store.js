@@ -154,11 +154,18 @@ export default new Vuex.Store({
       if (!state.cmds[cmdId]) {
         return
       }
-      const previous = state.cmds[cmdId]
       const updated = {}
-      updated[cmdId] = previous
+      updated[cmdId] = state.cmds[cmdId]
       updated[cmdId].currentValue = payload.display_value
       state.cmds = Object.assign({}, state.cmds, updated)
+      // update eqLogic date with cmd collect date if it is newer
+      const eqLogicId = state.cmds[cmdId].eqLogic_id
+      if (Vue.moment(payload.collectDate).isAfter(state.eqLogics[eqLogicId].status.lastCommunication)) {
+        const eqLogicUpdated = {}
+        eqLogicUpdated[eqLogicId] = state.eqLogics[eqLogicId]
+        eqLogicUpdated[eqLogicId].status.lastCommunication = payload.collectDate
+        state.eqLogics = Object.assign({}, state.eqLogics, eqLogicUpdated)
+      }
     },
   },
 

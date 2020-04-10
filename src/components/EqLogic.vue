@@ -2,7 +2,10 @@
   <article class="card has-margin-bottom-6">
     <header class="card-header">
       <p class="card-header-title">{{ eqLogic.name }}</p>
-      <span class="card-header-icon"><span v-if="eqLogicBattery">{{ eqLogicBattery.currentValue }}%<i class="fa-ml" :class="eqLogicBattery.iconClass" /></span></span>
+      <aside class="card-header-icon">
+        <span v-if="eqLogicBattery" class="has-text-grey"><i class="fa-mr" :class="eqLogicBattery.iconClass" />{{ eqLogicBattery.currentValue }}%</span>
+        <span v-if="eqLogic.status.lastCommunication" :title="eqLogic.status.lastCommunication | moment('LLLL')" class="has-text-grey has-margin-left-8"><i class="fa-mr far fa-clock" /><time-ago :date="eqLogic.status.lastCommunication" /></span>
+      </aside>
     </header>
     <component :is="getEqLogicComponent(eqLogic.eqType_name)" v-if="isEqLogicHandled(eqLogic.eqType_name)" :eq-logic="eqLogic" class="card-content" />
     <div v-else class="card-content">
@@ -17,6 +20,7 @@
 <script>
 import Action from '@/components/Action'
 import Info from '@/components/Info'
+import TimeAgo from '@/components/TimeAgo'
 import { mapGetters } from 'vuex'
 import { CmdMixin } from '@/mixins/Cmd'
 
@@ -24,6 +28,7 @@ export default {
   components: {
     Action,
     Info,
+    TimeAgo,
   },
   mixins: [CmdMixin],
   props: {
