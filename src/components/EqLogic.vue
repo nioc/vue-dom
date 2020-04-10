@@ -2,7 +2,7 @@
   <article class="card has-margin-bottom-6">
     <header class="card-header">
       <p class="card-header-title">{{ eqLogic.name }}</p>
-      <span class="card-header-icon"><span v-if="cmdBattery">{{ cmdBattery.currentValue }}%<i class="fa-ml" :class="cmdBattery.level" /></span></span>
+      <span class="card-header-icon"><span v-if="eqLogicBattery">{{ eqLogicBattery.currentValue }}%<i class="fa-ml" :class="eqLogicBattery.iconClass" /></span></span>
     </header>
     <component :is="getEqLogicComponent(eqLogic.eqType_name)" v-if="isEqLogicHandled(eqLogic.eqType_name)" :eq-logic="eqLogic" class="card-content" />
     <div v-else class="card-content">
@@ -18,12 +18,14 @@
 import Action from '@/components/Action'
 import Info from '@/components/Info'
 import { mapGetters } from 'vuex'
+import { CmdMixin } from '@/mixins/Cmd'
 
 export default {
   components: {
     Action,
     Info,
   },
+  mixins: [CmdMixin],
   props: {
     id: {
       type: String,
@@ -39,22 +41,12 @@ export default {
   },
   computed: {
     eqLogic () { return this.eqLogicById(this.id) },
-    cmdBattery: function () {
+    eqLogicBattery: function () {
       const battery = this.eqLogic.status.battery
       if (battery) {
-        let level = 'fa fa-battery-full'
-        if (battery < 20) {
-          level = 'fa fa-battery-empty'
-        } else if (battery < 40) {
-          level = 'fa fa-battery-quarter'
-        } else if (battery < 60) {
-          level = 'fa fa-battery-half'
-        } else if (battery < 80) {
-          level = 'fa fa-battery-three-quarters'
-        }
         return {
           currentValue: battery,
-          level,
+          iconClass: this.getBatteryLevelIconClass(battery),
         }
       }
       return null
@@ -92,7 +84,7 @@ export default {
       })
       return { infos: infosList, actions: actionsList }
     },
-    ...mapGetters(['eqLogicById', 'cmdsByEqLogicId']),
+    ...mapGetters(['eqLogicById']),
   },
   methods: {
     getEqLogicComponent (eqType) {

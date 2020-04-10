@@ -4,8 +4,9 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { CmdMixin } from '@/mixins/Cmd'
 export default {
+  mixins: [CmdMixin],
   props: {
     id: {
       type: String,
@@ -24,19 +25,7 @@ export default {
       set: () => {},
     },
     iconClass () {
-      switch (this.cmd.generic_type) {
-        case 'HUMIDITY':
-        case 'RAIN_CURRENT':
-          return 'fa-tint'
-        case 'TEMPERATURE':
-          return 'fa-thermometer-half'
-        case 'CO2':
-          return 'fa-bullseye'
-        case 'VOLTAGE':
-        case 'POWER':
-          return 'fa-bolt'
-      }
-      return 'fa-question'
+      return this.getIconClass(this.cmd)
     },
     action () {
       const cmds = this.cmdsByEqLogicId(this.eqLogicId)
@@ -49,18 +38,9 @@ export default {
       const vm = this
       return async (newValue) => {
         const cmdId = newValue === '1' ? cmdOn.id : cmdOff.id
-        try {
-          await vm.$JeedomApi.cmd(cmdId)
-        } catch (error) {
-          console.error(error)
-          this.setInformation({ message: error.message, type: 'is-danger' })
-        }
+        vm.execCmd({ id: cmdId })
       }
     },
-    ...mapGetters(['cmdById', 'cmdsByEqLogicId']),
-  },
-  methods: {
-    ...mapMutations(['setInformation']),
   },
 }
 </script>

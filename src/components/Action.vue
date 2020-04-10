@@ -7,8 +7,9 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { CmdMixin } from '@/mixins/Cmd'
 export default {
+  mixins: [CmdMixin],
   props: {
     id: {
       type: String,
@@ -21,25 +22,7 @@ export default {
       set: () => {},
     },
     cmd () { return this.cmdById(this.id) },
-    iconClass () {
-      switch (this.cmd.logicalId) {
-        case 'refresh':
-          return 'fa fa-sync-alt'
-        case 'wol':
-          return 'fa fa-bolt'
-      }
-      switch (this.cmd.generic_type) {
-        case 'FLAP_DOWN':
-          return 'fa fa-angle-double-down'
-        case 'FLAP_STOP':
-          return 'fa fa-stop'
-        case 'FLAP_UP':
-          return 'fa fa-angle-double-up'
-        default:
-          return 'fa fa-arrow-up'
-      }
-    },
-    ...mapGetters(['cmdById']),
+    iconClass () { return this.getIconClass(this.cmd) },
   },
   methods: {
     action: function () {
@@ -48,7 +31,6 @@ export default {
     actionSlider: function (newValue) {
       this.execCmd({ id: this.cmd.id, options: { slider: newValue } })
     },
-    ...mapActions(['execCmd']),
   },
 }
 </script>
