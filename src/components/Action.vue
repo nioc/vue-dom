@@ -21,7 +21,7 @@ export default {
       get: function () { return this.cmd.currentValue },
       set: () => {},
     },
-    cmd () { return this.cmdById(this.id) },
+    cmd () { return this.getCmdById(this.id) },
     iconClass () { return this.getIconClass(this.cmd) },
   },
   methods: {

@@ -2,7 +2,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 export const CmdMixin = {
   computed: {
-    ...mapGetters(['cmdById', 'cmdsByEqLogicId']),
+    ...mapGetters(['getCmdById', 'getCmdsByEqLogicId']),
   },
   methods: {
     getBatteryLevelIconClass (level) {

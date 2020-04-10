@@ -40,9 +40,9 @@ export default {
     }
   },
   computed: {
-    object () { return this.objectById(this.id) },
+    object () { return this.getObjectById(this.id) },
     title () { return this.object.name },
-    summary () { return this.objectsSummaryById(this.id) },
+    summary () { return this.getObjectSummaryById(this.id) },
   },
   watch: {
     title: {

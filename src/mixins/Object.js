@@ -2,7 +2,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 export const ObjectMixin = {
   computed: {
-    ...mapGetters(['objectById']),
+    ...mapGetters(['getObjectById']),
   },
   methods: {
     ...mapActions(['loadObject']),

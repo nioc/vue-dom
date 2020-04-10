@@ -2,7 +2,7 @@ import { mapGetters } from 'vuex'
 
 export const SummaryMixin = {
   computed: {
-    ...mapGetters(['objectsSummaryById']),
+    ...mapGetters(['getObjectSummaryById']),
   },
   methods: {
     getSummaryIconClass (key) {

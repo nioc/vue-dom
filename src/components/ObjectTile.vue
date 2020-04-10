@@ -23,8 +23,8 @@ export default {
     },
   },
   computed: {
-    object () { return this.objectById(this.id) },
-    summary () { return this.objectsSummaryById(this.id) },
+    object () { return this.getObjectById(this.id) },
+    summary () { return this.getObjectSummaryById(this.id) },
   },
 }
 </script>

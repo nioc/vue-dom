@@ -40,7 +40,7 @@ export default {
     }
   },
   computed: {
-    eqLogic () { return this.eqLogicById(this.id) },
+    eqLogic () { return this.getEqLogicById(this.id) },
     eqLogicBattery: function () {
       const battery = this.eqLogic.status.battery
       if (battery) {
@@ -55,7 +55,7 @@ export default {
       const actionsList = []
       const actionsHiddenList = []
       const infosList = []
-      const cmds = this.cmdsByEqLogicId(this.id)
+      const cmds = this.getCmdsByEqLogicId(this.id)
       cmds.forEach(cmd => {
         if (cmd.type === 'info') {
           const cmdValue = '#' + cmd.id + '#'
@@ -84,7 +84,7 @@ export default {
       })
       return { infos: infosList, actions: actionsList }
     },
-    ...mapGetters(['eqLogicById']),
+    ...mapGetters(['getEqLogicById']),
   },
   methods: {
     getEqLogicComponent (eqType) {

@@ -45,7 +45,7 @@ export default {
   mixins: [ObjectsMixin, SummaryMixin],
   computed: {
     ordered () { return findChild(this.objectsRaw, [], { id: null }) },
-    summary () { return this.objectsSummaryById(0) },
+    summary () { return this.getObjectSummaryById(0) },
   },
 }
 </script>

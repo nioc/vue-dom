@@ -34,7 +34,7 @@ export default new Vuex.Store({
 
   getters: {
     // return object by id or object with empty name and eqLogics
-    objectById: (state) => (id) => {
+    getObjectById: (state) => (id) => {
       return (state.objects[id]) || {
         name: '',
         eqLogics: [],
@@ -42,24 +42,24 @@ export default new Vuex.Store({
     },
 
     // return object summary by id or empty object
-    objectsSummaryById: (state) => (id) => {
+    getObjectSummaryById: (state) => (id) => {
       return (state.objectsSummary[id]) || {}
     },
 
     // return eqLogic by id or object with empty cmds
-    eqLogicById: (state) => (id) => {
+    getEqLogicById: (state) => (id) => {
       return (state.eqLogics[id]) || {
         cmds: [],
       }
     },
 
     // return all cmds for requested eqLogicId
-    cmdsByEqLogicId: (state, getters) => (id) => {
+    getCmdsByEqLogicId: (state, getters) => (id) => {
       const cmds = []
       const cmdsId = state.eqLogics[id].cmds
       // reduce cmd to minimal informations
       cmdsId.forEach((cmdId) => {
-        const c = getters.cmdById(cmdId)
+        const c = getters.getCmdById(cmdId)
         cmds.push({
           id: c.id,
           type: c.type,
@@ -72,7 +72,7 @@ export default new Vuex.Store({
     },
 
     // return cmd by id or empty object
-    cmdById: (state) => (id) => {
+    getCmdById: (state) => (id) => {
       return (state.cmds[id]) || { }
     },
   },

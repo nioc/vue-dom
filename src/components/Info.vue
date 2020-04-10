@@ -18,7 +18,7 @@ export default {
     },
   },
   computed: {
-    cmd () { return this.cmdById(this.id) },
+    cmd () { return this.getCmdById(this.id) },
     value: {
       // computed to avoid vuex mutation
       get: function () { return this.cmd.currentValue },
@@ -28,7 +28,7 @@ export default {
       return this.getIconClass(this.cmd)
     },
     action () {
-      const cmds = this.cmdsByEqLogicId(this.eqLogicId)
+      const cmds = this.getCmdsByEqLogicId(this.eqLogicId)
       const cmdValue = '#' + this.cmd.id + '#'
       const cmdOn = cmds.find((c) => c.value === cmdValue && c.generic_type === 'LIGHT_ON')
       const cmdOff = cmds.find((c) => c.value === cmdValue && c.generic_type === 'LIGHT_OFF')
