@@ -5,17 +5,7 @@ export const SummaryMixin = {
     ...mapGetters(['objectsSummaryById']),
   },
   methods: {
-    getSummaryHtml (id) {
-      const summary = this.objectsSummaryById(id)
-      let html = ''
-      if (summary.keys) {
-        summary.keys.forEach((info) => {
-          html += '<span><i class="fa-fw ' + this.summaryIconClass(info.key) + '"></i>' + info.value + this.summaryUnit(info.key) + '</span>'
-        })
-      }
-      return html
-    },
-    summaryIconClass (key) {
+    getSummaryIconClass (key) {
       switch (key) {
         case 'humidity':
           return 'fa fa-tint'
@@ -28,7 +18,7 @@ export const SummaryMixin = {
       }
       return ''
     },
-    summaryUnit (key) {
+    getSummaryUnit (key) {
       switch (key) {
         case 'humidity':
           return '%'

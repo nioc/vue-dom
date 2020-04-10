@@ -1,7 +1,7 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items="[{link: '/', icon: 'fa-home', text: 'Home', isActive: true}]" :html="summaryHtml" />
+      <breadcrumb :items="[{link: '/', icon: 'fa-home', text: 'Home', isActive: true}]" :summary="summary" />
     </div>
     <div class="hero-body">
       <div class="container">
@@ -45,7 +45,7 @@ export default {
   mixins: [ObjectsMixin, SummaryMixin],
   computed: {
     ordered () { return findChild(this.objectsRaw, [], { id: null }) },
-    summaryHtml () { return this.getSummaryHtml(0) },
+    summary () { return this.objectsSummaryById(0) },
   },
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="box is-radiusless has-background-white-bis">
-    <nav class="breadcrumb container" aria-label="breadcrumbs">
+    <nav class="breadcrumb container is-flex-space-between" aria-label="breadcrumbs">
       <ul>
         <li v-for="(item, index) in items" :key="item.text" :class="{'is-active': item.isActive}">
           <router-link :to="item.link">
@@ -10,24 +10,25 @@
             <span :class="{'is-hidden-mobile': index !== (items.length-1) && item.icon}">{{ item.text }}</span>
           </router-link>
         </li>
-        <li v-if="html">
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <span class="has-text-grey has-text-weight-light is-size-7 has-margin-left-7" v-html="html" />
-        </li>
       </ul>
+      <aside v-if="summary.keys" class="has-text-grey has-text-weight-light is-size-7 has-margin-left-7">
+        <span v-for="info in summary.keys" :key="info.key" class="has-padding-left-8"><i class="fa-fw" :class="getSummaryIconClass(info.key)" />{{ info.value }}{{ getSummaryUnit(info.key) }}</span>
+      </aside>
     </nav>
   </div>
 </template>
 
 <script>
+import { SummaryMixin } from '@/mixins/Summary'
 export default {
+  mixins: [SummaryMixin],
   props: {
     items: {
       type: Array,
       required: true,
     },
-    html: {
-      type: String,
+    summary: {
+      type: Object,
       required: false,
       default: null,
     },

@@ -1,7 +1,7 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items.sync="breadcrumbItems" :html="summaryHtml" />
+      <breadcrumb :items.sync="breadcrumbItems" :summary="summary" />
     </div>
     <div class="hero-body">
       <div class="container">
@@ -42,7 +42,7 @@ export default {
   computed: {
     object () { return this.objectById(this.id) },
     title () { return this.object.name },
-    summaryHtml () { return this.getSummaryHtml(this.id) },
+    summary () { return this.objectsSummaryById(this.id) },
   },
   watch: {
     title: {
