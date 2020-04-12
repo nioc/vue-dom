@@ -34,16 +34,35 @@ export const CmdMixin = {
           return 'fa fa-angle-double-up'
         case 'HUMIDITY':
         case 'RAIN_CURRENT':
-          return 'fa-tint'
-        case 'TEMPERATURE':
-          return 'fa-thermometer-half'
+          return 'fa fa-tint'
+        case 'TEMPERATURE': {
+          const min = parseInt(cmd.configuration.minValue) || 0
+          const max = parseInt(cmd.configuration.maxValue) || 100
+          const interval = (max - min) / 5
+          if (cmd.currentValue < min + interval) {
+            return 'fa fa-thermometer-empty'
+          }
+          if (cmd.currentValue < min + 2 * interval) {
+            return 'fa fa-thermometer-quarter'
+          }
+          if (cmd.currentValue < min + 3 * interval) {
+            return 'fa fa-thermometer-half'
+          }
+          if (cmd.currentValue < min + 4 * interval) {
+            return 'fa fa-thermometer-three-quarters'
+          }
+          return 'fa fa-thermometer-full'
+        }
         case 'CO2':
-          return 'fa-bullseye'
+          return 'fa fa-bullseye'
         case 'VOLTAGE':
         case 'POWER':
-          return 'fa-bolt'
+          return 'fa fa-bolt'
       }
-      return 'fa-question'
+      if (cmd.display.icon) {
+        return cmd.display.icon.match(/class="(.*?)"/)[1] || 'fa fa-question'
+      }
+      return 'fa fa-question'
     },
     ...mapActions(['execCmd']),
   },

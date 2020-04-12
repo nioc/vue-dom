@@ -1,6 +1,6 @@
 <template>
   <b-switch v-if="cmd.subType==='binary'" v-model="value" :disabled="!action" true-value="1" :title="cmd.name" @input="action" />
-  <div v-else><i class="fa fa-fw" :class="iconClass" />{{ cmd.name }} : {{ cmd.currentValue }} {{ cmd.unite }}</div>
+  <div v-else><i class="fa-fw" :class="iconClass" />{{ cmd.name }} : {{ cmd.currentValue }}{{ unit }}</div>
 </template>
 
 <script>
@@ -24,9 +24,8 @@ export default {
       get: function () { return this.cmd.currentValue },
       set: () => {},
     },
-    iconClass () {
-      return this.getIconClass(this.cmd)
-    },
+    iconClass () { return this.getIconClass(this.cmd) },
+    unit () { return this.cmd.unite ? ' ' + this.cmd.unite : '' },
     action () {
       const cmds = this.getCmdsByEqLogicId(this.eqLogicId)
       const cmdValue = '#' + this.cmd.id + '#'

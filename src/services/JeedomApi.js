@@ -201,7 +201,10 @@ export default {
           object.eqLogics = object.eqLogics.filter((eqLogic) => eqLogic.isVisible === '1').map((eqLogic) => {
             delete (eqLogic.display)
             eqLogic.cmds = eqLogic.cmds.filter((cmd) => cmd.isVisible === '1').sort((a, b) => a.order - b.order).map((cmd) => {
-              delete (cmd.display)
+              // reduce cmd size
+              cmd.display = {
+                icon: cmd.display.icon,
+              }
               return cmd
             })
             return eqLogic
