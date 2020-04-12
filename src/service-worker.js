@@ -29,3 +29,9 @@ workbox.routing.registerRoute(
     cacheName: 'api-cache',
   }),
 )
+
+self.addEventListener('message', (message) => {
+  if (message.data === 'skipWaiting') {
+    self.skipWaiting()
+  }
+})

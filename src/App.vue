@@ -16,6 +16,8 @@ export default {
   data () {
     return {
       isReady: false,
+      refreshing: false,
+      registration: null,
     }
   },
   computed: {
@@ -35,6 +37,21 @@ export default {
     },
   },
   created () {
+    // handle update from service worker
+    document.addEventListener(
+      'updated', this.askForRefresh, { once: true },
+    )
+    // reload page if requested by service worker
+    navigator.serviceWorker.addEventListener(
+      'controllerchange', () => {
+        if (this.refreshing) {
+          return
+        }
+        this.refreshing = true
+        window.location.reload()
+      },
+    )
+    // load objects
     if (this.isAuthenticated) {
       this.loadObjects()
     }
@@ -46,6 +63,26 @@ export default {
     this.isReady = true
   },
   methods: {
+    // display confirm dialog for refreshing application
+    askForRefresh (e) {
+      this.registration = e.detail
+      this.$buefy.dialog.confirm({
+        title: 'Mise à jour',
+        message: 'Une mise à jour a été téléchargée, souhaitez-vous recharger l\'application ?',
+        cancelText: 'Plus tard',
+        hasIcon: true,
+        icon: 'sync-alt',
+        iconPack: 'fa',
+        onConfirm: () => this.refreshApp(),
+      })
+    },
+    // refresh application from updated service worker
+    refreshApp () {
+      if (!this.registration || !this.registration.waiting) {
+        return
+      }
+      this.registration.waiting.postMessage('skipWaiting')
+    },
     // store network status
     notifyConnectivity (event) {
       this.setNetworkStatus(window.navigator.onLine)
