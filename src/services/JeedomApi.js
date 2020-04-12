@@ -258,6 +258,16 @@ export default {
         }
       },
 
+      // change scenario state (run, stop, enable, disable)
+      async changeScenarioState (id, state) {
+        try {
+          return await jsonRpcCall('scenario::changeState', { id, state })
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
     }
   },
 }

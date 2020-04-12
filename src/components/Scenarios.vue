@@ -11,10 +11,10 @@
               <p class="card-header-title"><span v-if="scenario.group" class="has-margin-right-8 has-text-grey-light">[{{ scenario.group }}]</span>{{ scenario.display.name }}</p>
             </header>
             <div class="card-content">
-              <button v-if="scenario.state === 'stop'" class="button is-primary">
+              <button v-if="scenario.state === 'stop'" class="button is-primary" @click="run(scenario.id)">
                 <span class="icon"><i class="fa fa-play-circle" /></span><span>Exécuter</span>
               </button>
-              <button v-if="scenario.state === 'run'" class="button is-primary">
+              <button v-else-if="scenario.state === 'in progress'" class="button is-primary">
                 <span class="icon"><i class="fa fa-stop-circle" /></span><span>Arrêter</span>
               </button>
             </div>
@@ -29,6 +29,7 @@
 import Breadcrumb from '@/components/Breadcrumb'
 
 export default {
+  name: 'Scenarios',
   components: {
     Breadcrumb,
   },
@@ -44,6 +45,11 @@ export default {
       const message = `Erreur lors de la requête de récupération des scénarios<br>${error.message}`
       this.$store.commit('setInformation', { type: 'is-danger', message })
     }
+  },
+  methods: {
+    run (id) {
+      this.$JeedomApi.changeScenarioState(id, 'run')
+    },
   },
 }
 </script>
