@@ -13,7 +13,7 @@ module.exports = {
       importWorkboxFrom: 'local',
       swSrc: 'src/service-worker.js',
     },
-    name: 'Jeedom',
+    name: 'VueDom',
     themeColor: '#96c927',
     msTileColor: '#96c927',
     iconPaths: {
