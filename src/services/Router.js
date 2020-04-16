@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '@/services/Store'
+import store from '@/store'
 
 // components
 import Login from '@/components/Login'

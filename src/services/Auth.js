@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import store from '@/services/Store'
+import store from '@/store'
 
 // set API key and notify application user is authenticated
 function authenticate (login, apiKey) {

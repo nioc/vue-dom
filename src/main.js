@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import store from '@/services/Store'
+import store from '@/store'
 import JeedomApi from '@/services/JeedomApi'
 import router from '@/services/Router'
 import Auth from '@/services/Auth'
