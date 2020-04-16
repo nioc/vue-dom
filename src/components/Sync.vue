@@ -13,7 +13,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState } = createNamespacedHelpers('app')
 
 export default {
   name: 'Sync',

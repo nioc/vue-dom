@@ -43,8 +43,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
 import Auth from '@/services/Auth'
+const { mapState } = createNamespacedHelpers('app')
 const custom = window.custom
 
 export default {

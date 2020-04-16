@@ -34,7 +34,8 @@
 import { bugs } from '../../package.json'
 import Auth from '@/services/Auth'
 import Sync from '@/components/Sync'
-import { mapState } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState } = createNamespacedHelpers('app')
 const custom = window.custom
 
 export default {

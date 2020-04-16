@@ -43,7 +43,7 @@ export default {
       this.scenarios = await this.$JeedomApi.getScenarios()
     } catch (error) {
       const message = `Erreur lors de la requête de récupération des scénarios<br>${error.message}`
-      this.$store.commit('setInformation', { type: 'is-danger', message })
+      this.$store.commit('app/setInformation', { type: 'is-danger', message })
     }
   },
   methods: {

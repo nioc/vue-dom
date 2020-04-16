@@ -21,8 +21,9 @@
 import Action from '@/components/Action'
 import Info from '@/components/Info'
 import TimeAgo from '@/components/TimeAgo'
-import { mapGetters } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
 import { CmdMixin } from '@/mixins/Cmd'
+const { mapGetters } = createNamespacedHelpers('objects')
 
 export default {
   components: {

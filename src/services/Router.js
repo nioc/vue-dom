@@ -72,7 +72,7 @@ const router = new Router({ routes })
 // apply navigation guards
 router.beforeEach((to, from, next) => {
   // check authentication
-  if (!store.state.isAuthenticated && to.name !== 'login') {
+  if (!store.state.app.isAuthenticated && to.name !== 'login') {
     next({
       name: 'login',
       query: { redirect: to.fullPath },
@@ -80,7 +80,7 @@ router.beforeEach((to, from, next) => {
     })
     return
   }
-  if (store.state.isAuthenticated && to.name === 'login') {
+  if (store.state.app.isAuthenticated && to.name === 'login') {
     next({
       name: 'home',
       replace: true,

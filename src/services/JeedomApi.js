@@ -51,11 +51,11 @@ export default {
       events.result.forEach((event) => {
         switch (event.name) {
           case 'cmd::update':
-            store.commit('updateCmd', event.option)
+            store.commit('objects/updateCmd', event.option)
             break
           case 'jeeObject::summary::update':
             for (const key in event.option.keys) {
-              store.commit('saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
+              store.commit('objects/saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
             }
             break
           default:
@@ -90,8 +90,8 @@ export default {
         }
         if (!apiKey) {
           console.warn('Missing API key')
-          store.commit('setInformation', { type: 'is-danger', message: 'Erreur d\'authentification, veuillez-vous reconnecter' })
-          store.commit('setUser', { login: null, isAuthenticated: false })
+          store.commit('app/setInformation', { type: 'is-danger', message: 'Erreur d\'authentification, veuillez-vous reconnecter' })
+          store.commit('app/setUser', { login: null, isAuthenticated: false })
           return
         }
         // ensure only one socket
@@ -114,7 +114,7 @@ export default {
           console.info('Events socket connection opened')
           const authMsg = JSON.stringify({ apiKey })
           websocket.send(authMsg)
-          store.commit('setEventsListenerStatus', true)
+          store.commit('app/setEventsListenerStatus', true)
         }
         // on message, handle events
         websocket.onmessage = (message) => {
@@ -131,7 +131,7 @@ export default {
         }
         // on connection close, store status and retry if it was an abnormal closure
         websocket.onclose = (event) => {
-          store.commit('setEventsListenerStatus', false)
+          store.commit('app/setEventsListenerStatus', false)
           isSocketOpen = false
           switch (event.code) {
             case 1000:
@@ -162,14 +162,14 @@ export default {
         }
         if (timerId) {
           clearTimeout(timerId)
-          store.commit('setEventsListenerStatus', false)
+          store.commit('app/setEventsListenerStatus', false)
         }
       },
 
       // request events by JSON-RPC API
       async openEventsListenerFallback (isPolling) {
         try {
-          store.commit('setEventsListenerStatus', true)
+          store.commit('app/setEventsListenerStatus', true)
           const events = await jsonRpcCall('event::changes', { datetime: lastEventsTimestamp })
           lastEventsTimestamp = events.datetime
           handleEventsResponse(events)
@@ -178,8 +178,8 @@ export default {
           }
           return
         } catch (error) {
-          store.commit('setEventsListenerStatus', false)
-          store.commit('setInformation', { type: 'is-danger', message: 'Erreur de communication avec le serveur' })
+          store.commit('app/setEventsListenerStatus', false)
+          store.commit('app/setInformation', { type: 'is-danger', message: 'Erreur de communication avec le serveur' })
           console.error(error)
         }
       },
