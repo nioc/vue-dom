@@ -9,7 +9,7 @@
 import { createNamespacedHelpers } from 'vuex'
 import Navbar from '@/components/Navbar'
 const { mapState, mapMutations } = createNamespacedHelpers('app')
-const { mapActions } = createNamespacedHelpers('objects')
+const { mapActions } = createNamespacedHelpers('data')
 
 export default {
   components: {

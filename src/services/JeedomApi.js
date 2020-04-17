@@ -51,11 +51,11 @@ export default {
       events.result.forEach((event) => {
         switch (event.name) {
           case 'cmd::update':
-            store.commit('objects/updateCmd', event.option)
+            store.commit('data/updateCmd', event.option)
             break
           case 'jeeObject::summary::update':
             for (const key in event.option.keys) {
-              store.commit('objects/saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
+              store.commit('data/saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
             }
             break
           default:

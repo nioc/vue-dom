@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex'
-const { mapGetters } = createNamespacedHelpers('objects')
+const { mapGetters } = createNamespacedHelpers('data')
 
 export const SummaryMixin = {
   computed: {

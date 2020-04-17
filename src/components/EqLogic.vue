@@ -23,7 +23,7 @@ import Info from '@/components/Info'
 import TimeAgo from '@/components/TimeAgo'
 import { createNamespacedHelpers } from 'vuex'
 import { CmdMixin } from '@/mixins/Cmd'
-const { mapGetters } = createNamespacedHelpers('objects')
+const { mapGetters } = createNamespacedHelpers('data')
 
 export default {
   components: {
