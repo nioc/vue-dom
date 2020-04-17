@@ -13,15 +13,19 @@ const objectSchema = new schema.Entity('objects', {
 })
 const objectListSchema = new schema.Array(objectSchema)
 
-const state = {
-  objects: {},
-  objectsSummary: {},
-  objectsRaw: [],
-  eqLogics: {},
-  cmds: {},
-  objectsList: [],
-  summaryList: [],
+const getDefaultState = () => {
+  return {
+    objects: {},
+    objectsSummary: {},
+    objectsRaw: [],
+    eqLogics: {},
+    cmds: {},
+    objectsList: [],
+    summaryList: [],
+  }
 }
+
+const state = getDefaultState()
 
 const getters = {
 
@@ -75,6 +79,12 @@ const mutations = {
   saveObjects (state, payload) {
     state.objectsRaw = payload
     const normalized = normalize(payload, objectListSchema)
+    // get previous eqLogics
+    for (const objectId in normalized.entities.objects) {
+      if (state.objects[objectId] && state.objects[objectId].eqLogics) {
+        normalized.entities.objects[objectId].eqLogics = state.objects[objectId].eqLogics
+      }
+    }
     Object.assign(state, normalized.entities)
   },
 
@@ -139,6 +149,11 @@ const mutations = {
       state.eqLogics = Object.assign({}, state.eqLogics, eqLogicUpdated)
     }
   },
+
+  // clear state
+  clear (state) {
+    Object.assign(state, getDefaultState())
+  },
 }
 
 const actions = {
@@ -158,6 +173,10 @@ const actions = {
       })
       // get all objects
       const objects = await vue.$JeedomApi.getObjects()
+      if (objects === undefined) {
+        // no objects to save
+        return
+      }
       commit('saveObjects', objects)
       // get objects summary
       objects.forEach(async (object) => {
@@ -188,6 +207,10 @@ const actions = {
     }
     try {
       const object = await vue.$JeedomApi.getObject(id)
+      if (object === undefined) {
+        // no object to save
+        return
+      }
       commit('saveObject', object)
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération de l'objet<br>${error.message}` }, { root: true })

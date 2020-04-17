@@ -1,9 +1,15 @@
+const getDefaultState = () => {
+  return {
+    login: null,
+    isAuthenticated: false,
+    information: {},
+  }
+}
+
 const state = {
-  login: null,
-  isAuthenticated: false,
-  hasEventsListenerOpen: false,
   hasNetwork: false,
-  information: {},
+  hasEventsListenerOpen: false,
+  ...getDefaultState(),
 }
 
 const getters = {
@@ -30,6 +36,14 @@ const mutations = {
   // store informations to be displayed as toast
   setInformation (state, payload) {
     state.information = payload
+  },
+
+  // clear state
+  clear (state) {
+    const defaultState = getDefaultState()
+    Object.keys(defaultState).forEach((key) => {
+      state[key] = defaultState[key]
+    })
   },
 }
 

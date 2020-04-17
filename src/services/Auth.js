@@ -27,9 +27,9 @@ export default {
 
   // clear local storage and store
   logout () {
+    store.dispatch('clear')
     localStorage.clear()
     sessionStorage.clear()
-    store.commit('app/setUser', { login: null, isAuthenticated: false })
   },
 
   // return stored user (login and api key)
