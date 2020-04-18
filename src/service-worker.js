@@ -3,8 +3,15 @@
 workbox.precaching.precacheAndRoute([])
 
 workbox.routing.registerRoute(
-  /.*\.(?:css|js)$/,
+  /.*(?:\/local.js)$/,
   workbox.strategies.staleWhileRevalidate({
+    cacheName: 'local-js-css-cache',
+  }),
+)
+
+workbox.routing.registerRoute(
+  /.*\.(?:css|js)$/,
+  workbox.strategies.cacheFirst({
     cacheName: 'js-css-cache',
   }),
 )

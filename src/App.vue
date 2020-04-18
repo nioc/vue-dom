@@ -27,7 +27,9 @@ export default {
   },
   watch: {
     isAuthenticated: function () {
-      this.loadObjects()
+      if (this.isAuthenticated) {
+        this.loadObjects()
+      }
       this.openEventsListener()
     },
     information: function (information) {
@@ -57,11 +59,12 @@ export default {
     if (this.isAuthenticated) {
       this.loadObjects()
     }
-    this.openEventsListener()
     // handle connectivity
     this.setNetworkStatus(window.navigator.onLine)
     window.addEventListener('offline', this.notifyConnectivity)
     window.addEventListener('online', this.notifyConnectivity)
+    // listen events
+    this.openEventsListener()
     this.isReady = true
   },
   methods: {

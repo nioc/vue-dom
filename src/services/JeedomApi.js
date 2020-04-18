@@ -83,6 +83,10 @@ export default {
 
       // suscribe to Jeedom events throught websocket
       openEventsListener (resetCounter, forceRefresh = false) {
+        if (!store.state.app.hasNetwork) {
+          // no network
+          return
+        }
         if (websocketUrl === null) {
           // websocket url not set, fallback to HTTP polling
           this.openEventsListenerFallback(true)
@@ -140,6 +144,11 @@ export default {
               break
             case 1006:
               // abnormal closure
+              if (!store.state.app.hasNetwork) {
+                // no network
+                console.warn(`Network failure, events socket connection closed (code: ${event.code}, try #${socketErrorCount}/${socketMaxTry})`)
+                return
+              }
               if (socketErrorCount >= socketMaxTry) {
                 console.warn(`Events socket connection closed (code: ${event.code}, try #${socketErrorCount}/${socketMaxTry})`)
                 this.openEventsListenerFallback(true)
