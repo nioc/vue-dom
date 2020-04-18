@@ -22,6 +22,7 @@ const getDefaultState = () => {
     cmds: {},
     objectsList: [],
     summaryList: [],
+    cmdsStatistics: {},
   }
 }
 
@@ -70,6 +71,11 @@ const getters = {
   // return cmd by id or empty object
   getCmdById: (state) => (id) => {
     return (state.cmds[id]) || { }
+  },
+
+  // return cmd statistics by id or null
+  getCmdStatisticsById: (state) => (id) => {
+    return (state.cmdsStatistics[id]) || null
   },
 }
 
@@ -128,6 +134,14 @@ const mutations = {
     const arr = []
     arr[payload.id] = normalized
     state.objectsSummary = Object.assign({}, state.objectsSummary, arr)
+  },
+
+  // store cmd statistics
+  saveCmdStatistics (state, payload) {
+    const cmdId = payload.id
+    const updated = {}
+    updated[cmdId] = payload.statistics
+    state.cmdsStatistics = Object.assign({}, state.cmdsStatistics, updated)
   },
 
   // store updated cmd information
@@ -214,6 +228,19 @@ const actions = {
       commit('saveObject', object)
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération de l'objet<br>${error.message}` }, { root: true })
+    }
+  },
+
+  // call API and store cmd statistics
+  async loadCmdStatistics ({ commit, state }, id) {
+    try {
+      const statistics = await vue.$JeedomApi.getStatistics(id)
+      if (statistics === undefined) {
+        return
+      }
+      commit('saveCmdStatistics', { id, statistics })
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des statistiques<br>${error.message}` }, { root: true })
     }
   },
 

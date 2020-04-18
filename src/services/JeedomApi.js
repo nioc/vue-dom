@@ -4,6 +4,7 @@ export default {
   install (Vue, options = { jsonRpcApiUrl: null, websocketUrl: null, store: null }) {
     const jsonRpcApiUrl = options.jsonRpcApiUrl
     const websocketUrl = options.websocketUrl
+    const statisticsPeriod = options.statisticsPeriod
     const store = options.store
     const socketMaxTry = 3
     const readDelay = 5000
@@ -271,6 +272,30 @@ export default {
       async changeScenarioState (id, state) {
         try {
           return await jsonRpcCall('scenario::changeState', { id, state })
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
+      // request cmd statistics and return min, max and average
+      async getStatistics (cmdId, startTime = null, endTime = null) {
+        const params = { id: parseInt(cmdId) }
+        if (endTime === null) {
+          endTime = new Date()
+        }
+        if (startTime === null) {
+          startTime = new Date(endTime.getTime() - statisticsPeriod)
+        }
+        params.startTime = Vue.moment(startTime).format('YYYY-MM-DD HH:mm:ss')
+        params.endTime = Vue.moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        try {
+          const statistics = await jsonRpcCall('cmd::getStatistique', params)
+          return {
+            min: Number.parseFloat(Number.parseFloat(statistics.min).toPrecision(3)),
+            avg: Number.parseFloat(Number.parseFloat(statistics.avg).toPrecision(3)),
+            max: Number.parseFloat(Number.parseFloat(statistics.max).toPrecision(3)),
+          }
         } catch (error) {
           console.error(error)
           throw error

@@ -23,6 +23,7 @@ const custom = window.custom
 Vue.use(JeedomApi, {
   jsonRpcApiUrl: custom.jsonRpcApiUrl,
   websocketUrl: custom.websocketUrl,
+  statisticsPeriod: custom.statisticsPeriod,
   store,
 })
 

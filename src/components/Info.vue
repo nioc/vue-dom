@@ -1,6 +1,14 @@
 <template>
   <b-switch v-if="cmd.subType==='binary'" v-model="value" :disabled="!action" true-value="1" :title="cmd.name" @input="action" />
-  <div v-else><i class="fa-fw" :class="iconClass" />{{ cmd.name }} : {{ cmd.currentValue }}{{ unit }}</div>
+  <div v-else>
+    <i class="fa-fw" :class="iconClass" />{{ cmd.name }}
+    <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light is-inline">
+      <li class="statistics-item"><span class="has-padding-horizontal-8" title="Min">{{ statistics.min }}</span></li>
+      <li class="statistics-item"><span class="has-padding-horizontal-8" title="Moyenne">{{ statistics.avg }}</span></li>
+      <li class="statistics-item"><span class="has-padding-horizontal-8" title="Max">{{ statistics.max }}</span></li>
+    </ul>
+    <span class="has-text-weight-semi-bold">{{ cmd.currentValue }}{{ unit }}</span>
+  </div>
 </template>
 
 <script>
@@ -40,6 +48,20 @@ export default {
         vm.execCmd({ id: cmdId })
       }
     },
+    statistics () { return this.getCmdStatisticsById(this.id) },
+  },
+  created () {
+    if (this.cmd.isHistorized === '1' && this.cmd.subType !== 'binary') {
+      this.loadCmdStatistics(this.cmd.id)
+    }
   },
 }
 </script>
+<style>
+.statistics-item {
+  display: inline;
+}
+.statistics-item:not(:last-child)::after {
+  content: "|";
+}
+</style>
