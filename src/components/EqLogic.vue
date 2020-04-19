@@ -12,7 +12,7 @@
       <info v-for="cmd in cmds.infos" :id="cmd" :key="cmd" :eq-logic-id="eqLogic.id" />
       <div v-if="cmds.actions.length > 0" class="is-flex-space-between has-margin-bottom-8">
         <span><i class="fa-fw fa fa-tools has-margin-right-6" />Actions</span>
-        <span class="buttons is-right has-addons">
+        <span class="buttons is-right has-addons is-flex-grow">
           <action v-for="cmd in cmds.actions" :id="cmd" :key="cmd" />
         </span>
       </div>

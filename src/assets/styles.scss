@@ -7,7 +7,15 @@ $breadcrumb-item-color: $primary;
 $link: $primary;
 
 @import "~bulma/bulma.sass";
+
+$slider-thumb-background: findLightColor($primary);
+$slider-thumb-border: 1px solid $primary;
+
 @import "~buefy/src/scss/buefy";
+
+a {
+  text-decoration: none !important;
+}
 
 .breadcrumb ul {
   flex-wrap: nowrap;
@@ -76,6 +84,10 @@ $i: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.is-flex-grow {
+  flex-grow: 2 !important;
 }
 
 .sync-mobile {

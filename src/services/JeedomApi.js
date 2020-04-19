@@ -302,6 +302,25 @@ export default {
         }
       },
 
+      // request cmd history
+      async getHistory (cmdId, startTime = null, endTime = null) {
+        const params = { id: parseInt(cmdId) }
+        if (endTime === null) {
+          endTime = new Date()
+        }
+        if (startTime === null) {
+          startTime = new Date(endTime.getTime() - 86400000)
+        }
+        params.startTime = Vue.moment(startTime).format('YYYY-MM-DD HH:mm:ss')
+        params.endTime = Vue.moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+        try {
+          return await jsonRpcCall('cmd::getHistory', params)
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
     }
   },
 }
