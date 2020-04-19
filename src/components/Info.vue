@@ -1,13 +1,15 @@
 <template>
-  <b-switch v-if="cmd.subType==='binary'" v-model="value" :disabled="!action" true-value="1" :title="cmd.name" @input="action" />
-  <div v-else>
-    <i class="fa-fw" :class="iconClass" />{{ cmd.name }}
-    <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light is-inline">
-      <li class="statistics-item"><span class="has-padding-horizontal-8" title="Min">{{ statistics.min }}</span></li>
-      <li class="statistics-item"><span class="has-padding-horizontal-8" title="Moyenne">{{ statistics.avg }}</span></li>
-      <li class="statistics-item"><span class="has-padding-horizontal-8" title="Max">{{ statistics.max }}</span></li>
-    </ul>
-    <span class="has-text-weight-semi-bold">{{ cmd.currentValue }}{{ unit }}</span>
+  <div class="is-flex-space-between has-margin-bottom-8">
+    <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ cmd.name }}</span>
+    <b-switch v-if="cmd.subType==='binary'" v-model="value" :disabled="!action" true-value="1" :title="cmd.name" class="has-margin-bottom-8" @input="action" />
+    <span v-else class="is-flex-space-between">
+      <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light">
+        <li class="statistics-item"><span class="has-padding-horizontal-8" title="Min">{{ statistics.min }}</span></li>
+        <li class="statistics-item"><span class="has-padding-horizontal-8" title="Moyenne">{{ statistics.avg }}</span></li>
+        <li class="statistics-item"><span class="has-padding-horizontal-8" title="Max">{{ statistics.max }}</span></li>
+      </ul>
+      <span class="has-text-weight-semi-bold">{{ cmd.currentValue }}{{ unit }}</span>
+    </span>
   </div>
 </template>
 

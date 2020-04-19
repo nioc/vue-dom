@@ -33,11 +33,13 @@ export default {
       this.openEventsListener()
     },
     information: function (information) {
-      this.$buefy.toast.open({
-        message: information.message,
-        type: information.type,
-        position: 'is-bottom',
-      })
+      if (information.message) {
+        this.$buefy.toast.open({
+          message: information.message,
+          type: information.type,
+          position: 'is-bottom',
+        })
+      }
     },
   },
   created () {

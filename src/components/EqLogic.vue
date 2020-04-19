@@ -2,16 +2,19 @@
   <article class="card has-margin-bottom-6">
     <header class="card-header">
       <p class="card-header-title">{{ eqLogic.name }}</p>
-      <aside class="card-header-icon">
+      <aside class="card-header-icon is-size-7-mobile">
         <span v-if="eqLogicBattery" class="has-text-grey"><i class="fa-mr" :class="eqLogicBattery.iconClass" />{{ eqLogicBattery.currentValue }}%</span>
-        <span v-if="eqLogic.status.lastCommunication" :title="eqLogic.status.lastCommunication | moment('LLLL')" class="has-text-grey has-margin-left-8"><i class="fa-mr far fa-clock" /><time-ago :date="eqLogic.status.lastCommunication" /></span>
+        <span v-if="eqLogic.status.lastCommunication" :title="eqLogic.status.lastCommunication | moment('LLLL')" class="has-text-grey has-margin-left-8"><i class="fa-mr far fa-clock" /><time-ago :date="eqLogic.status.lastCommunication" :drop-fixes="true" /></span>
       </aside>
     </header>
     <component :is="getEqLogicComponent(eqLogic.eqType_name)" v-if="isEqLogicHandled(eqLogic.eqType_name)" :eq-logic="eqLogic" class="card-content" />
     <div v-else class="card-content">
       <info v-for="cmd in cmds.infos" :id="cmd" :key="cmd" :eq-logic-id="eqLogic.id" />
-      <div class="buttons has-addons has-margin-top-6">
-        <action v-for="cmd in cmds.actions" :id="cmd" :key="cmd" />
+      <div v-if="cmds.actions.length > 0" class="is-flex-space-between has-margin-bottom-8">
+        <span><i class="fa-fw fa fa-tools has-margin-right-6" />Actions</span>
+        <span class="buttons is-right has-addons">
+          <action v-for="cmd in cmds.actions" :id="cmd" :key="cmd" />
+        </span>
       </div>
     </div>
   </article>

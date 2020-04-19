@@ -20,36 +20,48 @@ $link: $primary;
 $indexSizes: ( 1, 2, 3, 4, 5, 6, 7, 8);
 $bulmaSizes: ( $size-1, $size-2, $size-3, $size-4, $size-5, $size-6, $size-7, 0.5em );
 $positions: ( "top", "left", "bottom", "right" );
+$attributes: ( "margin", "padding" );
 $i: 1;
 @each $size in $indexSizes {
-	$sizeem: nth($bulmaSizes, $i);
-	$i: $i+1;
-	.has-margin-#{$size} {
-		margin: $sizeem !important;
-	}
-	.has-negative-margin-#{$size} {
-		margin: -$sizeem !important;
-	}
-	.has-padding-#{$size} {
-		padding: $sizeem !important;
-	}
-	@each $position in $positions {
-		.has-margin-#{$position}-#{$size} {
-			margin-#{$position}: $sizeem !important;
-		}
-		.has-padding-#{$position}-#{$size} {
-			padding-#{$position}: $sizeem !important;
-		}
-		.has-negative-margin-#{$position}-#{$size} {
-			margin-#{$position}: -$sizeem !important;
-		}
-	}
+  $sizeem: nth($bulmaSizes, $i);
+  $i: $i+1;
+  @each $attribute in $attributes {
+    .has-#{$attribute}-#{$size} {
+      #{$attribute}: $sizeem !important;
+    }
+    .has-#{$attribute}-horizontal-#{$size} {
+      #{$attribute}-left: $sizeem !important;
+      #{$attribute}-right: $sizeem !important;
+    }
+    .has-#{$attribute}-vertical-#{$size} {
+      #{$attribute}-top: $sizeem !important;
+      #{$attribute}-bottom: $sizeem !important;
+    }
+    @each $position in $positions {
+      .has-#{$attribute}-#{$position}-#{$size} {
+        #{$attribute}-#{$position}: $sizeem !important;
+      }
+    }
+  }
 }
 
-@media screen and (max-width: 768px) {
+@each $name, $pair in $colors {
+  $color: nth($pair, 1);
+  .buttons.has-addons .button.is-#{$name} {
+    border-color: rgba(lighten($color, 20%), 0.4)
+  }
+  .buttons.has-addons .button.is-#{$name}.is-light {
+    border-color: rgba($color, 0.2)
+  }
+}
+
+@include mobile {
   .button .is-icon-mobile:first-child:not(:last-child) {
     margin-left: unset;
     margin-right: unset;
+  }
+  .hero-body {
+    padding: 1rem 0.5rem;
   }
 }
 

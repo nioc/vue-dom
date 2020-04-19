@@ -54,6 +54,8 @@ export const CmdMixin = {
           }
           return 'fa fa-thermometer-full'
         }
+        case 'LIGHT_STATE':
+          return 'fas fa-lightbulb'
         case 'CO2':
           return 'fa fa-bullseye'
         case 'VOLTAGE':

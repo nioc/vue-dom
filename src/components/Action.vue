@@ -1,5 +1,5 @@
 <template>
-  <button v-if="cmd.subType === 'other'" class="button is-rounded" @click="action">
+  <button v-if="cmd.subType === 'other'" class="button is-rounded is-primary is-light" @click="action">
     <span class="icon is-icon-mobile"><i :class="iconClass" /></span><span class="is-hidden-mobile">{{ cmd.name }}</span>
   </button>
   <b-slider v-else-if="cmd.subType === 'slider'" v-model="value" lazy @change="actionSlider" />
