@@ -51,9 +51,14 @@ export default {
       lastEventsTimestamp = events.datetime
       events.result.forEach((event) => {
         switch (event.name) {
-          case 'cmd::update':
-            store.commit('data/updateCmd', event.option)
+          case 'cmd::update': {
+            store.commit('data/updateCmd', {
+              id: event.option.cmd_id,
+              currentValue: event.option.value,
+              collectDate: event.option.collectDate,
+            })
             break
+          }
           case 'jeeObject::summary::update':
             for (const key in event.option.keys) {
               store.commit('data/saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
@@ -197,8 +202,78 @@ export default {
       // request all objects and returns only visible ones
       async getObjects () {
         try {
-          const objects = await jsonRpcCall('object::all')
-          return objects.filter((object) => object.isVisible === '1')
+          const jObjects = await jsonRpcCall('object::full')
+          return jObjects.filter((jObject) => jObject.isVisible === '1').map((jObject) => {
+            // construct object
+            const object = {
+              id: jObject.id,
+              name: jObject.name,
+              parentId: jObject.father_id,
+              summary: {},
+              eqLogics: [],
+            }
+            // set object summary keys
+            for (const key in jObject.configuration.summary) {
+              let keyHasSummary = false
+              const elements = jObject.configuration.summary[key]
+              elements.forEach((element) => {
+                if (element.enable === '1') {
+                  keyHasSummary = true
+                }
+              })
+              if (keyHasSummary) {
+                object.summary[key] = true
+              }
+            }
+            // set object eqLogics
+            object.eqLogics = jObject.eqLogics.filter((jEqLogic) => jEqLogic.isVisible === '1').map((jEqLogic) => {
+            // construct eqLogic
+              const eqLogic = {
+                id: jEqLogic.id,
+                eqTypeName: jEqLogic.eqType_name,
+                name: jEqLogic.name,
+                genericType: jEqLogic.generic_type,
+                status: {
+                  battery: jEqLogic.status.battery,
+                  lastCommunication: jEqLogic.status.lastCommunication,
+                },
+                configuration: {
+                  type: jEqLogic.configuration.type,
+                },
+                cmds: [],
+              }
+              // set eqLogic cmds
+              eqLogic.cmds = jEqLogic.cmds.filter((jCmd) => jCmd.isVisible === '1').sort((a, b) => a.order - b.order).map((jCmd) => {
+                // construct cmd
+                const cmd = {
+                  id: jCmd.id,
+                  currentValue: jCmd.state,
+                  value: jCmd.value,
+                  unit: jCmd.unite,
+                  name: jCmd.name,
+                  type: jCmd.type,
+                  subType: jCmd.subType,
+                  logicalId: jCmd.logicalId,
+                  eqLogicId: jCmd.eqLogic_id,
+                  eqType: jCmd.eqType,
+                  genericType: jCmd.generic_type,
+                  isHistorized: jCmd.isHistorized,
+                  icon: jCmd.display.icon,
+                  isVisible: jCmd.isVisible,
+                  order: jCmd.order,
+                }
+                if (jCmd.configuration.minValue !== '') {
+                  cmd.minValue = parseInt(jCmd.configuration.minValue)
+                }
+                if (jCmd.configuration.maxValue !== '') {
+                  cmd.maxValue = parseInt(jCmd.configuration.maxValue)
+                }
+                return cmd
+              })
+              return eqLogic
+            })
+            return object
+          })
         } catch (error) {
           console.error(error)
         }

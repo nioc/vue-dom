@@ -7,7 +7,7 @@
         <span v-if="eqLogic.status.lastCommunication" :title="eqLogic.status.lastCommunication | moment('LLLL')" class="has-text-grey has-margin-left-8"><i class="fa-mr far fa-clock" /><time-ago :date="eqLogic.status.lastCommunication" :drop-fixes="true" /></span>
       </aside>
     </header>
-    <component :is="getEqLogicComponent(eqLogic.eqType_name)" v-if="isEqLogicHandled(eqLogic.eqType_name)" :eq-logic="eqLogic" class="card-content" />
+    <component :is="getEqLogicComponent(eqLogic.eqTypeName)" v-if="isEqLogicHandled(eqLogic.eqTypeName)" :eq-logic="eqLogic" class="card-content" />
     <div v-else class="card-content">
       <info v-for="cmd in cmds.infos" :id="cmd" :key="cmd" :eq-logic-id="eqLogic.id" />
       <div v-if="cmds.actions.length > 0" class="is-flex-space-between has-margin-bottom-8">
@@ -70,15 +70,15 @@ export default {
           const cmdValue = '#' + cmd.id + '#'
           if (cmd.subType === 'binary') {
             // search for light switch on/off
-            const cmdOn = cmds.find((c) => c.value === cmdValue && c.generic_type === 'LIGHT_ON')
-            const cmdOff = cmds.find((c) => c.value === cmdValue && c.generic_type === 'LIGHT_OFF')
+            const cmdOn = cmds.find((c) => c.value === cmdValue && c.genericType === 'LIGHT_ON')
+            const cmdOff = cmds.find((c) => c.value === cmdValue && c.genericType === 'LIGHT_OFF')
             if (cmdOn && cmdOff) {
               // do not display button for on/off actions
               actionsHiddenList.push(cmdOn.id, cmdOff.id)
             }
             infosList.push(cmd.id)
           } else if (cmd.subType === 'numeric') {
-            if (!cmds.find((c) => c.value === cmdValue && c.generic_type === 'LIGHT_SLIDER')) {
+            if (!cmds.find((c) => c.value === cmdValue && c.genericType === 'LIGHT_SLIDER')) {
               // do not display slider value info
               infosList.push(cmd.id)
             }

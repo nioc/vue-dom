@@ -26,7 +26,7 @@ export const CmdMixin = {
         case 'wol':
           return 'fa fa-bolt'
       }
-      switch (cmd.generic_type) {
+      switch (cmd.genericType) {
         case 'FLAP_DOWN':
           return 'fa fa-angle-double-down'
         case 'FLAP_STOP':
@@ -37,8 +37,8 @@ export const CmdMixin = {
         case 'RAIN_CURRENT':
           return 'fa fa-tint'
         case 'TEMPERATURE': {
-          const min = parseInt(cmd.configuration.minValue) || 0
-          const max = parseInt(cmd.configuration.maxValue) || 100
+          const min = cmd.minValue || 0
+          const max = cmd.maxValue || 100
           const interval = (max - min) / 5
           if (cmd.currentValue < min + interval) {
             return 'fa fa-thermometer-empty'
@@ -62,8 +62,8 @@ export const CmdMixin = {
         case 'POWER':
           return 'fa fa-bolt'
       }
-      if (cmd.display.icon) {
-        return cmd.display.icon.match(/class="(.*?)"/)[1] || 'fa fa-question'
+      if (cmd.icon) {
+        return cmd.icon.match(/class="(.*?)"/)[1] || 'fa fa-question'
       }
       return 'fa fa-question'
     },

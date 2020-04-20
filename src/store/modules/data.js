@@ -62,7 +62,7 @@ const getters = {
         type: c.type,
         value: c.value,
         subType: c.subType,
-        generic_type: c.generic_type,
+        genericType: c.genericType,
       })
     })
     return cmds
@@ -146,16 +146,16 @@ const mutations = {
 
   // store updated cmd information
   updateCmd (state, payload) {
-    const cmdId = payload.cmd_id
+    const cmdId = payload.id
     if (!state.cmds[cmdId]) {
       return
     }
     const updated = {}
     updated[cmdId] = state.cmds[cmdId]
-    updated[cmdId].currentValue = payload.display_value
+    updated[cmdId].currentValue = payload.currentValue
     state.cmds = Object.assign({}, state.cmds, updated)
     // update eqLogic date with cmd collect date if it is newer
-    const eqLogicId = state.cmds[cmdId].eqLogic_id
+    const eqLogicId = state.cmds[cmdId].eqLogicId
     if (Vue.moment(payload.collectDate).isAfter(state.eqLogics[eqLogicId].status.lastCommunication)) {
       const eqLogicUpdated = {}
       eqLogicUpdated[eqLogicId] = state.eqLogics[eqLogicId]
@@ -194,19 +194,9 @@ const actions = {
       commit('saveObjects', objects)
       // get objects summary
       objects.forEach(async (object) => {
-        const objectSummary = object.configuration.summary
-        for (const key in objectSummary) {
-          let keyHasSummary = false
-          const elements = objectSummary[key]
-          elements.forEach((element) => {
-            if (element.enable === '1') {
-              keyHasSummary = true
-            }
-          })
-          if (keyHasSummary) {
-            const value = await vue.$JeedomApi.getObjectSummary(object.id, key)
-            commit('saveObjectSummary', { id: object.id, key, value })
-          }
+        for (const key in object.summary) {
+          const value = await vue.$JeedomApi.getObjectSummary(object.id, key)
+          commit('saveObjectSummary', { id: object.id, key, value })
         }
       })
     } catch (error) {

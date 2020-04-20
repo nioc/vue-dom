@@ -55,12 +55,12 @@ export default {
       set: () => {},
     },
     iconClass () { return this.getIconClass(this.cmd) },
-    unit () { return this.cmd.unite ? ' ' + this.cmd.unite : '' },
+    unit () { return this.cmd.unit ? ' ' + this.cmd.unit : '' },
     action () {
       const cmds = this.getCmdsByEqLogicId(this.eqLogicId)
       const cmdValue = '#' + this.cmd.id + '#'
-      const cmdOn = cmds.find((c) => c.value === cmdValue && c.generic_type === 'LIGHT_ON')
-      const cmdOff = cmds.find((c) => c.value === cmdValue && c.generic_type === 'LIGHT_OFF')
+      const cmdOn = cmds.find((c) => c.value === cmdValue && c.genericType === 'LIGHT_ON')
+      const cmdOff = cmds.find((c) => c.value === cmdValue && c.genericType === 'LIGHT_OFF')
       if (!cmdOn || !cmdOff) {
         return
       }

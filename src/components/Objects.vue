@@ -31,7 +31,7 @@ function findChild (objects, objectsOrdered, parent) {
   }
   const childs = []
   objects.forEach((object) => {
-    if (object.father_id === parent.id) {
+    if (object.parentId === parent.id) {
       childs.push(object)
     }
   })
