@@ -204,23 +204,6 @@ const actions = {
     }
   },
 
-  // if not already fetched, call API and store object
-  async loadObject ({ commit, state }, id) {
-    if (state.objectsList.includes(id)) {
-      return
-    }
-    try {
-      const object = await vue.$JeedomApi.getObject(id)
-      if (object === undefined) {
-        // no object to save
-        return
-      }
-      commit('saveObject', object)
-    } catch (error) {
-      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération de l'objet<br>${error.message}` }, { root: true })
-    }
-  },
-
   // call API and store cmd statistics
   async loadCmdStatistics ({ commit, state }, id) {
     try {

@@ -279,27 +279,6 @@ export default {
         }
       },
 
-      // request an objects and its equipments and commands, returns only visible ones
-      async getObject (objectId) {
-        try {
-          const object = await jsonRpcCall('object::fullById', { id: objectId })
-          object.eqLogics = object.eqLogics.filter((eqLogic) => eqLogic.isVisible === '1').map((eqLogic) => {
-            delete (eqLogic.display)
-            eqLogic.cmds = eqLogic.cmds.filter((cmd) => cmd.isVisible === '1').sort((a, b) => a.order - b.order).map((cmd) => {
-              // reduce cmd size
-              cmd.display = {
-                icon: cmd.display.icon,
-              }
-              return cmd
-            })
-            return eqLogic
-          })
-          return object
-        } catch (error) {
-          console.error(error)
-        }
-      },
-
       // request global summary
       async getSummary () {
         try {

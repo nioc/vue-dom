@@ -54,7 +54,6 @@ export default {
     },
   },
   created () {
-    this.loadObject(this.id)
     this.breadcrumbItems = [
       { link: '/', icon: 'fa-home', text: 'Home' },
       { link: '/objects/' + this.object.id, icon: 'fa-cube', text: this.object.name, isActive: true },
