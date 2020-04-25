@@ -3,7 +3,7 @@ const { mapState, mapActions } = createNamespacedHelpers('data')
 
 export const ObjectsMixin = {
   computed: {
-    ...mapState(['objects', 'objectsRaw']),
+    ...mapState(['objects', 'objectsRaw', 'tagsList']),
   },
   methods: {
     ...mapActions(['loadObjects']),

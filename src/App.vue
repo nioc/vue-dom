@@ -1,7 +1,7 @@
 <template>
   <div>
     <navbar v-if="isAuthenticated" />
-    <router-view v-if="isReady" />
+    <router-view v-if="isReady" :key="$route.fullPath" />
   </div>
 </template>
 

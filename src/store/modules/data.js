@@ -23,6 +23,7 @@ const getDefaultState = () => {
     objectsList: [],
     summaryList: [],
     cmdsStatistics: {},
+    tagsList: [],
   }
 }
 
@@ -48,6 +49,11 @@ const getters = {
     return (state.eqLogics[id]) || {
       cmds: [],
     }
+  },
+
+  // return eqLogic by tag
+  getEqLogicsIdByTag: (state) => (tag) => {
+    return Object.values(state.eqLogics).filter((eqLogic) => eqLogic.tags.includes(tag)).map((eqLogic) => eqLogic.id)
   },
 
   // return all cmds for requested eqLogicId
@@ -164,6 +170,11 @@ const mutations = {
     }
   },
 
+  // store tags
+  saveTags (state, payload) {
+    state.tagsList = payload
+  },
+
   // clear state
   clear (state) {
     Object.assign(state, getDefaultState())
@@ -192,6 +203,14 @@ const actions = {
         return
       }
       commit('saveObjects', objects)
+      // get tags
+      let tagsList = []
+      objects.forEach((object) => {
+        object.eqLogics.forEach((eqLogic) => {
+          tagsList = tagsList.concat(eqLogic.tags)
+        })
+      })
+      commit('saveTags', [...new Set(tagsList)])
       // get objects summary
       objects.forEach(async (object) => {
         for (const key in object.summary) {

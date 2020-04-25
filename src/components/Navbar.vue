@@ -13,6 +13,12 @@
       <div class="navbar-start">
         <router-link class="navbar-item" to="/objects"><i class="fa fa-home fa-fw fa-mr" />Objets</router-link>
         <router-link class="navbar-item" to="/scenarios"><i class="fa fa-book fa-fw fa-mr" />Scénarios</router-link>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link"><i class="fa fa-tags fa-fw fa-mr" />Catégories</a>
+          <div class="navbar-dropdown">
+            <router-link v-for="tag in tagsList" :key="tag" :to="{name: 'tag', params: {tag}}" class="navbar-item">{{ tag }}</router-link>
+          </div>
+        </div>
       </div>
       <div class="navbar-end">
         <div class="navbar-item is-hidden-touch"><sync /></div>

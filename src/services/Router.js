@@ -7,6 +7,7 @@ import Login from '@/components/Login'
 import Objects from '@/components/Objects'
 import ObjectDetail from '@/components/ObjectDetail'
 import Scenarios from '@/components/Scenarios'
+import Tag from '@/components/Tag'
 import About from '@/components/About'
 
 Vue.use(Router)
@@ -38,6 +39,15 @@ const routes = [
     props: true,
     meta: {
       title: 'Objet',
+    },
+  },
+  {
+    path: '/tags/:tag',
+    name: 'tag',
+    component: Tag,
+    props: true,
+    meta: {
+      title: 'Tag',
     },
   },
   {

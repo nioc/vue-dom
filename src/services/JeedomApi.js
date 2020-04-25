@@ -241,6 +241,7 @@ export default {
                   type: jEqLogic.configuration.type,
                 },
                 cmds: [],
+                tags: jEqLogic.tags ? jEqLogic.tags.split(',') : [],
               }
               // set eqLogic cmds
               eqLogic.cmds = jEqLogic.cmds.filter((jCmd) => jCmd.isVisible === '1').sort((a, b) => a.order - b.order).map((jCmd) => {
