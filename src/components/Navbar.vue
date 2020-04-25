@@ -19,6 +19,7 @@
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link"><i class="fa fa-user fa-fw fa-mr" />{{ login }}</a>
           <div class="navbar-dropdown is-right">
+            <a class="navbar-item" @click="refreshData"><i class="fa fa-sync-alt fa-fw fa-mr" />Rafraichir les données</a>
             <router-link class="navbar-item" to="/about"><i class="fa fa-info-circle fa-fw fa-mr" />A propos</router-link>
             <a class="navbar-item" :href="bugUrl" target="_blank" rel="noreferrer"><i class="fa fa-bug fa-fw fa-mr" />Bug</a>
             <hr class="navbar-divider">
@@ -34,6 +35,7 @@
 import { bugs } from '../../package.json'
 import Auth from '@/services/Auth'
 import Sync from '@/components/Sync'
+import { ObjectsMixin } from '@/mixins/Objects'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState } = createNamespacedHelpers('app')
 const custom = window.custom
@@ -43,6 +45,7 @@ export default {
   components: {
     Sync,
   },
+  mixins: [ObjectsMixin],
   data () {
     return {
       title: custom.title,
@@ -60,6 +63,10 @@ export default {
       this.$JeedomApi.closeEventsListener()
       Auth.logout()
       this.$router.replace({ name: 'login' })
+    },
+    refreshData () {
+      this.loadObjects()
+      this.toggleMenu({ target: document.getElementById('navbar-burger') })
     },
     toggleMenu (e) {
       e.target.classList.toggle('is-active')
