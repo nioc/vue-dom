@@ -1,7 +1,7 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items="[{link: '/', icon: 'fa-home', text: 'Home', isActive: true}]" :summary="summary" />
+      <breadcrumb :items="[{link: {name: 'objects'}, icon: 'fa-home', text: 'Objets', isActive: true}]" :summary="summary" />
     </div>
     <div class="hero-body">
       <div class="container">

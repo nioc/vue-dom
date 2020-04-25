@@ -42,6 +42,15 @@ const routes = [
     },
   },
   {
+    path: '/tags',
+    name: 'tags',
+    component: Tag,
+    props: true,
+    meta: {
+      title: 'Tag',
+    },
+  },
+  {
     path: '/tags/:tag',
     name: 'tag',
     component: Tag,

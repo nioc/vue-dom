@@ -11,10 +11,10 @@
     </div>
     <div id="navbar-menu" class="navbar-menu">
       <div class="navbar-start">
-        <router-link class="navbar-item" to="/objects" title="Objets"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Objets</span></router-link>
-        <router-link class="navbar-item" to="/scenarios" title="Scénarios"><i class="fa fa-book fa-fw fa-mr" /><span class="is-navbar-label">Scénarios</span></router-link>
+        <router-link class="navbar-item" :to="{name: 'objects'}" title="Objets"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Objets</span></router-link>
+        <router-link class="navbar-item" :to="{name: 'scenarios'}" title="Scénarios"><i class="fa fa-book fa-fw fa-mr" /><span class="is-navbar-label">Scénarios</span></router-link>
         <div v-if="tagsList.length" class="navbar-item has-dropdown is-hoverable">
-          <router-link class="navbar-link is-arrowless" to="/tags" event=""><i class="fa fa-tags fa-fw fa-mr" /><span class="is-navbar-label">Catégories</span></router-link>
+          <router-link class="navbar-link is-arrowless" :to="{name: 'tags'}" event=""><i class="fa fa-tags fa-fw fa-mr" /><span class="is-navbar-label">Catégories</span></router-link>
           <div class="navbar-dropdown">
             <router-link v-for="tag in tagsList" :key="tag" :to="{name: 'tag', params: {tag}}" class="navbar-item">{{ tag }}</router-link>
           </div>
@@ -26,7 +26,7 @@
           <a class="navbar-link is-arrowless"><i class="fa fa-user fa-fw fa-mr" /><span class="is-navbar-label">{{ login }}</span></a>
           <div class="navbar-dropdown is-right">
             <a class="navbar-item" @click="refreshData"><i class="fa fa-sync-alt fa-fw fa-mr" />Rafraichir les données</a>
-            <router-link class="navbar-item" to="/about"><i class="fa fa-info-circle fa-fw fa-mr" />A propos</router-link>
+            <router-link class="navbar-item" :to="{name: 'about'}"><i class="fa fa-info-circle fa-fw fa-mr" />A propos</router-link>
             <a class="navbar-item" :href="bugUrl" target="_blank" rel="noreferrer"><i class="fa fa-bug fa-fw fa-mr" />Bug</a>
             <hr class="navbar-divider">
             <a class="navbar-item" @click="logout()"><i class="fa fa-sign-out-alt fa-fw fa-mr" />Logout</a>

@@ -45,8 +45,7 @@ export default {
   created () {
     document.title = document.title.replace('Tag |', this.tag + ' |')
     this.breadcrumbItems = [
-      { link: '/', icon: 'fa-home', text: 'Home' },
-      { link: '/tags/' + this.tag, icon: 'fa-tag', text: this.tag, isActive: true },
+      { link: { name: 'tag', params: { tag: this.tag } }, icon: 'fa-tag', text: this.tag, isActive: true },
     ]
   },
 }
