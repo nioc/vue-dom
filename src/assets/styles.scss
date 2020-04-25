@@ -5,11 +5,16 @@
 $primary: #96c927;
 $breadcrumb-item-color: $primary;
 $link: $primary;
+$navbar-breakpoint: 300px;
 
 @import "~bulma/bulma.sass";
 
 $slider-thumb-background: findLightColor($primary);
 $slider-thumb-border: 1px solid $primary;
+
+.navbar .router-link-active {
+  color: $primary !important
+}
 
 @import "~buefy/src/scss/buefy";
 
@@ -90,8 +95,28 @@ $i: 1;
   flex-grow: 2 !important;
 }
 
+.is-navbar-label {
+  @include until($navbar-breakpoint) {
+      display: initial !important;
+    }
+  @include from($navbar-breakpoint) {
+    @include mobile {
+      display: none !important;
+    }
+  }
+}
+
+.sync-tablet {
+  @include until($navbar-breakpoint) {
+    display: none !important;
+  }
+}
+
 .sync-mobile {
   margin-left: auto;
   flex-direction: row-reverse;
   flex-grow: 2 !important;
+  @include from($navbar-breakpoint) {
+    display: none !important;
+  }
 }

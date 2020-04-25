@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar is-dark is-fixed-top">
     <div class="navbar-brand">
-      <router-link class="navbar-item" to="/"><img src="./../assets/home.png" class="fa-mr">{{ title }}</router-link>
+      <span class="navbar-item"><img src="./../assets/home.png" class="fa-mr"><span class="is-hidden-mobile">{{ title }}</span></span>
       <div class="navbar-item is-hidden-desktop sync-mobile"><sync /></div>
       <a id="navbar-burger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" @click="toggleMenu">
         <span aria-hidden="true" class="is-primary" />
@@ -11,19 +11,19 @@
     </div>
     <div id="navbar-menu" class="navbar-menu">
       <div class="navbar-start">
-        <router-link class="navbar-item" to="/objects"><i class="fa fa-home fa-fw fa-mr" />Objets</router-link>
-        <router-link class="navbar-item" to="/scenarios"><i class="fa fa-book fa-fw fa-mr" />Scénarios</router-link>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link"><i class="fa fa-tags fa-fw fa-mr" />Catégories</a>
+        <router-link class="navbar-item" to="/objects" title="Objets"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Objets</span></router-link>
+        <router-link class="navbar-item" to="/scenarios" title="Scénarios"><i class="fa fa-book fa-fw fa-mr" /><span class="is-navbar-label">Scénarios</span></router-link>
+        <div v-if="tagsList.length" class="navbar-item has-dropdown is-hoverable">
+          <router-link class="navbar-link is-arrowless" to="/tags" event=""><i class="fa fa-tags fa-fw fa-mr" /><span class="is-navbar-label">Catégories</span></router-link>
           <div class="navbar-dropdown">
             <router-link v-for="tag in tagsList" :key="tag" :to="{name: 'tag', params: {tag}}" class="navbar-item">{{ tag }}</router-link>
           </div>
         </div>
       </div>
       <div class="navbar-end">
-        <div class="navbar-item is-hidden-touch"><sync /></div>
+        <div class="navbar-item sync-tablet"><sync /></div>
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link"><i class="fa fa-user fa-fw fa-mr" />{{ login }}</a>
+          <a class="navbar-link is-arrowless"><i class="fa fa-user fa-fw fa-mr" /><span class="is-navbar-label">{{ login }}</span></a>
           <div class="navbar-dropdown is-right">
             <a class="navbar-item" @click="refreshData"><i class="fa fa-sync-alt fa-fw fa-mr" />Rafraichir les données</a>
             <router-link class="navbar-item" to="/about"><i class="fa fa-info-circle fa-fw fa-mr" />A propos</router-link>
