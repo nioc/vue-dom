@@ -58,6 +58,12 @@ export const CmdMixin = {
           return 'fas fa-lightbulb'
         case 'CO2':
           return 'fa fa-bullseye'
+        case 'PRESENCE':
+          return 'fas fa-eye'
+        case 'WIND_DIRECTION':
+          return 'far fa-compass'
+        case 'WIND_SPEED':
+          return 'fas fa-wind'
         case 'VOLTAGE':
         case 'POWER':
           return 'fa fa-bolt'
