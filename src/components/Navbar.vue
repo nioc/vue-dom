@@ -13,7 +13,7 @@
       <div class="navbar-start">
         <router-link class="navbar-item" :to="{name: 'objects'}" title="Objets"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Objets</span></router-link>
         <router-link class="navbar-item" :to="{name: 'scenarios'}" title="Scénarios"><i class="fa fa-book fa-fw fa-mr" /><span class="is-navbar-label">Scénarios</span></router-link>
-        <div v-if="tagsList.length" class="navbar-item has-dropdown is-hoverable">
+        <div v-if="tagsList.length" class="navbar-item has-dropdown" :class="{'is-active': hasDropdownTagsDisplayed}" @click="hasDropdownTagsDisplayed = !hasDropdownTagsDisplayed">
           <router-link class="navbar-link is-arrowless" :to="{name: 'tags'}" event=""><i class="fa fa-tags fa-fw fa-mr" /><span class="is-navbar-label">Catégories</span></router-link>
           <div class="navbar-dropdown">
             <router-link v-for="tag in tagsList" :key="tag" :to="{name: 'tag', params: {tag}}" class="navbar-item">{{ tag }}</router-link>
@@ -22,7 +22,7 @@
       </div>
       <div class="navbar-end">
         <div class="navbar-item sync-tablet"><sync /></div>
-        <div class="navbar-item has-dropdown is-hoverable">
+        <div class="navbar-item has-dropdown" :class="{'is-active': hasDropdownUserDisplayed}" @click="hasDropdownUserDisplayed = !hasDropdownUserDisplayed">
           <a class="navbar-link is-arrowless"><i class="fa fa-user fa-fw fa-mr" /><span class="is-navbar-label">{{ login }}</span></a>
           <div class="navbar-dropdown is-right">
             <a class="navbar-item" @click="refreshData"><i class="fa fa-sync-alt fa-fw fa-mr" />Rafraichir les données</a>
@@ -56,6 +56,8 @@ export default {
     return {
       title: custom.title,
       bugUrl: bugs.url,
+      hasDropdownUserDisplayed: false,
+      hasDropdownTagsDisplayed: false,
     }
   },
   computed: {
