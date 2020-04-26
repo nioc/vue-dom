@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { version, license, homepage, vueJeedom } from '../../package.json'
+import { version, license, homepage, vueDom } from '../../package.json'
 import axios from 'axios'
 import spdxLicenseList from 'spdx-license-list'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -44,13 +44,13 @@ export default {
   },
   data () {
     return {
-      name: vueJeedom.name,
+      name: vueDom.name,
       version: {
         installed: version,
         latest: null,
         latestLink: null,
       },
-      description: vueJeedom.description,
+      description: vueDom.description,
       license: {
         id: license,
         name: null,
@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     getLastVersion () {
-      axios.get(vueJeedom.latestReleaseUrl)
+      axios.get(vueDom.latestReleaseUrl)
         .then((response) => {
           this.version.latest = response.data.tag_name
           this.version.latestLink = response.data.html_url

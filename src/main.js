@@ -38,4 +38,4 @@ new Vue({
   store,
   router,
   render: (h) => h(App),
-}).$mount('#vue-jeedom')
+}).$mount('#vue-dom')
