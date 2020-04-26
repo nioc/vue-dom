@@ -18,6 +18,8 @@ Vue-dom is a web front end for the home automation software [Jeedom](https://www
 -    responsive
 -    progressive web app (offline access).
 
+Check out the [live demo](https://nioc.github.io/vue-dom/) (since using mock data, there is no effective action and inconsistencies may occur).
+
 ## Installation
 
 For basic use, you just have to:
