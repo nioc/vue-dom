@@ -9,6 +9,9 @@ Vue-dom is a web front end for the home automation software [Jeedom](https://www
 ## Key features
 -    display objects with summary,
 -    display object with logical equipments,
+-    display logical equipments by tags,
+-    display info statistics (min, average and max) and history chart,
+-    display and start scenarios,
 -    user authentication with login and password (not stored in application)
 -    communicate with your Jeedom through JSON-RPC API and [websocket](https://github.com/nioc/jeedom-websocket), authorized with user API key,
 -    reduce data traffic,
@@ -60,6 +63,9 @@ This project is powered by the following components:
 - [normalizr](https://github.com/paularmstrong/normalizr) (MIT)
 - [Chart.js](https://www.chartjs.org/) (MIT)
 - [vue-chartjs](https://vue-chartjs.org/) (MIT)
+- [vuex-persist](https://github.com/championswimmer/vuex-persist) (MIT)
+- [Moment.js](https://momentjs.com/) (MIT)
+- [vue-moment](https://github.com/brockpetrie/vue-moment) (MIT)
 
 ## License
 
