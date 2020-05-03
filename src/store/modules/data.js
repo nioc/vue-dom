@@ -91,12 +91,6 @@ const mutations = {
   saveObjects (state, payload) {
     state.objectsRaw = payload
     const normalized = normalize(payload, objectListSchema)
-    // get previous eqLogics
-    for (const objectId in normalized.entities.objects) {
-      if (state.objects[objectId] && state.objects[objectId].eqLogics) {
-        normalized.entities.objects[objectId].eqLogics = state.objects[objectId].eqLogics
-      }
-    }
     Object.assign(state, normalized.entities)
   },
 
