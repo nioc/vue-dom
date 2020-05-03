@@ -49,10 +49,11 @@ export default {
 
     function handleEventsResponse (events) {
       lastEventsTimestamp = events.datetime
+      const updateCmds = []
       events.result.forEach((event) => {
         switch (event.name) {
           case 'cmd::update': {
-            store.commit('data/updateCmd', {
+            updateCmds.push({
               id: event.option.cmd_id,
               currentValue: event.option.value,
               collectDate: event.option.collectDate,
@@ -68,6 +69,10 @@ export default {
             break
         }
       })
+      // commit updateCmds batch
+      if (updateCmds.length > 0) {
+        store.commit('data/updateCmds', updateCmds)
+      }
     }
 
     Vue.prototype.$JeedomApi = {

@@ -150,22 +150,28 @@ const mutations = {
     state.cmdsStatistics = Object.assign({}, state.cmdsStatistics, updated)
   },
 
-  // store updated cmd information
-  updateCmd (state, payload) {
-    const cmdId = payload.id
-    if (!state.cmds[cmdId]) {
-      return
-    }
+  // store updated cmds information (batch)
+  updateCmds (state, payload) {
     const updated = {}
-    updated[cmdId] = state.cmds[cmdId]
-    updated[cmdId].currentValue = payload.currentValue
-    state.cmds = Object.assign({}, state.cmds, updated)
-    // update eqLogic date with cmd collect date if it is newer
-    const eqLogicId = state.cmds[cmdId].eqLogicId
-    if (Vue.moment(payload.collectDate).isAfter(state.eqLogics[eqLogicId].status.lastCommunication)) {
-      const eqLogicUpdated = {}
-      eqLogicUpdated[eqLogicId] = state.eqLogics[eqLogicId]
-      eqLogicUpdated[eqLogicId].status.lastCommunication = payload.collectDate
+    const eqLogicUpdated = {}
+    payload.forEach(updateCmd => {
+      const cmdId = updateCmd.id
+      if (!state.cmds[cmdId]) {
+        return
+      }
+      updated[cmdId] = state.cmds[cmdId]
+      updated[cmdId].currentValue = updateCmd.currentValue
+      // update eqLogic date with cmd collect date if it is newer
+      const eqLogicId = state.cmds[cmdId].eqLogicId
+      if (Vue.moment(updateCmd.collectDate).isAfter(state.eqLogics[eqLogicId].status.lastCommunication)) {
+        eqLogicUpdated[eqLogicId] = state.eqLogics[eqLogicId]
+        eqLogicUpdated[eqLogicId].status.lastCommunication = updateCmd.collectDate
+      }
+    })
+    if (Object.keys(updated).length > 0) {
+      state.cmds = Object.assign({}, state.cmds, updated)
+    }
+    if (Object.keys(eqLogicUpdated).length > 0) {
       state.eqLogics = Object.assign({}, state.eqLogics, eqLogicUpdated)
     }
   },
