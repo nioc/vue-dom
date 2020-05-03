@@ -25,23 +25,6 @@ import { SummaryMixin } from '@/mixins/Summary'
 import Breadcrumb from '@/components/Breadcrumb'
 import ObjectTile from '@/components/ObjectTile'
 
-function findChild (objects, objectsOrdered, parent) {
-  if (parent.id) {
-    objectsOrdered.push(parent)
-  }
-  const childs = []
-  objects.forEach((object) => {
-    if (object.parentId === parent.id) {
-      childs.push(object)
-    }
-  })
-  childs.sort((a, b) => a.order - b.order)
-  childs.forEach((child) => {
-    objectsOrdered = findChild(objects, objectsOrdered, child)
-  })
-  return objectsOrdered
-}
-
 export default {
   name: 'Objects',
   components: {
@@ -55,7 +38,7 @@ export default {
     }
   },
   computed: {
-    ordered () { return findChild(this.objectsRaw, [], { id: null }).filter((object) => object.eqLogics.length > 0 && object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    ordered () { return this.objectsOrdered.filter((object) => object.eqLogics.length > 0 && object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     summary () { return this.getObjectSummaryById(0) },
   },
 }

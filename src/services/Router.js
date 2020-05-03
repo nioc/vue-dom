@@ -115,11 +115,9 @@ router.beforeEach((to, from, next) => {
     }
     document.title = title + ' | ' + custom.title
   }
-  // close hamburger (if existing)
-  const burger = document.getElementById('navbar-burger')
-  if (burger) {
-    burger.classList.remove('is-active')
-    document.getElementById('navbar-menu').classList.remove('is-active')
+  // close sidebar
+  if (store.state.app.hasSidebarOpened) {
+    store.commit('app/setSidebarStatus', false)
   }
   next()
 })

@@ -9,6 +9,7 @@ const getDefaultState = () => {
 const state = {
   hasNetwork: false,
   hasEventsListenerOpen: false,
+  hasSidebarOpened: false,
   ...getDefaultState(),
 }
 
@@ -44,6 +45,11 @@ const mutations = {
     Object.keys(defaultState).forEach((key) => {
       state[key] = defaultState[key]
     })
+  },
+
+  // store sidebar status
+  setSidebarStatus (state, payload) {
+    state.hasSidebarOpened = payload
   },
 }
 

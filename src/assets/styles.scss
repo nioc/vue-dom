@@ -16,6 +16,13 @@ $slider-thumb-border: 1px solid $primary;
   color: $primary !important
 }
 
+.sidebar-content .router-link-exact-active {
+  color: $primary !important
+}
+.sidebar-content img {
+  max-height: 3.5rem;
+}
+
 @import "~buefy/src/scss/buefy";
 
 a {
@@ -83,6 +90,11 @@ $i: 1;
 }
 .fa-mr {
   margin-right: 0.4em;
+}
+
+.is-flex-center {
+  display: flex;
+  align-items: center;
 }
 
 .is-flex-space-between {
