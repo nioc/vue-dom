@@ -82,6 +82,8 @@ export default {
               // do not display slider value info
               infosList.push(cmd.id)
             }
+          } else if (cmd.subType === 'string') {
+            infosList.push(cmd.id)
           }
         }
       })

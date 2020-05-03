@@ -55,7 +55,7 @@ export default {
     }
   },
   computed: {
-    ordered () { return findChild(this.objectsRaw, [], { id: null }).filter((object) => object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    ordered () { return findChild(this.objectsRaw, [], { id: null }).filter((object) => object.eqLogics.length > 0 && object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     summary () { return this.getObjectSummaryById(0) },
   },
 }

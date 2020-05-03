@@ -67,6 +67,10 @@ export const CmdMixin = {
         case 'VOLTAGE':
         case 'POWER':
           return 'fa fa-bolt'
+        case 'CAMERA_RECORD_STATE':
+          return 'fas fa-video'
+        case 'ENERGY_STATE':
+          return 'fas fa-power-off'
       }
       if (cmd.icon) {
         return cmd.icon.match(/class="(.*?)"/)[1] || 'fa fa-question'
