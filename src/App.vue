@@ -37,11 +37,17 @@ export default {
     },
     information: function (information) {
       if (information.message) {
-        this.$buefy.toast.open({
+        const toast = {
           message: information.message,
           type: information.type,
-          position: 'is-bottom',
-        })
+        }
+        if (information.position) {
+          toast.position = information.position
+        }
+        if (information.duration) {
+          toast.duration = information.duration
+        }
+        this.$buefy.toast.open(toast)
       }
     },
   },
