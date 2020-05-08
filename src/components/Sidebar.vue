@@ -42,6 +42,12 @@
             </template>
           </b-menu-item>
 
+          <b-menu-item icon="bell fa-fw fa-mr" tag="router-link" :to="{name: 'notifications'}">
+            <template slot="label">
+              Notifications
+            </template>
+          </b-menu-item>
+
         </b-menu-list>
 
         <b-menu-list label="Actions">

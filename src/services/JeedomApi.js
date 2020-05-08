@@ -381,6 +381,36 @@ export default {
         }
       },
 
+      // request system notifications
+      async getNotifications () {
+        try {
+          const notifications = await jsonRpcCall('message::all')
+          return notifications.map((log) => {
+            // remove HTML encoding
+            const txt = document.createElement('textarea')
+            txt.innerHTML = log.message
+            log.message = txt.value
+            return log
+          })
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
+      // delete system notifications
+      async clearNotifications () {
+        try {
+          const result = await jsonRpcCall('message::removeAll')
+          if (result !== 'ok') {
+            throw new Error('Erreur lors de la suppression')
+          }
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
     }
   },
 }

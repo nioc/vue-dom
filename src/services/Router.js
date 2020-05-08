@@ -9,6 +9,7 @@ import ObjectDetail from '@/components/ObjectDetail'
 import Scenarios from '@/components/Scenarios'
 import Tag from '@/components/Tag'
 import About from '@/components/About'
+import Notifications from '@/components/Notifications'
 
 Vue.use(Router)
 
@@ -81,6 +82,14 @@ const routes = [
     component: About,
     meta: {
       title: 'A propos',
+    },
+  },
+  {
+    path: '/notifications',
+    name: 'notifications',
+    component: Notifications,
+    meta: {
+      title: 'Notifications',
     },
   },
 ]
