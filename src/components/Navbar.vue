@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar is-dark is-fixed-top">
     <div class="navbar-brand">
-      <a class="navbar-item" @click="setSidebarStatus(true)"><img src="./../assets/home.png" class="fa-mr"><span class="is-hidden-mobile">{{ title }}</span></a>
+      <a class="navbar-item" href="#" @click="setSidebarStatus(true)"><img src="./../assets/home.png" class="fa-mr"><span class="is-hidden-mobile">{{ title }}</span></a>
       <div class="navbar-item is-hidden-desktop sync-mobile"><sync /></div>
     </div>
     <div id="navbar-menu" class="navbar-menu">
@@ -15,7 +15,8 @@
           </div>
         </div>
       </div>
-      <div class="navbar-end">
+      <div class="navbar-end is-flex-center">
+        <query />
         <div class="navbar-item sync-tablet"><sync /></div>
       </div>
     </div>
@@ -24,6 +25,7 @@
 
 <script>
 import Sync from '@/components/Sync'
+import Query from '@/components/Query'
 import { ObjectsMixin } from '@/mixins/Objects'
 import { createNamespacedHelpers } from 'vuex'
 const { mapMutations } = createNamespacedHelpers('app')
@@ -33,6 +35,7 @@ export default {
   name: 'Navbar',
   components: {
     Sync,
+    Query,
   },
   mixins: [ObjectsMixin],
   data () {

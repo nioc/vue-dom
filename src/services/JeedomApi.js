@@ -381,6 +381,40 @@ export default {
         }
       },
 
+      // try to ask a question
+      async askQuestion (query, replyCmd = null) {
+        const params = {
+          query,
+        }
+        if (replyCmd !== null) {
+          params.reply_cmd = replyCmd
+        }
+        try {
+          const result = await jsonRpcCall('interact::tryToReply', params)
+          if (!result.reply) {
+            console.error('no reply found')
+            throw new Error('Aucune réponse trouvée')
+          }
+          return result.reply.replace('\\n\\n', '<br/>').replace('\\n', '<br/>')
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
+      // request defined interactions
+      async getSentences () {
+        try {
+          const sentences = await jsonRpcCall('interactQuery::all')
+          return sentences.map((sentence) => {
+            return sentence.query
+          })
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      },
+
       // request system notifications
       async getNotifications () {
         try {

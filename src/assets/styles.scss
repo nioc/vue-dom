@@ -132,3 +132,37 @@ $i: 1;
     display: none !important;
   }
 }
+
+.navbar .is-auto-expand {
+  width:40px;
+}
+
+.navbar .is-auto-expand:not(.is-expanded) input {
+  cursor: pointer;
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.navbar .is-auto-expand:not(.is-expanded) .icon {
+  color: #fff !important;
+}
+
+.navbar .is-auto-expand.is-expanded {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  width: 100%;
+  padding: 0.5em;
+}
+
+.navbar .is-auto-expand:not(.is-expanded) .dropdown-menu {
+  display: none;
+}
+
+.navbar .is-auto-expand .delete {
+  position: fixed;
+  right: 18px;
+  top: 14px;
+}
