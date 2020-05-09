@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "79bc460f02bcfb2351d1",
-    "url": "css/app.8f305d7b.css"
+    "revision": "539fba580b3eb1cfb5b1",
+    "url": "css/app.4777492e.css"
   },
   {
-    "revision": "ad6654f185365d350e60",
-    "url": "css/chunk-vendors.d0f538ac.css"
+    "revision": "041d083154d75c7e8cb0",
+    "url": "css/chunk-vendors.22d25dc4.css"
   },
   {
     "revision": "261d666b0147c6c5cda07265f98b8f8c",
@@ -152,16 +152,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "img/ms-icon-70x70.png"
   },
   {
-    "revision": "630a6c487c8736d4b9864c1d34888054",
+    "revision": "5c5d61d9efb1ddc6597facc425ec2918",
     "url": "index.html"
   },
   {
-    "revision": "79bc460f02bcfb2351d1",
-    "url": "js/app.cd3280d8.js"
+    "revision": "539fba580b3eb1cfb5b1",
+    "url": "js/app.43199718.js"
   },
   {
-    "revision": "ad6654f185365d350e60",
-    "url": "js/chunk-vendors.9fe720bf.js"
+    "revision": "041d083154d75c7e8cb0",
+    "url": "js/chunk-vendors.da94610d.js"
   },
   {
     "revision": "c3f0d735bd925f1a266cc8211cdf32bc",
