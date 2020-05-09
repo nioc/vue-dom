@@ -12,10 +12,12 @@ Vue-dom is a web front end for the home automation software [Jeedom](https://www
 -    display logical equipments by tags,
 -    display info statistics (min, average and max) and history chart,
 -    display and start scenarios,
--    user authentication with login and password (not stored in application)
+-    display system notifications,
+-    ask query (interaction),
+-    user authentication with login and password (not stored in application),
 -    communicate with your Jeedom through JSON-RPC API and [websocket](https://github.com/nioc/jeedom-websocket), authorized with user API key,
 -    reduce data traffic,
--    responsive
+-    responsive,
 -    progressive web app (offline access).
 
 Check out the [live demo](https://nioc.github.io/vue-dom/) (since using mock data, there is no effective action and inconsistencies may occur).
