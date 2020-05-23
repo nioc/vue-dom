@@ -3,7 +3,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('data')
 
 export const CmdMixin = {
   computed: {
-    ...mapGetters(['getCmdById', 'getCmdsByEqLogicId', 'getCmdStatisticsById']),
+    ...mapGetters(['getCmdById', 'getCmdsByEqLogicId', 'getCmdsByIds', 'getCmdStatisticsById']),
   },
   methods: {
     getBatteryLevelIconClass (level) {

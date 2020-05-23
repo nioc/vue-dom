@@ -74,6 +74,22 @@ const getters = {
     return cmds
   },
 
+  // return cmds by id or empty array
+  getCmdsByIds: (state, getters) => (cmdsId) => {
+    const cmds = []
+    cmdsId.forEach((cmdId) => {
+      const c = getters.getCmdById(cmdId)
+      cmds.push({
+        id: c.id,
+        type: c.type,
+        value: c.value,
+        subType: c.subType,
+        genericType: c.genericType,
+      })
+    })
+    return cmds
+  },
+
   // return cmd by id or empty object
   getCmdById: (state) => (id) => {
     return (state.cmds[id]) || { }
