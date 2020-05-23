@@ -65,6 +65,43 @@ export default {
               store.commit('data/saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
             }
             break
+          case 'jeedom::alert': {
+            // Jeedom alert
+            let type = 'is-danger'
+            switch (event.option.level) {
+              case 'success':
+                type = 'is-success'
+                break
+              case 'info':
+                type = 'is-info'
+                break
+              case 'warning':
+                type = 'is-warning'
+                break
+            }
+            store.commit('app/setInformation', { type, message: event.option.message })
+            break
+          }
+          case 'notify': {
+            // Jeedom message
+            let type = 'is-danger'
+            let message = ''
+            switch (event.option.category) {
+              case 'message':
+                type = 'is-info'
+                break
+              default:
+                break
+            }
+            if (event.option.title) {
+              message += `${event.option.title}<br>`
+            }
+            if (event.option.message) {
+              message += event.option.message
+            }
+            store.commit('app/setInformation', { type, message })
+            break
+          }
           default:
             break
         }
