@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="is-flex-space-between has-margin-bottom-8">
-      <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ cmd.name }}<a v-if="cmd.isHistorized === '1'" class="has-margin-left-8 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
+      <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ cmd.name }}<a v-if="cmd.isHistorized" class="has-margin-left-8 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
       <b-switch v-if="cmd.subType==='binary'" v-model="value" :disabled="!action" true-value="1" :title="cmd.name" class="has-margin-bottom-8" @input="action" />
       <span v-else class="is-flex-space-between">
         <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light">
@@ -74,7 +74,7 @@ export default {
     statistics () { return this.getCmdStatisticsById(this.id) },
   },
   created () {
-    if (this.cmd.isHistorized === '1' && this.cmd.subType !== 'binary') {
+    if (this.cmd.isHistorized && this.cmd.subType !== 'binary') {
       this.loadCmdStatistics(this.cmd.id)
     }
   },

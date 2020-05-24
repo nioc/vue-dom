@@ -286,7 +286,7 @@ export default {
                 tags: jEqLogic.tags ? jEqLogic.tags.split(',') : [],
               }
               // set eqLogic cmds
-              eqLogic.cmds = jEqLogic.cmds.filter((jCmd) => jCmd.isVisible === '1').sort((a, b) => a.order - b.order).map((jCmd) => {
+              eqLogic.cmds = jEqLogic.cmds.sort((a, b) => a.order - b.order).map((jCmd) => {
                 // construct cmd
                 const cmd = {
                   id: jCmd.id,
@@ -300,9 +300,9 @@ export default {
                   eqLogicId: jCmd.eqLogic_id,
                   eqType: jCmd.eqType,
                   genericType: jCmd.generic_type,
-                  isHistorized: jCmd.isHistorized,
+                  isHistorized: jCmd.isHistorized === '1',
                   icon: jCmd.display.icon,
-                  isVisible: jCmd.isVisible,
+                  isVisible: jCmd.isVisible === '1',
                   order: jCmd.order,
                 }
                 if (jCmd.configuration.minValue !== '') {

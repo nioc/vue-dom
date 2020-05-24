@@ -69,6 +69,7 @@ const getters = {
         value: c.value,
         subType: c.subType,
         genericType: c.genericType,
+        isVisible: c.isVisible,
       })
     })
     return cmds
@@ -85,6 +86,7 @@ const getters = {
         value: c.value,
         subType: c.subType,
         genericType: c.genericType,
+        isVisible: c.isVisible,
       })
     })
     return cmds

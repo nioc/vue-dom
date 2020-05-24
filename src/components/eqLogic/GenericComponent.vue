@@ -34,7 +34,7 @@ export default {
       const actionsList = []
       const actionsHiddenList = []
       const infosList = []
-      const cmds = this.getCmdsByIds(this.eqLogic.cmds)
+      const cmds = this.getCmdsByIds(this.eqLogic.cmds).filter((cmd) => cmd.isVisible)
       cmds.forEach(cmd => {
         if (cmd.type === 'info') {
           const cmdValue = '#' + cmd.id + '#'
