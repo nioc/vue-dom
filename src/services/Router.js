@@ -6,10 +6,7 @@ import store from '@/store'
 import Login from '@/components/Login'
 import Objects from '@/components/Objects'
 import ObjectDetail from '@/components/ObjectDetail'
-import Scenarios from '@/components/Scenarios'
 import Tag from '@/components/Tag'
-import About from '@/components/About'
-import Notifications from '@/components/Notifications'
 
 Vue.use(Router)
 
@@ -63,7 +60,7 @@ const routes = [
   {
     path: '/scenarios',
     name: 'scenarios',
-    component: Scenarios,
+    component: () => import(/* webpackChunkName: "Scenarios" */ '@/components/Scenarios'),
     meta: {
       title: 'Scénarios',
     },
@@ -79,7 +76,7 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: About,
+    component: () => import(/* webpackChunkName: "About" */ '@/components/About'),
     meta: {
       title: 'A propos',
     },
@@ -87,7 +84,7 @@ const routes = [
   {
     path: '/notifications',
     name: 'notifications',
-    component: Notifications,
+    component: () => import(/* webpackChunkName: "Notifications" */ '@/components/Notifications'),
     meta: {
       title: 'Notifications',
     },
