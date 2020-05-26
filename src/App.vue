@@ -57,15 +57,17 @@ export default {
       'updated', this.askForRefresh, { once: true },
     )
     // reload page if requested by service worker
-    navigator.serviceWorker.addEventListener(
-      'controllerchange', () => {
-        if (this.refreshing) {
-          return
-        }
-        this.refreshing = true
-        window.location.reload()
-      },
-    )
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener(
+        'controllerchange', () => {
+          if (this.refreshing) {
+            return
+          }
+          this.refreshing = true
+          window.location.reload()
+        },
+      )
+    }
     // load objects
     if (this.isAuthenticated) {
       this.loadObjects()
