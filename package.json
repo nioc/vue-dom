@@ -34,7 +34,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "axios": "^0.19.2",
-    "buefy": "^0.8.17",
+    "buefy": "^0.8.19",
     "bulma": "^0.8.2",
     "chart.js": "^2.9.3",
     "font-awesome": "^4.7.0",
@@ -44,8 +44,8 @@
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-moment": "^4.1.0",
-    "vue-router": "^3.1.6",
-    "vuex": "^3.3.0",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0",
     "vuex-persist": "^2.2.0"
   },
   "devDependencies": {
