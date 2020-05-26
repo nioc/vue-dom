@@ -57,7 +57,7 @@ export default {
       try {
         const message = await this.$JeedomApi.askQuestion(this.question)
         this.clear()
-        this.$store.commit('app/setInformation', { type: 'is-dark', message, position: 'is-top', duration: 5000 })
+        this.$store.commit('app/setInformation', { type: 'is-dark', message, position: 'is-bottom', duration: 5000 })
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

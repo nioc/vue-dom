@@ -432,7 +432,7 @@ export default {
             console.error('no reply found')
             throw new Error('Aucune réponse trouvée')
           }
-          return result.reply.replace('\\n\\n', '<br/>').replace('\\n', '<br/>')
+          return result.reply.replace(/(\\+n)+/g, '<br/>')
         } catch (error) {
           console.error(error)
           throw error
