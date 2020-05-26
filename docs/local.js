@@ -5,4 +5,6 @@ var custom = {
   websocketUrl: null,
   // websocketUrl: 'wss://10.0.0.0/socket/',
   statisticsPeriod: 86400000,
+  components: {
+  },
 }
