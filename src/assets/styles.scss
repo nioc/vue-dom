@@ -166,3 +166,27 @@ $i: 1;
   right: 18px;
   top: 14px;
 }
+
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: 200%;
+  }
+  100% {
+    background-position: -100%;
+  }
+}
+.loading-info {
+  width: 100%;
+  border-radius: 0.25em;
+  animation-duration: 1.5s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: linear-gradient(45deg, hsl(0, 0%, 94%) 8%, hsl(0, 0%, 90%) 18%, hsl(0, 0%, 94%) 33%);
+  background-size: 300% 100%;
+}
+.loading-info::after {
+    content: ".";
+    visibility: hidden;
+}
