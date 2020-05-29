@@ -11,7 +11,8 @@
               <p class="card-header-title"><span v-if="scenario.group" class="has-margin-right-8 has-text-grey-light">[{{ scenario.group }}]</span>{{ scenario.display.name }}</p>
             </header>
             <div class="card-content">
-              <button v-if="scenario.state === 'stop'" class="button is-primary" @click="run(scenario.id)">
+              <p class="content">{{ scenario.description }}</p>
+              <button v-if="(scenario.state === 'stop' || scenario.state === '')" class="button is-primary" @click="run(scenario.id)">
                 <span class="icon"><i class="fa fa-play-circle" /></span><span>Exécuter</span>
               </button>
               <button v-else-if="scenario.state === 'in progress'" class="button is-primary">
@@ -27,29 +28,26 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import { createNamespacedHelpers } from 'vuex'
+const { mapGetters, mapActions } = createNamespacedHelpers('data')
 
 export default {
   name: 'Scenarios',
   components: {
     Breadcrumb,
   },
-  data () {
-    return {
-      scenarios: [],
-    }
+  computed: {
+    ...mapGetters(['getScenarios']),
+    scenarios () { return this.getScenarios() },
   },
-  async mounted () {
-    try {
-      this.scenarios = await this.$JeedomApi.getScenarios()
-    } catch (error) {
-      const message = `Erreur lors de la requête de récupération des scénarios<br>${error.message}`
-      this.$store.commit('app/setInformation', { type: 'is-danger', message })
-    }
+  created () {
+    this.loadScenarios()
   },
   methods: {
     run (id) {
       this.$JeedomApi.changeScenarioState(id, 'run')
     },
+    ...mapActions(['loadScenarios']),
   },
 }
 </script>

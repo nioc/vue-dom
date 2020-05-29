@@ -65,6 +65,12 @@ export default {
               store.commit('data/saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
             }
             break
+          case 'scenario::update':
+            store.commit('data/updateScenario', {
+              id: event.option.scenario_id,
+              state: event.option.state,
+            })
+            break
           case 'jeedom::alert': {
             // Jeedom alert
             let type = 'is-danger'

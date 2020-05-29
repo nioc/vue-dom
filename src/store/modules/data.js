@@ -12,6 +12,8 @@ const objectSchema = new schema.Entity('objects', {
   eqLogics: [eqLogicSchema],
 })
 const objectListSchema = new schema.Array(objectSchema)
+const scenarioSchema = new schema.Entity('scenarios')
+const scenarioListSchema = new schema.Array(scenarioSchema)
 
 const getDefaultState = () => {
   return {
@@ -24,6 +26,7 @@ const getDefaultState = () => {
     summaryList: [],
     cmdsStatistics: {},
     tagsList: [],
+    scenarios: {},
   }
 }
 
@@ -100,6 +103,11 @@ const getters = {
   // return cmd statistics by id or null
   getCmdStatisticsById: (state) => (id) => {
     return (state.cmdsStatistics[id]) || null
+  },
+
+  // return all scenarios
+  getScenarios: (state) => () => {
+    return Object.keys(state.scenarios).map((scenarioId) => state.scenarios[scenarioId])
   },
 }
 
@@ -193,6 +201,23 @@ const mutations = {
     state.tagsList = payload
   },
 
+  // store scenarios
+  saveScenarios (state, payload) {
+    const normalized = normalize(payload, scenarioListSchema)
+    Object.assign(state, normalized.entities)
+  },
+
+  // store updated scenario information
+  updateScenario (state, payload) {
+    if (!state.scenarios[payload.id]) {
+      return
+    }
+    const updated = {}
+    updated[payload.id] = state.scenarios[payload.id]
+    updated[payload.id].state = payload.state
+    state.scenarios = Object.assign({}, state.scenarios, updated)
+  },
+
   // clear state
   clear (state) {
     Object.assign(state, getDefaultState())
@@ -261,6 +286,19 @@ const actions = {
     } catch (error) {
       console.error(error)
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la requête d'exécution de la commande<br>${error.message}` }, { root: true })
+    }
+  },
+
+  // call API and store scenarios
+  async loadScenarios ({ commit }) {
+    try {
+      const scenarios = await vue.$JeedomApi.getScenarios()
+      if (scenarios === undefined) {
+        return
+      }
+      commit('saveScenarios', scenarios)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des scénarios<br>${error.message}` }, { root: true })
     }
   },
 }
