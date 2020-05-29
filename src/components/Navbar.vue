@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar is-dark is-fixed-top">
     <div class="navbar-brand">
-      <a class="navbar-item" href="#" @click="setSidebarStatus(true)"><img src="./../assets/home.png" class="fa-mr"><span class="is-hidden-mobile">{{ title }}</span></a>
+      <a class="navbar-item" href="#" @click="openSidebar"><img src="./../assets/home.png" class="fa-mr"><span class="is-hidden-mobile">{{ title }}</span></a>
       <div class="navbar-item is-hidden-desktop sync-mobile"><sync /></div>
     </div>
     <div id="navbar-menu" class="navbar-menu">
@@ -48,6 +48,10 @@ export default {
     document.body.classList.add('has-navbar-fixed-top')
   },
   methods: {
+    openSidebar (e) {
+      e.preventDefault()
+      this.setSidebarStatus(true)
+    },
     ...mapMutations(['setSidebarStatus']),
   },
 }
