@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import store from '@/store'
-import JeedomApi from '@/services/JeedomApi'
+import Provider from '@/services/Provider'
 import router from '@/services/Router'
 import Auth from '@/services/Auth'
 import Buefy from '@/mixins/Buefy'
@@ -18,12 +18,7 @@ Vue.use(VueMoment, {
   moment,
 })
 
-const custom = window.custom
-
-Vue.use(JeedomApi, {
-  jsonRpcApiUrl: custom.jsonRpcApiUrl,
-  websocketUrl: custom.websocketUrl,
-  statisticsPeriod: custom.statisticsPeriod,
+Vue.use(Provider, {
   store,
 })
 

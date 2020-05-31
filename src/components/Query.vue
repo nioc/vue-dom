@@ -55,7 +55,7 @@ export default {
         return
       }
       try {
-        const message = await this.$JeedomApi.askQuestion(this.question)
+        const message = await this.$Provider.askQuestion(this.question)
         this.clear()
         this.$store.commit('app/setInformation', { type: 'is-dark', message, position: 'is-bottom', duration: 5000 })
       } catch (error) {
@@ -64,7 +64,7 @@ export default {
     },
     async getSentences () {
       try {
-        this.sentences = await this.$JeedomApi.getSentences()
+        this.sentences = await this.$Provider.getSentences()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

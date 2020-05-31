@@ -58,7 +58,7 @@ export default {
   methods: {
     async get () {
       try {
-        this.notifications = await this.$JeedomApi.getNotifications()
+        this.notifications = await this.$Provider.getNotifications()
         this.notifications.sort((a, b) => this.$moment(b.date) - this.$moment(a.date))
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
@@ -66,7 +66,7 @@ export default {
     },
     async clear () {
       try {
-        await this.$JeedomApi.clearNotifications()
+        await this.$Provider.clearNotifications()
         this.get()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })

@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     async getHistory () {
-      const history = await this.$JeedomApi.getHistory(this.id, this.startDate, this.endDate)
+      const history = await this.$Provider.getHistory(this.id, this.startDate, this.endDate)
       this.history = {
         datasets: [
           {

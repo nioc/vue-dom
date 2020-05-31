@@ -111,7 +111,7 @@ export default {
     },
     openEventsListener () {
       if (this.isAuthenticated) {
-        this.$JeedomApi.openEventsListener(true, false)
+        this.$Provider.openEventsListener(true, false)
       }
     },
     ...mapActions(['loadObjects']),

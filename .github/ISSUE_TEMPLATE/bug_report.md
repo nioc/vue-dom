@@ -29,7 +29,8 @@ If applicable, add formatted console logs to help explain your problem.
 **Application (please complete the following information):**
  - Version [e.g. 1.2.3]
  - Using websocket: [yes/no]
- - Jeedom version [e.g. 3.3.45]
+ - Back end: [e.g. Jeedom]
+ - Back end version [e.g. 3.3.45]
 
 **Browser (please complete the following information):**
  - Device: [e.g. desktop, smartphone]

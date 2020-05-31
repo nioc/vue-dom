@@ -101,7 +101,7 @@ export default {
       this.open = false
     },
     logout () {
-      this.$JeedomApi.closeEventsListener()
+      this.$Provider.closeEventsListener()
       Auth.logout()
       this.$router.replace({ name: 'login' })
     },

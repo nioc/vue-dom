@@ -1,7 +1,7 @@
 {
   "name": "vue-dom",
   "version": "0.3.1",
-  "description": "Vue-dom is a VueJS front end for the home automation software Jeedom",
+  "description": "Vue-dom is a VueJS front end for home automation software (Jeedom, ...)",
   "keywords": [
     "Jeedom",
     "VueJS"
@@ -22,7 +22,7 @@
   "private": true,
   "vueDom": {
     "name": "VueDom",
-    "description": "<p><b>VueDom</b> est un client web pour la solution domotique <a href='https://www.jeedom.com' target='_blank' rel='noreferrer'>Jeedom</a>.</p><p>Il s'appuie sur les composants open-sources suivants :</p><ul><li>VueJS</li><li>Bulma</li></ul><p>En cas de problème ou pour toute suggestion, merci de créer un <a href='https://github.com/nioc/vue-dom/issues' target='_blank' rel='noreferrer'>ticket</a>.</p>",
+    "description": "<p><b>VueDom</b> est un client web pour solution domotique (actuellement compatible avec <a href='https://www.jeedom.com' target='_blank' rel='noreferrer'>Jeedom</a>).</p><p>Il s'appuie sur les composants open-sources suivants :</p><ul><li>VueJS</li><li>Bulma</li></ul><p>En cas de problème ou pour toute suggestion, merci de créer un <a href='https://github.com/nioc/vue-dom/issues' target='_blank' rel='noreferrer'>ticket</a>.</p>",
     "latestReleaseUrl": "https://api.github.com/repos/nioc/vue-dom/releases/latest"
   },
   "scripts": {

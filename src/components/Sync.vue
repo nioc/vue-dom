@@ -24,11 +24,11 @@ export default {
   methods: {
     openEventsListener (e) {
       e.preventDefault()
-      this.$JeedomApi.openEventsListener(true, true)
+      this.$Provider.openEventsListener(true, true)
     },
     closeEventsListener (e) {
       e.preventDefault()
-      this.$JeedomApi.closeEventsListener()
+      this.$Provider.closeEventsListener()
     },
   },
 }

@@ -3,7 +3,7 @@ import store from '@/store'
 
 // set API key and notify application user is authenticated
 function authenticate (login, apiKey) {
-  new Vue().$JeedomApi.setApiKey(apiKey)
+  new Vue().$Provider.setApiKey(apiKey)
   store.commit('app/setUser', { isAuthenticated: true, login })
 }
 
@@ -14,7 +14,7 @@ export default {
     if (!login || !password) {
       return false
     }
-    const apiKey = await new Vue().$JeedomApi.getApiKey(login, password)
+    const apiKey = await new Vue().$Provider.getApiKey(login, password)
     if (!apiKey) {
       return false
     }

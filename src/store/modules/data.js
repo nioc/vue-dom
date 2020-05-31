@@ -230,7 +230,7 @@ const actions = {
   async loadObjects ({ commit }) {
     try {
       // get global summary
-      vue.$JeedomApi.getSummary().then((summary) => {
+      vue.$Provider.getSummary().then((summary) => {
         for (const key in summary) {
           if (summary[key] !== null) {
             commit('saveObjectSummary', { id: 'global', key, value: summary[key] })
@@ -240,7 +240,7 @@ const actions = {
         commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération du résumé global<br>${error.message}` }, { root: true })
       })
       // get all objects
-      const objects = await vue.$JeedomApi.getObjects()
+      const objects = await vue.$Provider.getObjects()
       if (objects === undefined) {
         // no objects to save
         return
@@ -257,7 +257,7 @@ const actions = {
       // get objects summary
       objects.forEach(async (object) => {
         for (const key in object.summary) {
-          const value = await vue.$JeedomApi.getObjectSummary(object.id, key)
+          const value = await vue.$Provider.getObjectSummary(object.id, key)
           commit('saveObjectSummary', { id: object.id, key, value })
         }
       })
@@ -269,7 +269,7 @@ const actions = {
   // call API and store cmd statistics
   async loadCmdStatistics ({ commit, state }, id) {
     try {
-      const statistics = await vue.$JeedomApi.getStatistics(id)
+      const statistics = await vue.$Provider.getStatistics(id)
       if (statistics === undefined) {
         return
       }
@@ -282,7 +282,7 @@ const actions = {
   // call cmd API
   async execCmd ({ commit }, cmd) {
     try {
-      await vue.$JeedomApi.cmd(cmd.id, cmd.options)
+      await vue.$Provider.cmd(cmd.id, cmd.options)
     } catch (error) {
       console.error(error)
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la requête d'exécution de la commande<br>${error.message}` }, { root: true })
@@ -292,7 +292,7 @@ const actions = {
   // call API and store scenarios
   async loadScenarios ({ commit }) {
     try {
-      const scenarios = await vue.$JeedomApi.getScenarios()
+      const scenarios = await vue.$Provider.getScenarios()
       if (scenarios === undefined) {
         return
       }

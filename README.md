@@ -4,7 +4,7 @@
 [![GitHub release](https://img.shields.io/github/release/nioc/vue-dom.svg)](https://github.com/nioc/vue-dom/releases/latest)
 [![Build Status](https://travis-ci.org/nioc/vue-dom.svg?branch=master)](https://travis-ci.org/nioc/vue-dom)
 
-Vue-dom is a web front end for the home automation software [Jeedom](https://www.jeedom.com).
+Vue-dom is a web front end for home automation software (currently only support [Jeedom](https://www.jeedom.com)).
 
 ## Key features
 -    display objects with summary,
@@ -15,7 +15,7 @@ Vue-dom is a web front end for the home automation software [Jeedom](https://www
 -    display system notifications,
 -    ask query (interaction),
 -    user authentication with login and password (not stored in application),
--    communicate with your Jeedom through JSON-RPC API and [websocket](https://github.com/nioc/jeedom-websocket), authorized with user API key,
+-    communicate with your back-end software through JSON-RPC API and [websocket](https://github.com/nioc/jeedom-websocket), authorized with user API key,
 -    reduce data traffic,
 -    responsive,
 -    progressive web app (offline access).
@@ -37,7 +37,7 @@ For basic use, you just have to:
                       allow from all
               </Directory>
       ```
--   set your Jeedom url in `/var/www/vue-dom/local.js`.
+-   set your back end (Jeedom) url in `/var/www/vue-dom/local.js`.
 
 For more advanced use (adding your own component, style, ...), you have to follow the [contributing guide](CONTRIBUTING.md) and edit Vue code.
 

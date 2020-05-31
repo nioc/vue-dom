@@ -6,8 +6,8 @@
     <div class="hero-body">
       <div class="container box">
         <h2 class="title">À propos</h2>
-        <h3 class="subtitle is-5">
-          <a :href="homepage" target="_blank" rel="noreferrer"><img class="image is-96x96" src="./../assets/home.png"><p class="subtitle has-text-primary">{{ name }}</p></a>
+        <h3 class="subtitle is-5 is-flex">
+          <a :href="homepage" target="_blank" rel="noreferrer"><img class="image is-96x96" src="./../assets/home.png"><p class="subtitle has-text-primary has-text-centered">{{ name }}</p></a>
         </h3>
         <div class="content field is-grouped is-grouped-multiline">
           <div class="control">

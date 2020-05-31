@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     run (id) {
-      this.$JeedomApi.changeScenarioState(id, 'run')
+      this.$Provider.changeScenarioState(id, 'run')
     },
     ...mapActions(['loadScenarios']),
   },
