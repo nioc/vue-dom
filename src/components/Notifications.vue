@@ -27,7 +27,7 @@
           Pas de notifications
         </div>
         <span class="buttons">
-          <button class="button is-primary" @click="get">
+          <button class="button is-primary" @click="loadNotifications">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
           </button>
           <button v-if="notifications.length" class="button is-danger" @click="clear">
@@ -41,33 +41,26 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState, mapActions } = createNamespacedHelpers('data')
 
 export default {
   name: 'Notifications',
   components: {
     Breadcrumb,
   },
-  data () {
-    return {
-      notifications: [],
-    }
+  computed: {
+    ...mapState(['notifications']),
   },
   mounted () {
-    this.get()
+    this.loadNotifications()
   },
   methods: {
-    async get () {
-      try {
-        this.notifications = await this.$Provider.getNotifications()
-        this.notifications.sort((a, b) => this.$moment(b.date) - this.$moment(a.date))
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-      }
-    },
+    ...mapActions(['loadNotifications']),
     async clear () {
       try {
         await this.$Provider.clearNotifications()
-        this.get()
+        this.loadNotifications()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

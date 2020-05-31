@@ -101,6 +101,10 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
             message += event.option.message
           }
           store.commit('app/setInformation', { type, message })
+          store.commit('data/addNotification', {
+            date: Vue.moment().format('YYYY-MM-DD HH:mm:ss'),
+            message: event.option.message,
+          })
           break
         }
         default:

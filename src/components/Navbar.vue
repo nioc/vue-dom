@@ -16,6 +16,7 @@
         </div>
       </div>
       <div class="navbar-end is-flex-center">
+        <notifications-counter class-name="navbar-item" :is-link="true" />
         <query />
         <div class="navbar-item sync-tablet"><sync /></div>
       </div>
@@ -26,6 +27,7 @@
 <script>
 import Sync from '@/components/Sync'
 import Query from '@/components/Query'
+import NotificationsCounter from '@/components/NotificationsCounter'
 import { ObjectsMixin } from '@/mixins/Objects'
 import { createNamespacedHelpers } from 'vuex'
 const { mapMutations } = createNamespacedHelpers('app')
@@ -36,6 +38,7 @@ export default {
   components: {
     Sync,
     Query,
+    NotificationsCounter,
   },
   mixins: [ObjectsMixin],
   data () {

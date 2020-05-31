@@ -27,6 +27,7 @@ const getDefaultState = () => {
     cmdsStatistics: {},
     tagsList: [],
     scenarios: {},
+    notifications: [],
   }
 }
 
@@ -108,6 +109,11 @@ const getters = {
   // return all scenarios
   getScenarios: (state) => () => {
     return Object.keys(state.scenarios).map((scenarioId) => state.scenarios[scenarioId])
+  },
+
+  // return notifications count
+  getNotificationsCount: (state) => () => {
+    return state.notifications.length
   },
 }
 
@@ -218,6 +224,17 @@ const mutations = {
     state.scenarios = Object.assign({}, state.scenarios, updated)
   },
 
+  // store all notifications
+  saveNotifications (state, payload) {
+    state.notifications = payload
+  },
+
+  // store new notification
+  addNotification (state, payload) {
+    state.notifications.push(payload)
+    state.notifications.sort((a, b) => Vue.moment(b.date) - Vue.moment(a.date))
+  },
+
   // clear state
   clear (state) {
     Object.assign(state, getDefaultState())
@@ -299,6 +316,20 @@ const actions = {
       commit('saveScenarios', scenarios)
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des scénarios<br>${error.message}` }, { root: true })
+    }
+  },
+
+  // call API and store notifications
+  async loadNotifications ({ commit }) {
+    try {
+      const notifications = await vue.$Provider.getNotifications()
+      if (notifications === undefined) {
+        return
+      }
+      notifications.sort((a, b) => Vue.moment(b.date) - Vue.moment(a.date))
+      commit('saveNotifications', notifications)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des notifications<br>${error.message}` }, { root: true })
     }
   },
 }

@@ -44,7 +44,7 @@
 
           <b-menu-item icon="bell fa-fw fa-mr" tag="router-link" :to="{name: 'notifications'}">
             <template slot="label">
-              Notifications
+              Notifications <notifications-counter class-name="is-inline has-margin-left-8" :is-link="false" />
             </template>
           </b-menu-item>
 
@@ -72,12 +72,16 @@
 import { bugs } from '../../package.json'
 import Auth from '@/services/Auth'
 import { ObjectsMixin } from '@/mixins/Objects'
+import NotificationsCounter from '@/components/NotificationsCounter'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState, mapMutations } = createNamespacedHelpers('app')
 const custom = window.custom
 
 export default {
   name: 'Sidebar',
+  components: {
+    NotificationsCounter,
+  },
   mixins: [ObjectsMixin],
   data () {
     return {
