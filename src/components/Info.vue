@@ -38,7 +38,7 @@ export default {
       type: String,
       required: true,
     },
-    eqLogicId: {
+    equipmentId: {
       type: String,
       required: true,
     },
@@ -58,10 +58,9 @@ export default {
     iconClass () { return this.getIconClass(this.cmd) },
     unit () { return this.cmd.unit ? ' ' + this.cmd.unit : '' },
     action () {
-      const cmds = this.getCmdsByEqLogicId(this.eqLogicId)
-      const cmdValue = '#' + this.cmd.id + '#'
-      const cmdOn = cmds.find((c) => c.value === cmdValue && c.genericType === 'LIGHT_ON')
-      const cmdOff = cmds.find((c) => c.value === cmdValue && c.genericType === 'LIGHT_OFF')
+      const cmds = this.getCmdsByEquipmentId(this.equipmentId)
+      const cmdOn = cmds.find((c) => c.stateFeedbackId === this.cmd.id && c.genericType === 'LIGHT_ON')
+      const cmdOff = cmds.find((c) => c.stateFeedbackId === this.cmd.id && c.genericType === 'LIGHT_OFF')
       if (!cmdOn || !cmdOff) {
         return
       }

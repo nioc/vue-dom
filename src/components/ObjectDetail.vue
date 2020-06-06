@@ -6,8 +6,8 @@
     <div class="hero-body">
       <div class="container">
         <ul>
-          <li v-for="eqLogicId in object.eqLogics" :key="eqLogicId">
-            <eq-logic :id="eqLogicId" />
+          <li v-for="equipmentId in object.equipments" :key="equipmentId">
+            <equipment :id="equipmentId" />
           </li>
         </ul>
       </div>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import EqLogic from '@/components/EqLogic'
+import Equipment from '@/components/EqLogic'
 import Breadcrumb from '@/components/Breadcrumb'
 import { SummaryMixin } from '@/mixins/Summary'
 import { ObjectMixin } from '@/mixins/Object'
@@ -25,7 +25,7 @@ export default {
   name: 'ObjectDetail',
   components: {
     Breadcrumb,
-    EqLogic,
+    Equipment,
   },
   mixins: [SummaryMixin, ObjectMixin],
   props: {

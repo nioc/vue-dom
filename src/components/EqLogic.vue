@@ -1,14 +1,14 @@
 <template>
   <article class="card has-margin-bottom-6">
     <header class="card-header">
-      <p class="card-header-title">{{ eqLogic.name }}</p>
+      <p class="card-header-title">{{ equipment.name }}</p>
       <aside class="card-header-icon is-size-7-mobile">
-        <span v-if="eqLogicBattery" class="has-text-grey"><i class="fa-mr" :class="eqLogicBattery.iconClass" />{{ eqLogicBattery.currentValue }}%</span>
-        <span v-if="eqLogic.status.lastCommunication" :title="eqLogic.status.lastCommunication | moment('LLLL')" class="has-text-grey has-margin-left-8"><i class="fa-mr far fa-clock" /><time-ago :date="eqLogic.status.lastCommunication" :drop-fixes="true" /></span>
+        <span v-if="equipment.battery" class="has-text-grey"><i class="fa-mr" :class="getBatteryLevelIconClass(equipment.battery)" />{{ equipment.battery }}%</span>
+        <span v-if="equipment.lastCommunication" :title="equipment.lastCommunication | moment('LLLL')" class="has-text-grey has-margin-left-8"><i class="fa-mr far fa-clock" /><time-ago :date="equipment.lastCommunication" :drop-fixes="true" /></span>
       </aside>
     </header>
-    <custom-component v-if="isEqLogicHandled(eqLogic.eqTypeName)" :component="getEqLogicComponent(eqLogic.eqTypeName)" :eq-logic="eqLogic" class="card-content" />
-    <generic-component v-else :eq-logic="eqLogic" class="card-content" />
+    <custom-component v-if="isEquipmentHandled(equipment.module)" :component="getEquipmentComponent(equipment.module)" :equipment="equipment" class="card-content" />
+    <generic-component v-else :equipment="equipment" class="card-content" />
   </article>
 </template>
 
@@ -35,25 +35,15 @@ export default {
     },
   },
   computed: {
-    eqLogic () { return this.getEqLogicById(this.id) },
-    eqLogicBattery: function () {
-      const battery = this.eqLogic.status.battery
-      if (battery) {
-        return {
-          currentValue: battery,
-          iconClass: this.getBatteryLevelIconClass(battery),
-        }
-      }
-      return null
-    },
-    ...mapGetters(['getEqLogicById']),
+    equipment () { return this.getEquipmentById(this.id) },
+    ...mapGetters(['getEquipmentById']),
   },
   methods: {
-    getEqLogicComponent (eqType) {
-      return custom.components[eqType]
+    getEquipmentComponent (moduleName) {
+      return custom.components[moduleName]
     },
-    isEqLogicHandled (eqType) {
-      return (custom.components[eqType] !== undefined)
+    isEquipmentHandled (moduleName) {
+      return (custom.components[moduleName] !== undefined)
     },
   },
 }

@@ -10,6 +10,20 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
   let isSocketOpen = false
   let lastEventsTimestamp = Date.now() / 1000
 
+  function convertIconClass (jIcon) {
+    let iconClass = jIcon.match(/class="(.*?)"/)[1]
+    // transform font awesome 4 to 5
+    switch (iconClass) {
+      case 'fas fa-refresh':
+        iconClass = 'fa fa-sync-alt'
+        break
+      case 'fas fa-smile-o':
+        iconClass = 'far fa-smile'
+        break
+    }
+    return iconClass || 'fa fa-question'
+  }
+
   // Execute a JSON RPC request and return result
   async function jsonRpcCall (method, params) {
     if (apiKey === null && method !== 'user::getHash') {
@@ -250,14 +264,15 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     async getObjects () {
       try {
         const jObjects = await jsonRpcCall('object::full')
-        return jObjects.filter((jObject) => jObject.isVisible === '1').map((jObject) => {
+        return jObjects.map((jObject) => {
           // construct object
           const object = {
             id: jObject.id,
             name: jObject.name,
             parentId: jObject.father_id,
+            isVisible: jObject.isVisible === '1',
             summary: {},
-            eqLogics: [],
+            equipments: [],
           }
           // set object summary keys
           for (const key in jObject.configuration.summary) {
@@ -272,53 +287,62 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               object.summary[key] = true
             }
           }
-          // set object eqLogics
-          object.eqLogics = jObject.eqLogics.filter((jEqLogic) => jEqLogic.isVisible === '1').map((jEqLogic) => {
-          // construct eqLogic
-            const eqLogic = {
+          // set object equipments
+          object.equipments = jObject.eqLogics.filter((jEqLogic) => jEqLogic.isVisible === '1').map((jEqLogic) => {
+          // construct equipment
+            const equipment = {
               id: jEqLogic.id,
-              eqTypeName: jEqLogic.eqType_name,
+              module: jEqLogic.eqType_name,
               name: jEqLogic.name,
-              genericType: jEqLogic.generic_type,
-              status: {
-                battery: jEqLogic.status.battery,
-                lastCommunication: jEqLogic.status.lastCommunication,
-              },
-              configuration: {
-                type: jEqLogic.configuration.type,
-              },
               cmds: [],
               tags: jEqLogic.tags ? jEqLogic.tags.split(',') : [],
             }
-            // set eqLogic cmds
-            eqLogic.cmds = jEqLogic.cmds.sort((a, b) => a.order - b.order).map((jCmd) => {
+            if (jEqLogic.configuration.type) {
+              equipment.configuration = {
+                type: jEqLogic.configuration.type,
+              }
+            }
+            if (jEqLogic.status) {
+              if (jEqLogic.status.battery) {
+                equipment.battery = jEqLogic.status.battery
+              }
+              if (jEqLogic.status.lastCommunication) {
+                equipment.lastCommunication = Vue.moment(jEqLogic.status.lastCommunication).format()
+              }
+            }
+            // set equipment cmds
+            equipment.cmds = jEqLogic.cmds.sort((a, b) => a.order - b.order).map((jCmd) => {
               // construct cmd
               const cmd = {
                 id: jCmd.id,
                 currentValue: jCmd.state,
-                value: jCmd.value,
                 unit: jCmd.unite,
                 name: jCmd.name,
                 type: jCmd.type,
                 subType: jCmd.subType,
                 logicalId: jCmd.logicalId,
-                eqLogicId: jCmd.eqLogic_id,
-                eqType: jCmd.eqType,
+                eqId: jCmd.eqLogic_id,
+                module: jCmd.eqType,
                 genericType: jCmd.generic_type,
                 isHistorized: jCmd.isHistorized === '1',
-                icon: jCmd.display.icon,
                 isVisible: jCmd.isVisible === '1',
                 order: jCmd.order,
               }
-              if (jCmd.configuration.minValue !== '') {
+              if (jCmd.display.icon) {
+                cmd.icon = convertIconClass(jCmd.display.icon)
+              }
+              if (jCmd.value) {
+                cmd.stateFeedbackId = jCmd.value.replace(/#/g, '')
+              }
+              if (jCmd.configuration.minValue && jCmd.configuration.minValue !== '') {
                 cmd.minValue = parseInt(jCmd.configuration.minValue)
               }
-              if (jCmd.configuration.maxValue !== '') {
+              if (jCmd.configuration.maxValue && jCmd.configuration.maxValue !== '') {
                 cmd.maxValue = parseInt(jCmd.configuration.maxValue)
               }
               return cmd
             })
-            return eqLogic
+            return equipment
           })
           return object
         })

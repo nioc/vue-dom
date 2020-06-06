@@ -5,11 +5,11 @@ const vue = new Vue()
 
 // prepare data normalization schemas
 const cmdSchema = new schema.Entity('cmds')
-const eqLogicSchema = new schema.Entity('eqLogics', {
+const equipmentSchema = new schema.Entity('equipments', {
   cmds: [cmdSchema],
 })
 const objectSchema = new schema.Entity('objects', {
-  eqLogics: [eqLogicSchema],
+  equipments: [equipmentSchema],
 })
 const objectListSchema = new schema.Array(objectSchema)
 const scenarioSchema = new schema.Entity('scenarios')
@@ -20,7 +20,7 @@ const getDefaultState = () => {
     objects: {},
     objectsSummary: {},
     objectsRaw: [],
-    eqLogics: {},
+    equipments: {},
     cmds: {},
     objectsList: [],
     summaryList: [],
@@ -35,11 +35,11 @@ const state = getDefaultState()
 
 const getters = {
 
-  // return object by id or object with empty name and eqLogics
+  // return object by id or object with empty name and equipments
   getObjectById: (state) => (id) => {
     return (state.objects[id]) || {
       name: '',
-      eqLogics: [],
+      equipments: [],
     }
   },
 
@@ -48,29 +48,29 @@ const getters = {
     return (state.objectsSummary[id]) || {}
   },
 
-  // return eqLogic by id or object with empty cmds
-  getEqLogicById: (state) => (id) => {
-    return (state.eqLogics[id]) || {
+  // return equipment by id or object with empty cmds
+  getEquipmentById: (state) => (id) => {
+    return (state.equipments[id]) || {
       cmds: [],
     }
   },
 
-  // return eqLogic by tag
-  getEqLogicsIdByTag: (state) => (tag) => {
-    return Object.values(state.eqLogics).filter((eqLogic) => eqLogic.tags.includes(tag)).map((eqLogic) => eqLogic.id)
+  // return equipments ids by tag
+  getEquipmentsIdByTag: (state) => (tag) => {
+    return Object.values(state.equipments).filter((equipment) => equipment.tags.includes(tag)).map((equipment) => equipment.id)
   },
 
-  // return all cmds for requested eqLogicId
-  getCmdsByEqLogicId: (state, getters) => (id) => {
+  // return all cmds for requested equipment id
+  getCmdsByEquipmentId: (state, getters) => (id) => {
     const cmds = []
-    const cmdsId = state.eqLogics[id].cmds
+    const cmdsId = state.equipments[id].cmds
     // reduce cmd to minimal informations
     cmdsId.forEach((cmdId) => {
       const c = getters.getCmdById(cmdId)
       cmds.push({
         id: c.id,
         type: c.type,
-        value: c.value,
+        stateFeedbackId: c.stateFeedbackId,
         subType: c.subType,
         genericType: c.genericType,
         isVisible: c.isVisible,
@@ -87,7 +87,7 @@ const getters = {
       cmds.push({
         id: c.id,
         type: c.type,
-        value: c.value,
+        stateFeedbackId: c.stateFeedbackId,
         subType: c.subType,
         genericType: c.genericType,
         isVisible: c.isVisible,
@@ -119,19 +119,19 @@ const getters = {
 
 const mutations = {
 
-  // store all objects, eqLogics and cmds normalized
+  // store all objects, equipments and cmds normalized
   saveObjects (state, payload) {
     state.objectsRaw = payload
     const normalized = normalize(payload, objectListSchema)
     Object.assign(state, normalized.entities)
   },
 
-  // store specific object, eqLogics and cmds normalized
+  // store specific object, equipments and cmds normalized
   saveObject (state, payload) {
     const normalized = normalize(payload, objectSchema)
     state.objectsList.push(normalized.result)
     Object.assign(state.objects, normalized.entities.objects)
-    Object.assign(state.eqLogics, normalized.entities.eqLogics)
+    Object.assign(state.equipments, normalized.entities.equipments)
     Object.assign(state.cmds, normalized.entities.cmds)
   },
 
@@ -179,7 +179,7 @@ const mutations = {
   // store updated cmds information (batch)
   updateCmds (state, payload) {
     const updated = {}
-    const eqLogicUpdated = {}
+    const equipmentUpdated = {}
     payload.forEach(updateCmd => {
       const cmdId = updateCmd.id
       if (!state.cmds[cmdId]) {
@@ -187,18 +187,18 @@ const mutations = {
       }
       updated[cmdId] = state.cmds[cmdId]
       updated[cmdId].currentValue = updateCmd.currentValue
-      // update eqLogic date with cmd collect date if it is newer
-      const eqLogicId = state.cmds[cmdId].eqLogicId
-      if (Vue.moment(updateCmd.collectDate).isAfter(state.eqLogics[eqLogicId].status.lastCommunication)) {
-        eqLogicUpdated[eqLogicId] = state.eqLogics[eqLogicId]
-        eqLogicUpdated[eqLogicId].status.lastCommunication = updateCmd.collectDate
+      // update equipment date with cmd collect date if it is newer
+      const equipmentId = state.cmds[cmdId].eqId
+      if (Vue.moment(updateCmd.collectDate).isAfter(state.equipments[equipmentId].lastCommunication)) {
+        equipmentUpdated[equipmentId] = state.equipments[equipmentId]
+        equipmentUpdated[equipmentId].lastCommunication = Vue.moment(updateCmd.collectDate).format()
       }
     })
     if (Object.keys(updated).length > 0) {
       state.cmds = Object.assign({}, state.cmds, updated)
     }
-    if (Object.keys(eqLogicUpdated).length > 0) {
-      state.eqLogics = Object.assign({}, state.eqLogics, eqLogicUpdated)
+    if (Object.keys(equipmentUpdated).length > 0) {
+      state.equipments = Object.assign({}, state.equipments, equipmentUpdated)
     }
   },
 
@@ -266,8 +266,8 @@ const actions = {
       // get tags
       let tagsList = []
       objects.forEach((object) => {
-        object.eqLogics.forEach((eqLogic) => {
-          tagsList = tagsList.concat(eqLogic.tags)
+        object.equipments.forEach((equipment) => {
+          tagsList = tagsList.concat(equipment.tags)
         })
       })
       commit('saveTags', [...new Set(tagsList)])

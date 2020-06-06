@@ -96,7 +96,7 @@ export default {
         this.setSidebarStatus(value)
       },
     },
-    ordered () { return this.objectsOrdered.filter((object) => object.eqLogics.length > 0 && object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    ordered () { return this.objectsOrdered.filter((object) => object.equipment.length > 0 && object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     ...mapState(['hasSidebarOpened']),
   },
   methods: {

@@ -20,7 +20,7 @@ function findChild (objects, objectsOrdered, parent) {
 
 export const ObjectsMixin = {
   computed: {
-    objectsOrdered () { return findChild(this.objectsRaw, [], { id: null }) },
+    objectsOrdered () { return findChild(this.objectsRaw.filter((object) => object.isVisible), [], { id: null }) },
     ...mapState(['objects', 'objectsRaw', 'tagsList']),
   },
   methods: {

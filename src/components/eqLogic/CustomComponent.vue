@@ -1,5 +1,5 @@
 <template>
-  <component :is="component" :eq-logic="eqLogic" />
+  <component :is="component" :equipment="equipment" />
 </template>
 
 <script>
@@ -18,7 +18,7 @@ export default {
     })
   }, {}),
   props: {
-    eqLogic: {
+    equipment: {
       type: Object,
       required: true,
     },
