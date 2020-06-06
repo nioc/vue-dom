@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Equipment from '@/components/EqLogic'
+import Equipment from '@/components/Equipment'
 import Breadcrumb from '@/components/Breadcrumb'
 import { SummaryMixin } from '@/mixins/Summary'
 import { ObjectMixin } from '@/mixins/Object'

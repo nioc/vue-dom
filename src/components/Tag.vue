@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Equipment from '@/components/EqLogic'
+import Equipment from '@/components/Equipment'
 import Breadcrumb from '@/components/Breadcrumb'
 import { createNamespacedHelpers } from 'vuex'
 const { mapGetters } = createNamespacedHelpers('data')

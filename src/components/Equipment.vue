@@ -14,8 +14,8 @@
 
 <script>
 import TimeAgo from '@/components/TimeAgo'
-import CustomComponent from '@/components/eqLogic/CustomComponent'
-import GenericComponent from '@/components/eqLogic/GenericComponent'
+import CustomComponent from '@/components/equipment/CustomComponent'
+import GenericComponent from '@/components/equipment/GenericComponent'
 import { createNamespacedHelpers } from 'vuex'
 import { CmdMixin } from '@/mixins/Cmd'
 const custom = window.custom

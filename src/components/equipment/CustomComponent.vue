@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import LoadingComponent from '@/components/eqLogic/LoadingComponent'
+import LoadingComponent from '@/components/equipment/LoadingComponent'
 const customComponents = window.custom.components
 
 export default {
@@ -11,7 +11,7 @@ export default {
     const componentName = customComponents[moduleName]
     return Object.assign(components, {
       [componentName]: () => ({
-        component: import(/* webpackChunkName: "[request]" */ '@/components/eqLogic/' + componentName),
+        component: import(/* webpackChunkName: "[request]" */ '@/components/equipment/' + componentName),
         loading: LoadingComponent,
         delay: 0,
       }),
