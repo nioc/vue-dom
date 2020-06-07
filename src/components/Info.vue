@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="is-flex-space-between has-margin-bottom-8">
-      <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ cmd.name }}<a v-if="cmd.isHistorized" class="has-margin-left-8 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
-      <b-switch v-if="cmd.subType==='binary'" v-model="value" :disabled="!action" true-value="1" :title="cmd.name" class="has-margin-bottom-8" @input="action" />
+      <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ state.name }}<a v-if="state.isHistorized" class="has-margin-left-8 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
+      <b-switch v-if="state.type==='binary'" v-model="value" :disabled="!action" true-value="1" :title="state.name" class="has-margin-bottom-8" @input="action" />
       <span v-else class="is-flex-space-between">
         <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light">
           <li class="statistics-item"><span class="has-padding-horizontal-8" title="Min">{{ statistics.min }}</span></li>
           <li class="statistics-item"><span class="has-padding-horizontal-8" title="Moyenne">{{ statistics.avg }}</span></li>
           <li class="statistics-item"><span class="has-padding-horizontal-8" title="Max">{{ statistics.max }}</span></li>
         </ul>
-        <i v-if="cmd.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow has-margin-right-8" :style="`transform: rotate(${135+cmd.currentValue}deg);`" />
-        <span class="has-text-weight-semi-bold">{{ cmd.currentValue }}{{ unit }}</span>
+        <i v-if="state.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow has-margin-right-8" :style="`transform: rotate(${135+state.currentValue}deg);`" />
+        <span class="has-text-weight-semi-bold">{{ state.currentValue }}{{ unit }}</span>
       </span>
     </div>
     <div v-if="hasHistoryDisplayed" class="message is-light">
@@ -19,7 +19,7 @@
         <button class="delete" title="Fermer" @click="hasHistoryDisplayed = false" />
       </div>
       <div class="message-body has-margin-bottom-7 has-padding-8">
-        <history :id="cmd.id" :name="cmd.name" />
+        <history :id="state.id" :name="state.name" />
       </div>
     </div>
   </div>
@@ -49,32 +49,32 @@ export default {
     }
   },
   computed: {
-    cmd () { return this.getCmdById(this.id) },
+    state () { return this.getStateById(this.id) },
     value: {
       // computed to avoid vuex mutation
-      get: function () { return this.cmd.currentValue },
+      get: function () { return this.state.currentValue },
       set: () => {},
     },
-    iconClass () { return this.getIconClass(this.cmd) },
-    unit () { return this.cmd.unit ? ' ' + this.cmd.unit : '' },
+    iconClass () { return this.getIconClass(this.state) },
+    unit () { return this.state.unit ? ' ' + this.state.unit : '' },
     action () {
-      const cmds = this.getCmdsByEquipmentId(this.equipmentId)
-      const cmdOn = cmds.find((c) => c.stateFeedbackId === this.cmd.id && c.genericType === 'LIGHT_ON')
-      const cmdOff = cmds.find((c) => c.stateFeedbackId === this.cmd.id && c.genericType === 'LIGHT_OFF')
-      if (!cmdOn || !cmdOff) {
+      const actions = this.getActionsByEquipmentId(this.equipmentId)
+      const actionOn = actions.find((action) => action.stateFeedbackId === this.state.id && action.genericType === 'LIGHT_ON')
+      const actionOff = actions.find((action) => action.stateFeedbackId === this.state.id && action.genericType === 'LIGHT_OFF')
+      if (!actionOn || !actionOff) {
         return
       }
       const vm = this
       return async (newValue) => {
-        const cmdId = newValue === '1' ? cmdOn.id : cmdOff.id
-        vm.execCmd({ id: cmdId })
+        const actionId = newValue === '1' ? actionOn.id : actionOff.id
+        vm.executeAction({ id: actionId })
       }
     },
-    statistics () { return this.getCmdStatisticsById(this.id) },
+    statistics () { return this.getStateStatisticsById(this.id) },
   },
   created () {
-    if (this.cmd.isHistorized && this.cmd.subType !== 'binary') {
-      this.loadCmdStatistics(this.cmd.id)
+    if (this.state.isHistorized && this.state.type !== 'binary') {
+      this.loadStateStatistics(this.state.id)
     }
   },
 }

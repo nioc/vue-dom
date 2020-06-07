@@ -1,10 +1,10 @@
 <template>
   <div>
-    <info v-for="cmd in cmds.infos" :id="cmd" :key="cmd" :equipment-id="equipment.id" />
-    <div v-if="cmds.actions.length > 0" class="is-flex-space-between has-margin-bottom-8">
+    <info v-for="state in attributes.states" :id="state" :key="state" :equipment-id="equipment.id" />
+    <div v-if="attributes.actions.length > 0" class="is-flex-space-between has-margin-bottom-8">
       <span><i class="fa-fw fa fa-tools has-margin-right-6" />Actions</span>
       <span class="buttons is-right has-addons is-flex-grow">
-        <action v-for="cmd in cmds.actions" :id="cmd" :key="cmd" />
+        <action v-for="action in attributes.actions" :id="action" :key="action" />
       </span>
     </div>
   </div>
@@ -30,39 +30,37 @@ export default {
     },
   },
   computed: {
-    cmds: function () {
+    attributes: function () {
       const actionsList = []
       const actionsHiddenList = []
-      const infosList = []
-      const cmds = this.getCmdsByIds(this.equipment.cmds).filter((cmd) => cmd.isVisible)
-      cmds.forEach(cmd => {
-        if (cmd.type === 'info') {
-          if (cmd.subType === 'binary') {
-            // search for light switch on/off
-            const cmdOn = cmds.find((c) => c.stateFeedbackId === cmd.id && c.genericType === 'LIGHT_ON')
-            const cmdOff = cmds.find((c) => c.stateFeedbackId === cmd.id && c.genericType === 'LIGHT_OFF')
-            if (cmdOn && cmdOff) {
-              // do not display button for on/off actions
-              actionsHiddenList.push(cmdOn.id, cmdOff.id)
-            }
-            infosList.push(cmd.id)
-          } else if (cmd.subType === 'numeric') {
-            if (!cmds.find((c) => c.stateFeedbackId === cmd.id && c.genericType === 'LIGHT_SLIDER')) {
-              // do not display slider value info
-              infosList.push(cmd.id)
-            }
-          } else if (cmd.subType === 'string') {
-            infosList.push(cmd.id)
+      const statesList = []
+      const actions = this.getActionsByIds(this.equipment.actions).filter((action) => action.isVisible)
+      this.getStatesByIds(this.equipment.states).filter((state) => state.isVisible).forEach(state => {
+        if (state.type === 'binary') {
+          // search for light switch on/off
+          const actionOn = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_ON')
+          const actionOff = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_OFF')
+          if (actionOn && actionOff) {
+            // do not display button for on/off actions
+            actionsHiddenList.push(actionOn.id, actionOff.id)
           }
+          statesList.push(state.id)
+        } else if (state.type === 'numeric') {
+          if (!actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_SLIDER')) {
+            // do not display slider state
+            statesList.push(state.id)
+          }
+        } else if (state.type === 'string') {
+          statesList.push(state.id)
         }
       })
-      // set visible action commands
-      cmds.forEach(cmd => {
-        if (cmd.type === 'action' && !actionsHiddenList.includes(cmd.id)) {
+      // set visible actions
+      actions.forEach(cmd => {
+        if (!actionsHiddenList.includes(cmd.id)) {
           actionsList.push(cmd.id)
         }
       })
-      return { infos: infosList, actions: actionsList }
+      return { states: statesList, actions: actionsList }
     },
     ...mapGetters(['getEquipmentById']),
   },

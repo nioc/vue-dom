@@ -4,9 +4,11 @@ import { normalize, schema } from 'normalizr'
 const vue = new Vue()
 
 // prepare data normalization schemas
-const cmdSchema = new schema.Entity('cmds')
+const stateSchema = new schema.Entity('states')
+const actionSchema = new schema.Entity('actions')
 const equipmentSchema = new schema.Entity('equipments', {
-  cmds: [cmdSchema],
+  states: [stateSchema],
+  actions: [actionSchema],
 })
 const objectSchema = new schema.Entity('objects', {
   equipments: [equipmentSchema],
@@ -21,10 +23,11 @@ const getDefaultState = () => {
     objectsSummary: {},
     objectsRaw: [],
     equipments: {},
-    cmds: {},
+    states: {},
+    actions: {},
     objectsList: [],
     summaryList: [],
-    cmdsStatistics: {},
+    statesStatistics: {},
     tagsList: [],
     scenarios: {},
     notifications: [],
@@ -48,10 +51,11 @@ const getters = {
     return (state.objectsSummary[id]) || {}
   },
 
-  // return equipment by id or object with empty cmds
+  // return equipment by id or object with empty action and state
   getEquipmentById: (state) => (id) => {
     return (state.equipments[id]) || {
-      cmds: [],
+      states: [],
+      actions: [],
     }
   },
 
@@ -60,50 +64,84 @@ const getters = {
     return Object.values(state.equipments).filter((equipment) => equipment.tags.includes(tag)).map((equipment) => equipment.id)
   },
 
-  // return all cmds for requested equipment id
-  getCmdsByEquipmentId: (state, getters) => (id) => {
-    const cmds = []
-    const cmdsId = state.equipments[id].cmds
-    // reduce cmd to minimal informations
-    cmdsId.forEach((cmdId) => {
-      const c = getters.getCmdById(cmdId)
-      cmds.push({
+  // return all states for requested equipment id
+  getStatesByEquipmentId: (state, getters) => (id) => {
+    const states = []
+    const statesId = state.equipments[id].states
+    // reduce state to minimal informations
+    statesId.forEach((stateId) => {
+      const c = getters.getStateById(stateId)
+      states.push({
         id: c.id,
         type: c.type,
-        stateFeedbackId: c.stateFeedbackId,
-        subType: c.subType,
         genericType: c.genericType,
         isVisible: c.isVisible,
       })
     })
-    return cmds
+    return states
   },
 
-  // return cmds by id or empty array
-  getCmdsByIds: (state, getters) => (cmdsId) => {
-    const cmds = []
-    cmdsId.forEach((cmdId) => {
-      const c = getters.getCmdById(cmdId)
-      cmds.push({
+  // return all actions for requested equipment id
+  getActionsByEquipmentId: (state, getters) => (id) => {
+    const actions = []
+    const actionsId = state.equipments[id].actions
+    // reduce action to minimal informations
+    actionsId.forEach((actionId) => {
+      const c = getters.getActionById(actionId)
+      actions.push({
         id: c.id,
         type: c.type,
         stateFeedbackId: c.stateFeedbackId,
-        subType: c.subType,
         genericType: c.genericType,
         isVisible: c.isVisible,
       })
     })
-    return cmds
+    return actions
   },
 
-  // return cmd by id or empty object
-  getCmdById: (state) => (id) => {
-    return (state.cmds[id]) || { }
+  // return states by id or empty array
+  getStatesByIds: (state, getters) => (statesId) => {
+    const states = []
+    statesId.forEach((stateId) => {
+      const c = getters.getStateById(stateId)
+      states.push({
+        id: c.id,
+        type: c.type,
+        genericType: c.genericType,
+        isVisible: c.isVisible,
+      })
+    })
+    return states
   },
 
-  // return cmd statistics by id or null
-  getCmdStatisticsById: (state) => (id) => {
-    return (state.cmdsStatistics[id]) || null
+  // return actions by id or empty array
+  getActionsByIds: (state, getters) => (actionsId) => {
+    const actions = []
+    actionsId.forEach((actionId) => {
+      const c = getters.getActionById(actionId)
+      actions.push({
+        id: c.id,
+        type: c.type,
+        stateFeedbackId: c.stateFeedbackId,
+        genericType: c.genericType,
+        isVisible: c.isVisible,
+      })
+    })
+    return actions
+  },
+
+  // return state by id or empty object
+  getStateById: (state) => (id) => {
+    return (state.states[id]) || { }
+  },
+  // return action by id or empty object
+  getActionById: (state) => (id) => {
+    return (state.actions[id]) || { }
+  },
+
+  // return state statistics by id or null
+  getStateStatisticsById: (state) => (id) => {
+    return (state.statesStatistics[id]) || null
   },
 
   // return all scenarios
@@ -119,20 +157,21 @@ const getters = {
 
 const mutations = {
 
-  // store all objects, equipments and cmds normalized
+  // store all objects, equipments, states and actions normalized
   saveObjects (state, payload) {
     state.objectsRaw = payload
     const normalized = normalize(payload, objectListSchema)
     Object.assign(state, normalized.entities)
   },
 
-  // store specific object, equipments and cmds normalized
+  // store specific object, equipments, states and actions normalized
   saveObject (state, payload) {
     const normalized = normalize(payload, objectSchema)
     state.objectsList.push(normalized.result)
     Object.assign(state.objects, normalized.entities.objects)
     Object.assign(state.equipments, normalized.entities.equipments)
-    Object.assign(state.cmds, normalized.entities.cmds)
+    Object.assign(state.states, normalized.entities.states)
+    Object.assign(state.actions, normalized.entities.actions)
   },
 
   // store specific object summary
@@ -168,37 +207,46 @@ const mutations = {
     state.objectsSummary = Object.assign({}, state.objectsSummary, arr)
   },
 
-  // store cmd statistics
-  saveCmdStatistics (state, payload) {
-    const cmdId = payload.id
+  // store state statistics
+  saveStateStatistics (state, payload) {
     const updated = {}
-    updated[cmdId] = payload.statistics
-    state.cmdsStatistics = Object.assign({}, state.cmdsStatistics, updated)
+    updated[payload.id] = payload.statistics
+    state.statesStatistics = Object.assign({}, state.statesStatistics, updated)
   },
 
-  // store updated cmds information (batch)
-  updateCmds (state, payload) {
-    const updated = {}
-    const equipmentUpdated = {}
-    payload.forEach(updateCmd => {
-      const cmdId = updateCmd.id
-      if (!state.cmds[cmdId]) {
+  // store updated states/actions (batch)
+  updateStates (state, payload) {
+    const statesUpdated = {}
+    const actionsUpdated = {}
+    const equipmentsUpdated = {}
+    payload.forEach(update => {
+      const id = update.id
+      if (!state.states[id] && !state.actions[id]) {
         return
       }
-      updated[cmdId] = state.cmds[cmdId]
-      updated[cmdId].currentValue = updateCmd.currentValue
-      // update equipment date with cmd collect date if it is newer
-      const equipmentId = state.cmds[cmdId].eqId
-      if (Vue.moment(updateCmd.collectDate).isAfter(state.equipments[equipmentId].lastCommunication)) {
-        equipmentUpdated[equipmentId] = state.equipments[equipmentId]
-        equipmentUpdated[equipmentId].lastCommunication = Vue.moment(updateCmd.collectDate).format()
+      if (state.states[id]) {
+        statesUpdated[id] = state.states[id]
+        statesUpdated[id].currentValue = update.currentValue
+        // update equipment date with state collect date if it is newer
+        const equipmentId = state.states[id].eqId
+        if (Vue.moment(update.collectDate).isAfter(state.equipments[equipmentId].lastCommunication)) {
+          equipmentsUpdated[equipmentId] = state.equipments[equipmentId]
+          equipmentsUpdated[equipmentId].lastCommunication = Vue.moment(update.collectDate).format()
+        }
+      }
+      if (state.actions[id]) {
+        actionsUpdated[id] = state.actions[id]
+        actionsUpdated[id].currentValue = update.currentValue
       }
     })
-    if (Object.keys(updated).length > 0) {
-      state.cmds = Object.assign({}, state.cmds, updated)
+    if (Object.keys(statesUpdated).length > 0) {
+      state.states = Object.assign({}, state.states, statesUpdated)
     }
-    if (Object.keys(equipmentUpdated).length > 0) {
-      state.equipments = Object.assign({}, state.equipments, equipmentUpdated)
+    if (Object.keys(actionsUpdated).length > 0) {
+      state.actions = Object.assign({}, state.actions, actionsUpdated)
+    }
+    if (Object.keys(equipmentsUpdated).length > 0) {
+      state.equipments = Object.assign({}, state.equipments, equipmentsUpdated)
     }
   },
 
@@ -283,23 +331,23 @@ const actions = {
     }
   },
 
-  // call API and store cmd statistics
-  async loadCmdStatistics ({ commit, state }, id) {
+  // call API and store state statistics
+  async loadStateStatistics ({ commit, state }, id) {
     try {
       const statistics = await vue.$Provider.getStatistics(id)
       if (statistics === undefined) {
         return
       }
-      commit('saveCmdStatistics', { id, statistics })
+      commit('saveStateStatistics', { id, statistics })
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des statistiques<br>${error.message}` }, { root: true })
     }
   },
 
-  // call cmd API
-  async execCmd ({ commit }, cmd) {
+  // execute an action by calling API
+  async executeAction ({ commit }, action) {
     try {
-      await vue.$Provider.cmd(cmd.id, cmd.options)
+      await vue.$Provider.executeAction(action.id, action.options)
     } catch (error) {
       console.error(error)
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la requête d'exécution de la commande<br>${error.message}` }, { root: true })

@@ -125,9 +125,9 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
           break
       }
     })
-    // commit updateCmds batch
+    // commit cmd::update batch
     if (updateCmds.length > 0) {
-      store.commit('data/updateCmds', updateCmds)
+      store.commit('data/updateStates', updateCmds)
     }
   }
 
@@ -310,21 +310,17 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
                 equipment.lastCommunication = Vue.moment(jEqLogic.status.lastCommunication).format()
               }
             }
-            // set equipment cmds
-            equipment.cmds = jEqLogic.cmds.sort((a, b) => a.order - b.order).map((jCmd) => {
+            // set equipment actions
+            equipment.actions = jEqLogic.cmds.filter((jCmd) => jCmd.type === 'action').sort((a, b) => a.order - b.order).map((jCmd) => {
               // construct cmd
               const cmd = {
                 id: jCmd.id,
-                currentValue: jCmd.state,
-                unit: jCmd.unite,
-                name: jCmd.name,
-                type: jCmd.type,
-                subType: jCmd.subType,
                 logicalId: jCmd.logicalId,
+                name: jCmd.name,
                 eqId: jCmd.eqLogic_id,
                 module: jCmd.eqType,
+                type: jCmd.subType,
                 genericType: jCmd.generic_type,
-                isHistorized: jCmd.isHistorized === '1',
                 isVisible: jCmd.isVisible === '1',
                 order: jCmd.order,
               }
@@ -333,6 +329,34 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               }
               if (jCmd.value) {
                 cmd.stateFeedbackId = jCmd.value.replace(/#/g, '')
+              }
+              if (jCmd.configuration.minValue && jCmd.configuration.minValue !== '') {
+                cmd.minValue = parseInt(jCmd.configuration.minValue)
+              }
+              if (jCmd.configuration.maxValue && jCmd.configuration.maxValue !== '') {
+                cmd.maxValue = parseInt(jCmd.configuration.maxValue)
+              }
+              return cmd
+            })
+            // set equipment states
+            equipment.states = jEqLogic.cmds.filter((jCmd) => jCmd.type === 'info').sort((a, b) => a.order - b.order).map((jCmd) => {
+              // construct cmd
+              const cmd = {
+                id: jCmd.id,
+                logicalId: jCmd.logicalId,
+                name: jCmd.name,
+                eqId: jCmd.eqLogic_id,
+                module: jCmd.eqType,
+                type: jCmd.subType,
+                genericType: jCmd.generic_type,
+                isHistorized: jCmd.isHistorized === '1',
+                isVisible: jCmd.isVisible === '1',
+                order: jCmd.order,
+                currentValue: jCmd.state,
+                unit: jCmd.unite,
+              }
+              if (jCmd.display.icon) {
+                cmd.icon = convertIconClass(jCmd.display.icon)
               }
               if (jCmd.configuration.minValue && jCmd.configuration.minValue !== '') {
                 cmd.minValue = parseInt(jCmd.configuration.minValue)
@@ -370,8 +394,8 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     },
 
     // execute a command
-    async cmd (cmdId, options) {
-      const params = { id: cmdId }
+    async executeAction (actionId, options) {
+      const params = { id: actionId }
       if (options) {
         params.options = options
       }
