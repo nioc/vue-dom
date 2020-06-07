@@ -441,6 +441,9 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       params.endTime = Vue.moment(endTime).format('YYYY-MM-DD HH:mm:ss')
       try {
         const statistics = await jsonRpcCall('cmd::getStatistique', params)
+        if (statistics.count === '0') {
+          return null
+        }
         return {
           min: Number.parseFloat(Number.parseFloat(statistics.min).toPrecision(3)),
           avg: Number.parseFloat(Number.parseFloat(statistics.avg).toPrecision(3)),
