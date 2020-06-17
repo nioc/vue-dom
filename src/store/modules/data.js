@@ -10,22 +10,22 @@ const equipmentSchema = new schema.Entity('equipments', {
   states: [stateSchema],
   actions: [actionSchema],
 })
-const objectSchema = new schema.Entity('objects', {
+const roomSchema = new schema.Entity('rooms', {
   equipments: [equipmentSchema],
 })
-const objectListSchema = new schema.Array(objectSchema)
+const roomListSchema = new schema.Array(roomSchema)
 const scenarioSchema = new schema.Entity('scenarios')
 const scenarioListSchema = new schema.Array(scenarioSchema)
 
 const getDefaultState = () => {
   return {
-    objects: {},
-    objectsSummary: {},
-    objectsRaw: [],
+    rooms: {},
+    roomsSummary: {},
+    roomsRaw: [],
     equipments: {},
     states: {},
     actions: {},
-    objectsList: [],
+    roomsList: [],
     summaryList: [],
     statesStatistics: {},
     tagsList: [],
@@ -38,17 +38,17 @@ const state = getDefaultState()
 
 const getters = {
 
-  // return object by id or object with empty name and equipments
-  getObjectById: (state) => (id) => {
-    return (state.objects[id]) || {
+  // return room by id or object with empty name and equipments
+  getRoomById: (state) => (id) => {
+    return (state.rooms[id]) || {
       name: '',
       equipments: [],
     }
   },
 
-  // return object summary by id or empty object
-  getObjectSummaryById: (state) => (id) => {
-    return (state.objectsSummary[id]) || {}
+  // return room summary by id or empty object
+  getRoomSummaryById: (state) => (id) => {
+    return (state.roomsSummary[id]) || {}
   },
 
   // return equipment by id or object with empty action and state
@@ -157,25 +157,25 @@ const getters = {
 
 const mutations = {
 
-  // store all objects, equipments, states and actions normalized
-  saveObjects (state, payload) {
-    state.objectsRaw = payload
-    const normalized = normalize(payload, objectListSchema)
+  // store all rooms, equipments, states and actions normalized
+  saveRooms (state, payload) {
+    state.roomsRaw = payload
+    const normalized = normalize(payload, roomListSchema)
     Object.assign(state, normalized.entities)
   },
 
-  // store specific object, equipments, states and actions normalized
-  saveObject (state, payload) {
-    const normalized = normalize(payload, objectSchema)
-    state.objectsList.push(normalized.result)
-    Object.assign(state.objects, normalized.entities.objects)
+  // store specific room, equipments, states and actions normalized
+  saveRoom (state, payload) {
+    const normalized = normalize(payload, roomSchema)
+    state.roomsList.push(normalized.result)
+    Object.assign(state.rooms, normalized.entities.rooms)
     Object.assign(state.equipments, normalized.entities.equipments)
     Object.assign(state.states, normalized.entities.states)
     Object.assign(state.actions, normalized.entities.actions)
   },
 
-  // store specific object summary
-  saveObjectSummary (state, payload) {
+  // store specific room summary
+  saveRoomSummary (state, payload) {
     if (payload.id === 'global') {
       payload.id = 0
     }
@@ -183,15 +183,15 @@ const mutations = {
       key: payload.key,
       value: payload.value,
     }
-    let normalized = state.objectsSummary[payload.id]
+    let normalized = state.roomsSummary[payload.id]
     if (!normalized) {
-      // there was no summary for this object
+      // there was no summary for this room
       normalized = {
         id: payload.id,
         keys: [info],
       }
     } else {
-      // search the key in object summary
+      // search the key in room summary
       const index = normalized.keys.findIndex((info) => info.key === payload.key)
       if (index !== -1) {
         // key found, update it
@@ -204,7 +204,7 @@ const mutations = {
     // normalized[payload.key] = payload.summary
     const arr = []
     arr[payload.id] = normalized
-    state.objectsSummary = Object.assign({}, state.objectsSummary, arr)
+    state.roomsSummary = Object.assign({}, state.roomsSummary, arr)
   },
 
   // store state statistics
@@ -291,43 +291,43 @@ const mutations = {
 
 const actions = {
 
-  // call API and store objects list
-  async loadObjects ({ commit }) {
+  // call API and store rooms list
+  async loadRooms ({ commit }) {
     try {
       // get global summary
       vue.$Provider.getSummary().then((summary) => {
         for (const key in summary) {
           if (summary[key] !== null) {
-            commit('saveObjectSummary', { id: 'global', key, value: summary[key] })
+            commit('saveRoomSummary', { id: 'global', key, value: summary[key] })
           }
         }
       }, (error) => {
         commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération du résumé global<br>${error.message}` }, { root: true })
       })
-      // get all objects
-      const objects = await vue.$Provider.getObjects()
-      if (objects === undefined) {
-        // no objects to save
+      // get all rooms
+      const rooms = await vue.$Provider.getRooms()
+      if (rooms === undefined) {
+        // no rooms to save
         return
       }
-      commit('saveObjects', objects)
+      commit('saveRooms', rooms)
       // get tags
       let tagsList = []
-      objects.forEach((object) => {
-        object.equipments.forEach((equipment) => {
+      rooms.forEach((room) => {
+        room.equipments.forEach((equipment) => {
           tagsList = tagsList.concat(equipment.tags)
         })
       })
       commit('saveTags', [...new Set(tagsList)])
-      // get objects summary
-      objects.forEach(async (object) => {
-        for (const key in object.summary) {
-          const value = await vue.$Provider.getObjectSummary(object.id, key)
-          commit('saveObjectSummary', { id: object.id, key, value })
+      // get rooms summary
+      rooms.forEach(async (room) => {
+        for (const key in room.summary) {
+          const value = await vue.$Provider.getRoomSummary(room.id, key)
+          commit('saveRoomSummary', { id: room.id, key, value })
         }
       })
     } catch (error) {
-      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des objets<br>${error.message}` }, { root: true })
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des pièces<br>${error.message}` }, { root: true })
     }
   },
 

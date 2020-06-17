@@ -7,8 +7,8 @@
 Vue-dom is a web front end for home automation software (currently only support [Jeedom](https://www.jeedom.com)).
 
 ## Key features
--    display objects with summary,
--    display object with logical equipments,
+-    display rooms with summary,
+-    display room with logical equipments,
 -    display logical equipments by tags,
 -    display info statistics (min, average and max) and history chart,
 -    display and start scenarios,

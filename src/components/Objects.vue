@@ -1,18 +1,18 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items="[{link: {name: 'objects'}, icon: 'fa-home', text: 'Objets', isActive: true}]" :summary="summary" />
+      <breadcrumb :items="[{link: {name: 'rooms'}, icon: 'fa-home', text: 'Pièces', isActive: true}]" :summary="summary" />
     </div>
     <div class="hero-body has-padding-horizontal-7">
       <div class="container">
         <div class="field">
           <p class="control has-icons-left">
-            <input v-model="search" class="input" type="text" placeholder="Rechercher un objet">
+            <input v-model="search" class="input" type="text" placeholder="Rechercher une pièce">
             <span class="icon is-small is-left"><i class="fas fa-search" /></span>
           </p>
         </div>
         <div class="columns is-multiline">
-          <object-tile v-for="object in ordered" :id="object.id" :key="object.id" />
+          <room-tile v-for="room in ordered" :id="room.id" :key="room.id" />
         </div>
       </div>
     </div>
@@ -20,26 +20,26 @@
 </template>
 
 <script>
-import { ObjectsMixin } from '@/mixins/Objects'
+import { RoomsMixin } from '@/mixins/Rooms'
 import { SummaryMixin } from '@/mixins/Summary'
 import Breadcrumb from '@/components/Breadcrumb'
-import ObjectTile from '@/components/ObjectTile'
+import RoomTile from '@/components/RoomTile'
 
 export default {
-  name: 'Objects',
+  name: 'Rooms',
   components: {
     Breadcrumb,
-    ObjectTile,
+    RoomTile,
   },
-  mixins: [ObjectsMixin, SummaryMixin],
+  mixins: [RoomsMixin, SummaryMixin],
   data () {
     return {
       search: '',
     }
   },
   computed: {
-    ordered () { return this.objectsOrdered.filter((object) => object.equipments.length > 0 && object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
-    summary () { return this.getObjectSummaryById(0) },
+    ordered () { return this.roomsOrdered.filter((room) => room.equipments.length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    summary () { return this.getRoomSummaryById(0) },
   },
 }
 </script>

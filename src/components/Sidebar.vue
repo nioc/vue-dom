@@ -9,11 +9,11 @@
         <b-menu-list label="Navigation">
           <b-menu-item icon="home fa-fw fa-mr">
             <template slot="label" slot-scope="props">
-              Objets
+              Pièces
               <i class="is-pulled-right fa" :class="props.expanded ? 'fa-caret-down' : 'fa-caret-up'" />
             </template>
-            <b-menu-item :to="{name: 'objects'}" label="Tous" tag="router-link" />
-            <b-menu-item v-for="object in objectsOrdered" :key="object.id" :to="{name: 'object', params: {id: object.id}}" :label="object.name" tag="router-link" />
+            <b-menu-item :to="{name: 'rooms'}" label="Tous" tag="router-link" />
+            <b-menu-item v-for="room in roomsOrdered" :key="room.id" :to="{name: 'room', params: {id: room.id}}" :label="room.name" tag="router-link" />
           </b-menu-item>
 
           <b-menu-item v-if="tagsList.length" icon="tags fa-fw fa-mr">
@@ -71,7 +71,7 @@
 <script>
 import { bugs } from '../../package.json'
 import Auth from '@/services/Auth'
-import { ObjectsMixin } from '@/mixins/Objects'
+import { RoomsMixin } from '@/mixins/Rooms'
 import NotificationsCounter from '@/components/NotificationsCounter'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState, mapMutations } = createNamespacedHelpers('app')
@@ -82,7 +82,7 @@ export default {
   components: {
     NotificationsCounter,
   },
-  mixins: [ObjectsMixin],
+  mixins: [RoomsMixin],
   data () {
     return {
       title: custom.title,
@@ -96,12 +96,12 @@ export default {
         this.setSidebarStatus(value)
       },
     },
-    ordered () { return this.objectsOrdered.filter((object) => object.equipment.length > 0 && object.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    ordered () { return this.roomsOrdered.filter((room) => room.equipment.length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     ...mapState(['hasSidebarOpened']),
   },
   methods: {
     refreshData () {
-      this.loadObjects()
+      this.loadRooms()
       this.open = false
     },
     logout () {

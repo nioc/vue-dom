@@ -4,8 +4,8 @@ import store from '@/store'
 
 // components
 import Login from '@/components/Login'
-import Objects from '@/components/Objects'
-import ObjectDetail from '@/components/ObjectDetail'
+import Rooms from '@/components/Rooms'
+import RoomDetail from '@/components/RoomDetail'
 import Tag from '@/components/Tag'
 
 Vue.use(Router)
@@ -17,26 +17,26 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Objects,
+    component: Rooms,
     meta: {
       title: 'Home',
     },
   },
   {
-    path: '/objects',
-    name: 'objects',
-    component: Objects,
+    path: '/rooms',
+    name: 'rooms',
+    component: Rooms,
     meta: {
-      title: 'Objets',
+      title: 'Pièces',
     },
   },
   {
-    path: '/objects/:id',
-    name: 'object',
-    component: ObjectDetail,
+    path: '/rooms/:id',
+    name: 'room',
+    component: RoomDetail,
     props: true,
     meta: {
-      title: 'Objet',
+      title: 'Pièce',
     },
   },
   {

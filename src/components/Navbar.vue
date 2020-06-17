@@ -6,7 +6,7 @@
     </div>
     <div id="navbar-menu" class="navbar-menu">
       <div class="navbar-start">
-        <router-link class="navbar-item" :to="{name: 'objects'}" title="Objets"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Objets</span></router-link>
+        <router-link class="navbar-item" :to="{name: 'rooms'}" title="Pièces"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Pièces</span></router-link>
         <router-link class="navbar-item" :to="{name: 'scenarios'}" title="Scénarios"><i class="fa fa-book fa-fw fa-mr" /><span class="is-navbar-label">Scénarios</span></router-link>
         <div v-if="tagsList.length" class="navbar-item has-dropdown" :class="{'is-active': hasDropdownTagsDisplayed}" @click="hasDropdownTagsDisplayed = !hasDropdownTagsDisplayed">
           <router-link class="navbar-link is-arrowless" :to="{name: 'tags'}" event=""><i class="fa fa-tags fa-fw fa-mr" /><span class="is-navbar-label">Catégories</span></router-link>
@@ -28,7 +28,7 @@
 import Sync from '@/components/Sync'
 import Query from '@/components/Query'
 import NotificationsCounter from '@/components/NotificationsCounter'
-import { ObjectsMixin } from '@/mixins/Objects'
+import { RoomsMixin } from '@/mixins/Rooms'
 import { createNamespacedHelpers } from 'vuex'
 const { mapMutations } = createNamespacedHelpers('app')
 const custom = window.custom
@@ -40,7 +40,7 @@ export default {
     Query,
     NotificationsCounter,
   },
-  mixins: [ObjectsMixin],
+  mixins: [RoomsMixin],
   data () {
     return {
       title: custom.title,

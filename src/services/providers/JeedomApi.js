@@ -71,7 +71,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
         }
         case 'jeeObject::summary::update':
           for (const key in event.option.keys) {
-            store.commit('data/saveObjectSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
+            store.commit('data/saveRoomSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
           }
           break
         case 'scenario::update':
@@ -260,13 +260,13 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       }
     },
 
-    // request all objects and returns only visible ones
-    async getObjects () {
+    // request all rooms and returns only visible ones
+    async getRooms () {
       try {
         const jObjects = await jsonRpcCall('object::full')
         return jObjects.map((jObject) => {
-          // construct object
-          const object = {
+          // construct room
+          const room = {
             id: jObject.id,
             name: jObject.name,
             parentId: jObject.father_id,
@@ -274,7 +274,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
             summary: {},
             equipments: [],
           }
-          // set object summary keys
+          // set room summary keys
           for (const key in jObject.configuration.summary) {
             let keyHasSummary = false
             const elements = jObject.configuration.summary[key]
@@ -284,11 +284,11 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               }
             })
             if (keyHasSummary) {
-              object.summary[key] = true
+              room.summary[key] = true
             }
           }
-          // set object equipments
-          object.equipments = jObject.eqLogics.filter((jEqLogic) => jEqLogic.isVisible === '1').map((jEqLogic) => {
+          // set room equipments
+          room.equipments = jObject.eqLogics.filter((jEqLogic) => jEqLogic.isVisible === '1').map((jEqLogic) => {
           // construct equipment
             const equipment = {
               id: jEqLogic.id,
@@ -368,7 +368,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
             })
             return equipment
           })
-          return object
+          return room
         })
       } catch (error) {
         console.error(error)
@@ -384,10 +384,10 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       }
     },
 
-    // request key object summary
-    async getObjectSummary (objectId, key) {
+    // request key room summary
+    async getRoomSummary (roomId, key) {
       try {
-        return await jsonRpcCall('summary::byId', { id: objectId, key })
+        return await jsonRpcCall('summary::byId', { id: roomId, key })
       } catch (error) {
         console.error(error)
       }

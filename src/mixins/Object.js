@@ -1,8 +1,8 @@
 import { createNamespacedHelpers } from 'vuex'
 const { mapGetters } = createNamespacedHelpers('data')
 
-export const ObjectMixin = {
+export const RoomMixin = {
   computed: {
-    ...mapGetters(['getObjectById']),
+    ...mapGetters(['getRoomById']),
   },
 }

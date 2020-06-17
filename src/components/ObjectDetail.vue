@@ -6,7 +6,7 @@
     <div class="hero-body">
       <div class="container">
         <ul>
-          <li v-for="equipmentId in object.equipments" :key="equipmentId">
+          <li v-for="equipmentId in room.equipments" :key="equipmentId">
             <equipment :id="equipmentId" />
           </li>
         </ul>
@@ -19,15 +19,15 @@
 import Equipment from '@/components/Equipment'
 import Breadcrumb from '@/components/Breadcrumb'
 import { SummaryMixin } from '@/mixins/Summary'
-import { ObjectMixin } from '@/mixins/Object'
+import { RoomMixin } from '@/mixins/Room'
 
 export default {
-  name: 'ObjectDetail',
+  name: 'RoomDetail',
   components: {
     Breadcrumb,
     Equipment,
   },
-  mixins: [SummaryMixin, ObjectMixin],
+  mixins: [SummaryMixin, RoomMixin],
   props: {
     id: {
       type: String,
@@ -40,14 +40,14 @@ export default {
     }
   },
   computed: {
-    object () { return this.getObjectById(this.id) },
-    title () { return this.object.name },
-    summary () { return this.getObjectSummaryById(this.id) },
+    room () { return this.getRoomById(this.id) },
+    title () { return this.room.name },
+    summary () { return this.getRoomSummaryById(this.id) },
   },
   watch: {
     title: {
       handler (title) {
-        document.title = document.title.replace('Objet |', title + ' |')
+        document.title = document.title.replace('Pièce |', title + ' |')
         this.breadcrumbItems[1].text = title
       },
       deep: true,
@@ -55,8 +55,8 @@ export default {
   },
   created () {
     this.breadcrumbItems = [
-      { link: { name: 'objects' }, icon: 'fa-home', text: 'Objets' },
-      { link: { name: 'objects', params: { id: this.object.id } }, icon: 'fa-cube', text: this.object.name, isActive: true },
+      { link: { name: 'rooms' }, icon: 'fa-home', text: 'Pièces' },
+      { link: { name: 'rooms', params: { id: this.room.id } }, icon: 'fa-cube', text: this.room.name, isActive: true },
     ]
   },
 }

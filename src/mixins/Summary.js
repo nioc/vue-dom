@@ -3,7 +3,7 @@ const { mapGetters } = createNamespacedHelpers('data')
 
 export const SummaryMixin = {
   computed: {
-    ...mapGetters(['getObjectSummaryById']),
+    ...mapGetters(['getRoomSummaryById']),
   },
   methods: {
     getSummaryIconClass (key) {
