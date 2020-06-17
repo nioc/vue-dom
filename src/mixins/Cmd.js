@@ -71,6 +71,24 @@ export const CmdMixin = {
           return 'fas fa-video'
         case 'ENERGY_STATE':
           return 'fas fa-power-off'
+        case 'IP_ADDRESS':
+          return 'fas fa-at'
+        case 'STATUS':
+          return 'fas fa-toggle-on'
+        case 'DOWNLOAD':
+          return 'fas fa-arrow-down'
+        case 'UPLOAD':
+          return 'fas fa-arrow-up'
+        case 'SIGNAL_QUALITY':
+          return 'fas fa-signal'
+        case 'RATE':
+          return 'fas fa-tachometer-alt'
+        case 'WIFI':
+          return 'fas fa-wifi'
+        case 'MAP':
+          return 'fas fa-sitemap'
+        case 'CONNECTION_TYPE':
+          return 'fas fa-project-diagram'
       }
       if (cmd.icon) {
         return cmd.icon

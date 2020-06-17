@@ -16,6 +16,10 @@ export const SummaryMixin = {
           return 'fa fa-lightbulb'
         case 'power':
           return 'fa fa-bolt'
+        case 'download':
+          return 'fas fa-arrow-down'
+        case 'upload':
+          return 'fas fa-arrow-up'
       }
       return ''
     },
@@ -29,6 +33,9 @@ export const SummaryMixin = {
           return ''
         case 'power':
           return ' W'
+        case 'upload':
+        case 'download':
+          return ' Ko/s'
       }
       return ''
     },
