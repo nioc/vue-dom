@@ -1,10 +1,11 @@
 {
   "name": "vue-dom",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Vue-dom is a VueJS front end for home automation software (Jeedom, ...)",
   "keywords": [
-    "Jeedom",
-    "VueJS"
+    "Home Automation",
+    "VueJS",
+    "Jeedom"
   ],
   "author": {
     "name": "nioc",
