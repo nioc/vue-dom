@@ -61,6 +61,11 @@
               Logout
             </template>
           </b-menu-item>
+          <b-menu-item :icon="isDarkMode ? 'toggle-on fa-fw fa-mr':'toggle-off fa-fw fa-mr'" tag="a" @click="setDarkMode">
+            <template slot="label">
+              Mode sombre
+            </template>
+          </b-menu-item>
         </b-menu-list>
 
       </b-menu>
@@ -87,6 +92,7 @@ export default {
     return {
       title: custom.title,
       bugUrl: bugs.url,
+      isDarkMode: false,
     }
   },
   computed: {
@@ -99,9 +105,25 @@ export default {
     ordered () { return this.roomsOrdered.filter((room) => room.equipment.length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     ...mapState(['hasSidebarOpened']),
   },
+  created () {
+    if (localStorage.getItem('darkMode')) {
+      this.isDarkMode = true
+    }
+  },
   methods: {
     refreshData () {
       this.loadRooms()
+      this.open = false
+    },
+    setDarkMode () {
+      this.isDarkMode = !this.isDarkMode
+      if (this.isDarkMode) {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        localStorage.setItem('darkMode', '1')
+      } else {
+        document.documentElement.removeAttribute('data-theme')
+        localStorage.removeItem('darkMode')
+      }
       this.open = false
     },
     logout () {

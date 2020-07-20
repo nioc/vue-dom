@@ -52,6 +52,12 @@ export default {
     },
   },
   created () {
+    // set user theme
+    if (localStorage.getItem('darkMode')) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+    }
     // handle update from service worker
     document.addEventListener(
       'updated', this.askForRefresh, { once: true },

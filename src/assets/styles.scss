@@ -25,6 +25,137 @@ $slider-thumb-border: 1px solid $primary;
 
 @import "~buefy/src/scss/buefy";
 
+[data-theme="dark"] {
+  $primary: #cce49b;
+  $dt-black: #191919;
+  $dt-black-bis: #232323;
+  $dt-black-ter: #292929;
+  background-color: $dt-black;
+  .has-background-white-bis {
+    background-color: $dt-black-ter !important;
+  }
+  .is-light {
+    background-color: $dt-black !important;
+  }
+  .message.is-light {
+    background-color: darken($dt-black-bis, 1%) !important;
+  }
+  .message.is-light .message-header {
+    background-color: darken($dt-black-bis, 2%) !important;
+    color: $grey-light !important;
+  }
+  .menu-list li ul {
+    border-left-color: $grey-darker;
+  }
+  .menu-list a:hover:not(.is-active) {
+    background-color: $dt-black !important;
+  }
+  .has-text-grey {
+    color: $grey-light !important;
+  }
+  .card-header-title,
+  .breadcrumb li.is-active a {
+    color: $grey-light !important;
+  }
+  .box,
+  .card {
+    color: $grey-light;
+    background-color: $dt-black-bis;
+  }
+  .title {
+    color: $grey-lighter;
+  }
+  :not(.notification) > .subtitle,
+  .menu-label,
+  .menu-list a:not(.is-active) {
+    color: $grey-light;
+  }
+  .notification.is-primary {
+    background-color: #96c927bd;
+  }
+  .input {
+    background-color: $dt-black-ter;
+    border-color: $dt-black-bis;
+    color: $grey-lightest;
+  }
+  input::placeholder {
+    color: $grey;
+  }
+  .control.has-icons-left .icon,
+  .control.has-icons-right .icon {
+    color: $grey;
+  }
+  .control.has-icons-left .input:focus ~ .icon,
+  .control.has-icons-right .input:focus ~ .icon {
+    color: $grey-light;
+  }
+  .navbar-dropdown {
+    background-color: $dt-black-ter;
+    border-top-color: $dt-black-bis;
+    .navbar-item {
+      color: $grey-light;
+    }
+    a.navbar-item:focus, a.navbar-item:hover {
+      background-color: $dt-black-bis;
+      color: $grey-lighter;
+    }
+  }
+  .table {
+    background-color: $dt-black;
+    color: $grey-lighter;
+    thead td, .thead th {
+      color: $grey-lighter;
+    }
+    td, th {
+      border-color: $dt-black-ter;
+    }
+  }
+  .table.is-striped tbody tr:not(.is-selected):nth-child(2n) {
+    background-color: $dt-black-bis;
+  }
+  .datepicker {
+    .dropdown-content {
+      background-color: $dt-black-ter;
+    }
+    .datepicker-table .datepicker-body {
+      .datepicker-cell.is-selectable {
+        color: $grey-lighter;
+      }
+      .datepicker-cell.is-unselectable {
+        color: $grey;
+      }
+    }
+    .datepicker-header {
+      border-bottom-color: $dt-black;
+    }
+    .datepicker-footer {
+      border-top-color: $dt-black;
+    }
+  }
+  select {
+    background-color: $dt-black-ter;
+    border-color: $dt-black-bis;
+    color: $grey-lighter;
+  }
+  .pagination-previous, .pagination-next, .pagination-link {
+    border-color: $dt-black-bis;
+  }
+  .dropdown-content {
+    background-color: $dt-black-ter;
+    .dropdown-item {
+      color: $grey-light;
+    }
+    a.dropdown-item:focus, a.dropdown-item:hover {
+      background-color: $dt-black-bis;
+      color: $grey-lighter;
+    }
+  }
+  .notification {
+    background-color: $dt-black-ter;
+    color: $grey-lighter;
+  }
+}
+
 a {
   text-decoration: none !important;
 }
