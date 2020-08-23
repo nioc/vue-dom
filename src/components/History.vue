@@ -59,7 +59,7 @@ export default {
             data: history.map((point) => point.value),
           },
         ],
-        labels: history.map((point) => this.$moment(point.datetime)),
+        labels: history.map((point) => point.date),
       }
       this.loaded = true
     },

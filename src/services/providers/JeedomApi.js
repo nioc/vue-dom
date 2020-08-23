@@ -467,7 +467,13 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       params.startTime = Vue.moment(startTime).format('YYYY-MM-DD HH:mm:ss')
       params.endTime = Vue.moment(endTime).format('YYYY-MM-DD HH:mm:ss')
       try {
-        return await jsonRpcCall('cmd::getHistory', params)
+        const history = await jsonRpcCall('cmd::getHistory', params)
+        return history.map((point) => {
+          return {
+            value: point.value,
+            date: Vue.moment(point.datetime),
+          }
+        })
       } catch (error) {
         console.error(error)
         throw error
