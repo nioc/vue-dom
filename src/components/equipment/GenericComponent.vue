@@ -36,7 +36,7 @@ export default {
       const statesList = []
       const actions = this.getActionsByIds(this.equipment.actions).filter((action) => action.isVisible)
       this.getStatesByIds(this.equipment.states).filter((state) => state.isVisible).forEach(state => {
-        if (state.type === 'binary') {
+        if (state.type === 'boolean') {
           // search for light switch on/off
           const actionOn = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_ON')
           const actionOff = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_OFF')
