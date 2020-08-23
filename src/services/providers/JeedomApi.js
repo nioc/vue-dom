@@ -134,7 +134,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
   return {
 
     // request user API key from his credentials
-    async getApiKey (login, password) {
+    async authenticate (login, password) {
       try {
         return await jsonRpcCall('user::getHash', { login, password })
       } catch (error) {
@@ -143,8 +143,8 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       }
     },
 
-    // initialize API key
-    setApiKey (_apiKey) {
+    // initialize authentication (API key)
+    setAuthentication (_apiKey) {
       apiKey = _apiKey
     },
 

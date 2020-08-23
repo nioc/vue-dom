@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import store from '@/store'
 
-// set API key and notify application user is authenticated
-function authenticate (login, apiKey) {
-  new Vue().$Provider.setApiKey(apiKey)
+// set authentication (API key, token, ...) and notify application user is authenticated
+function setAuthentication (login, authentication) {
+  new Vue().$Provider.setAuthentication(authentication)
   store.commit('app/setUser', { isAuthenticated: true, login })
 }
 
@@ -14,13 +14,13 @@ export default {
     if (!login || !password) {
       return false
     }
-    const apiKey = await new Vue().$Provider.getApiKey(login, password)
-    if (!apiKey) {
+    const authentication = await new Vue().$Provider.authenticate(login, password)
+    if (!authentication) {
       return false
     }
-    authenticate(login, apiKey)
+    setAuthentication(login, authentication)
     if (remember) {
-      localStorage.setItem('user', JSON.stringify({ login, apiKey }))
+      localStorage.setItem('user', JSON.stringify({ login, authentication }))
     }
     return true
   },
@@ -37,7 +37,7 @@ export default {
     try {
       const user = JSON.parse(localStorage.getItem('user'))
       if (user) {
-        authenticate(user.login, user.apiKey)
+        setAuthentication(user.login, user.authentication)
       }
     } catch (e) {
       console.error('Error during restore user', e)
