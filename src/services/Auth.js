@@ -3,8 +3,17 @@ import store from '@/store'
 
 // set authentication (API key, token, ...) and notify application user is authenticated
 function setAuthentication (login, authentication) {
+  const roles = []
+  if (authentication.access_token) {
+    try {
+      const payload = JSON.parse(atob(authentication.access_token.split('.')[1]))
+      roles.push(...payload.scope.split(' '))
+    } catch (error) {
+      console.warn('JWT parsing failed', error)
+    }
+  }
   new Vue().$Provider.setAuthentication(authentication)
-  store.commit('app/setUser', { isAuthenticated: true, login })
+  store.commit('app/setUser', { isAuthenticated: true, login, roles })
 }
 
 export default {

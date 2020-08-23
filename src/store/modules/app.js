@@ -2,6 +2,7 @@ const getDefaultState = () => {
   return {
     login: null,
     isAuthenticated: false,
+    roles: [],
     information: {},
   }
 }
@@ -22,6 +23,7 @@ const mutations = {
   setUser (state, payload) {
     state.login = payload.login
     state.isAuthenticated = payload.isAuthenticated
+    state.roles = payload.roles
   },
 
   // store websocket status
