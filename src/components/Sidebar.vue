@@ -1,5 +1,5 @@
 <template>
-  <b-sidebar type="is-light" :fullheight="true" :open.sync="open" :overlay="true">
+  <b-sidebar v-model="open" type="is-light" :fullheight="true" :overlay="true">
     <aside class="has-padding-6">
       <div class="has-margin-bottom-5 is-flex-center">
         <img src="./../assets/home.png">
