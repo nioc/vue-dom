@@ -319,7 +319,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
                 name: jCmd.name,
                 eqId: jCmd.eqLogic_id,
                 module: jCmd.eqType,
-                type: jCmd.subType,
+                type: jCmd.subType.replace('other', 'button'),
                 genericType: jCmd.generic_type,
                 isVisible: jCmd.isVisible === '1',
                 order: jCmd.order,

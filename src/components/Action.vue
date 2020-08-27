@@ -1,5 +1,5 @@
 <template>
-  <button v-if="action.type === 'other'" class="button is-rounded is-primary is-light" :title="action.name" @click="execute">
+  <button v-if="action.type === 'button'" class="button is-rounded is-primary is-light" :title="action.name" @click="execute">
     <span class="icon is-icon-mobile"><i :class="iconClass" /></span><span class="is-hidden-mobile">{{ action.name }}</span>
   </button>
   <b-slider v-else-if="action.type === 'slider'" v-model="value" lazy class="has-margin-left-4 has-margin-top-8" :title="action.name" @change="actionSlider" />

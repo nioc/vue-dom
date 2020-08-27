@@ -40,9 +40,14 @@ export default {
           // search for light switch on/off
           const actionOn = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_ON')
           const actionOff = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_OFF')
+          const actionSwitch = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_SWITCH')
           if (actionOn && actionOff) {
             // do not display button for on/off actions
             actionsHiddenList.push(actionOn.id, actionOff.id)
+          }
+          if (actionSwitch) {
+            // do not display button for on/off actions
+            actionsHiddenList.push(actionSwitch.id)
           }
           statesList.push(state.id)
         } else if (state.type === 'numeric') {
