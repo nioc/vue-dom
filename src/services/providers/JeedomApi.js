@@ -148,6 +148,11 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       apiKey = _apiKey
     },
 
+    // return user roles
+    getRoles () {
+      return []
+    },
+
     // suscribe to Jeedom events throught websocket
     openEventsListener (resetCounter, forceRefresh = false) {
       if (!store.state.app.hasNetwork) {
