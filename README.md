@@ -39,7 +39,7 @@ For basic use, you just have to:
       ```
 -   set your back end (Jeedom) url in `/var/www/vue-dom/local.js`.
 
-If you are using Docker, you can download the [Dockerfile](../docker/Dockerfile) and build image with your own url:
+If you are using Docker, you can download the [Dockerfile](/docker/Dockerfile) and build image with your own url:
 ```
 docker build \
 -f Dockerfile \
