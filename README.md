@@ -39,6 +39,20 @@ For basic use, you just have to:
       ```
 -   set your back end (Jeedom) url in `/var/www/vue-dom/local.js`.
 
+If you are using Docker, you can download the [Dockerfile](../docker/Dockerfile) and build image with your own url:
+```
+docker build \
+-f Dockerfile \
+-t nioc/vue-dom:nginx-alpine-latest \
+--build-arg JSON_RPC_API_URL=https://192.168.1.50/core/api/jeeApi.php \
+--build-arg WEBSOCKET_URL=wss://192.168.1.50/socket/ .
+```
+
+And then run application in container:
+```
+docker run -d -p 80:80 --rm --name vue-dom-1 nioc/vue-dom:nginx-alpine-latest
+```
+
 For more advanced use (adding your own component, style, ...), you have to follow the [contributing guide](CONTRIBUTING.md) and edit Vue code.
 
 ## Versioning
