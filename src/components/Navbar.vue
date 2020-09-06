@@ -14,6 +14,7 @@
             <router-link v-for="tag in tagsList" :key="tag" :to="{name: 'tag', params: {tag}}" class="navbar-item">{{ tag }}</router-link>
           </div>
         </div>
+        <router-link v-if="hasRole('admin')" class="navbar-item" :to="{name: 'admin'}" title="Admin"><i class="fa fa-tools fa-fw fa-mr" /><span class="is-navbar-label">Admin</span></router-link>
       </div>
       <div class="navbar-end is-flex-center">
         <notifications-counter class-name="navbar-item" :is-link="true" />
@@ -30,7 +31,7 @@ import Query from '@/components/Query'
 import NotificationsCounter from '@/components/NotificationsCounter'
 import { RoomsMixin } from '@/mixins/Rooms'
 import { createNamespacedHelpers } from 'vuex'
-const { mapMutations } = createNamespacedHelpers('app')
+const { mapState, mapMutations } = createNamespacedHelpers('app')
 const custom = window.custom
 
 export default {
@@ -47,6 +48,9 @@ export default {
       hasDropdownTagsDisplayed: false,
     }
   },
+  computed: {
+    ...mapState(['roles']),
+  },
   mounted () {
     document.body.classList.add('has-navbar-fixed-top')
   },
@@ -54,6 +58,9 @@ export default {
     openSidebar (e) {
       e.preventDefault()
       this.setSidebarStatus(true)
+    },
+    hasRole (role) {
+      return this.roles.includes(role)
     },
     ...mapMutations(['setSidebarStatus']),
   },

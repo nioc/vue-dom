@@ -48,6 +48,13 @@
             </template>
           </b-menu-item>
 
+          <b-menu-item v-if="hasRole('admin')" icon="tools fa-fw fa-mr">
+            <template slot="label" slot-scope="props">
+              Admin
+              <i class="is-pulled-right fa" :class="props.expanded ? 'fa-caret-down' : 'fa-caret-up'" />
+            </template>
+          </b-menu-item>
+
         </b-menu-list>
 
         <b-menu-list label="Actions">
@@ -103,7 +110,7 @@ export default {
       },
     },
     ordered () { return this.roomsOrdered.filter((room) => room.equipment.length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
-    ...mapState(['hasSidebarOpened']),
+    ...mapState(['hasSidebarOpened', 'roles']),
   },
   created () {
     if (localStorage.getItem('darkMode')) {
@@ -111,6 +118,9 @@ export default {
     }
   },
   methods: {
+    hasRole (role) {
+      return this.roles.includes(role)
+    },
     refreshData () {
       this.loadRooms()
       this.open = false
