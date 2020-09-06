@@ -148,6 +148,11 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       apiKey = _apiKey
     },
 
+    // return all roles
+    getAllRoles () {
+      return []
+    },
+
     // return user roles
     getRoles () {
       return []

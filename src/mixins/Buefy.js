@@ -1,9 +1,11 @@
 import moment from 'moment'
-import config from 'buefy/src/utils/config'
-import { Switch, Slider, Checkbox, Toast, Dialog, Datetimepicker, Input, Sidebar, Menu, Autocomplete } from 'buefy/src/components'
+import config, { setVueInstance } from 'buefy/src/utils/config'
+
+import { Switch, Slider, Checkbox, Toast, Dialog, Datetimepicker, Input, Sidebar, Menu, Autocomplete, Loading } from 'buefy/src/components'
 
 const Buefy = {
   install (Vue, options = {}) {
+    setVueInstance(Vue)
     // options
     config.defaultIconPack = 'fas'
     config.defaultDayNames = moment.weekdaysMin()
@@ -20,6 +22,7 @@ const Buefy = {
     Vue.use(Sidebar)
     Vue.use(Menu)
     Vue.use(Autocomplete)
+    Vue.use(Loading)
   },
 }
 

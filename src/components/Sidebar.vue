@@ -53,6 +53,7 @@
               Admin
               <i class="is-pulled-right fa" :class="props.expanded ? 'fa-caret-down' : 'fa-caret-up'" />
             </template>
+            <b-menu-item :to="{name: 'admin-users'}" label="Utilisateurs" tag="router-link" />
           </b-menu-item>
 
         </b-menu-list>
