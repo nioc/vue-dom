@@ -7,6 +7,7 @@
       <div class="container box">
         <h2 class="title">Administration</h2>
         <ul class="is-size-5">
+          <li><router-link :to="{name: 'admin-users'}"><i class="fa fa-users fa-fw fa-mr" />Utilisateurs</router-link></li>
         </ul>
       </div>
     </div>

@@ -298,6 +298,10 @@ $i: 1;
   top: 14px;
 }
 
+table.is-vertical-centered td, table.is-vertical-centered th {
+  vertical-align: middle;
+}
+
 @keyframes placeHolderShimmer {
   0% {
     background-position: 200%;
@@ -318,6 +322,11 @@ $i: 1;
   background-size: 300% 100%;
 }
 .loading-info::after {
-    content: ".";
-    visibility: hidden;
+  content: ".";
+  visibility: hidden;
+}
+
+.is-required .label::after {
+  content: " *";
+  color: $danger;
 }

@@ -97,6 +97,23 @@ const routes = [
       title: 'Admin',
     },
   },
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Users'),
+    meta: {
+      title: 'Admin utilisateurs',
+    },
+  },
+  {
+    path: '/admin/users/:id',
+    name: 'admin-user',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/User'),
+    meta: {
+      title: 'Admin utilisateur',
+    },
+  },
 ]
 
 // create router
