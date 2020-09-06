@@ -89,6 +89,14 @@ const routes = [
       title: 'Notifications',
     },
   },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Admin'),
+    meta: {
+      title: 'Admin',
+    },
+  },
 ]
 
 // create router
