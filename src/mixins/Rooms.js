@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex'
 const { mapState, mapActions } = createNamespacedHelpers('data')
 
 function findChild (rooms, roomsOrdered, parent) {
-  if (parent.id) {
+  if (parent.id !== null) {
     roomsOrdered.push(parent)
   }
   const childs = []
