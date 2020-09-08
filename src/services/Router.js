@@ -131,6 +131,24 @@ const routes = [
       title: 'Admin pièce',
     },
   },
+  {
+    path: '/admin/equipments',
+    name: 'admin-equipments',
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Equipments'),
+    props: (route) => ({ search: route.query.search }),
+    meta: {
+      title: 'Admin équipements',
+    },
+  },
+  {
+    path: '/admin/equipments/:id',
+    name: 'admin-equipment',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Equipment'),
+    meta: {
+      title: 'Admin équipement',
+    },
+  },
 ]
 
 // create router

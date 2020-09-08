@@ -1,7 +1,7 @@
 import moment from 'moment'
 import config, { setVueInstance } from 'buefy/src/utils/config'
 
-import { Switch, Slider, Checkbox, Toast, Dialog, Datetimepicker, Input, Sidebar, Menu, Autocomplete, Loading } from 'buefy/src/components'
+import { Switch, Slider, Checkbox, Toast, Dialog, Table, Datetimepicker, Input, Sidebar, Menu, Autocomplete, Loading } from 'buefy/src/components'
 
 const Buefy = {
   install (Vue, options = {}) {
@@ -17,6 +17,7 @@ const Buefy = {
     Vue.use(Checkbox)
     Vue.use(Toast)
     Vue.use(Dialog)
+    Vue.use(Table)
     Vue.use(Datetimepicker)
     Vue.use(Input)
     Vue.use(Sidebar)
