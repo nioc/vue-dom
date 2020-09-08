@@ -25,10 +25,7 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
-                <label class="checkbox">
-                  <input v-model="room.isVisible" type="checkbox">
-                  Visible
-                </label>
+                <b-switch v-model="room.isVisible">{{ room.isVisible ? 'Visible' : 'Masquée' }}</b-switch>
               </div>
             </div>
             <div class="field">
