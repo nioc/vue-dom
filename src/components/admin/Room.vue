@@ -40,13 +40,13 @@
               </div>
             </div>
             <div class="buttons">
-              <button class="button is-primary" title="Sauvegarder" @click="updateRoom()">
+              <button class="button is-primary" title="Sauvegarder" @click="saveRoom()">
                 <span class="icon"><i class="fa fa-save" /></span><span>Sauvegarder</span>
               </button>
-              <button class="button is-light" title="Dupliquer" @click="copyRoom()">
+              <button v-if="!isNew" class="button is-light" title="Dupliquer" @click="copyRoom()">
                 <span class="icon"><i class="fa fa-copy" /></span><span>Dupliquer</span>
               </button>
-              <button class="button is-danger" title="Supprimer" @click="removeRoom()">
+              <button v-if="!isNew" class="button is-danger" title="Supprimer" @click="removeRoom()">
                 <span class="icon"><i class="fa fa-trash" /></span><span>Supprimer</span>
               </button>
             </div>
@@ -110,15 +110,21 @@ export default {
   },
   data () {
     return {
-      room: {},
+      room: {
+        isVisible: false,
+        parentId: null,
+      },
       rooms: [],
       isLoading: false,
     }
   },
   computed: {
+    isNew () { return this.id === 'new' },
   },
   mounted () {
-    this.getRoom()
+    if (!this.isNew) {
+      this.getRoom()
+    }
     this.getParents()
   },
   methods: {
@@ -130,10 +136,15 @@ export default {
       this.room = await this.$Provider.getRoom(this.id)
       this.isLoading = false
     },
-    async updateRoom () {
+    async saveRoom () {
       this.isLoading = true
       try {
-        await this.$Provider.updateRoom(this.room)
+        if (this.isNew) {
+          this.room = await this.$Provider.createRoom(this.room)
+          this.id = this.room.id
+        } else {
+          await this.$Provider.updateRoom(this.room)
+        }
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

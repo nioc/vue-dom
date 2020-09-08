@@ -72,17 +72,8 @@ export default {
     async getRooms () {
       this.rooms = await this.$Provider.getRooms()
     },
-    async createRoom () {
-      try {
-        const roomCreated = await this.$Provider.createRoom({
-          name: 'Nouveau',
-          isVisible: false,
-        })
-        this.rooms.push(roomCreated)
-        this.$router.push({ name: 'admin-room', params: { id: roomCreated.id } })
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-      }
+    createRoom () {
+      this.$router.push({ name: 'admin-room', params: { id: 'new' } })
     },
     async deleteRoom (id) {
       await this.$Provider.deleteRoom(id)
