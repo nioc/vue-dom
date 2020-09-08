@@ -26,7 +26,7 @@
               <td>{{ user.login }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.roles }}</td>
-              <td>{{ user.isActive ? 'Actif' : 'Inactif' }}</td>
+              <td><i class="fas fa-fw" :class="user.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="user.isActive ? 'Actif' : 'Inactif'" /></td>
             </tr>
           </tbody>
         </table>

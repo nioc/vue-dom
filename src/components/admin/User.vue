@@ -27,10 +27,7 @@
         <div class="field">
           <div class="control">
             <label class="label">Statut</label>
-            <label class="checkbox">
-              <input v-model="user.isActive" type="checkbox">
-              Actif
-            </label>
+            <b-switch v-model="user.isActive">{{ user.isActive ? 'Actif' : 'Inactif' }}</b-switch>
           </div>
         </div>
         <div class="field">
