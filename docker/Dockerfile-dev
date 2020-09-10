@@ -1,0 +1,19 @@
+# this dockerfile allow to develop application code without installing NodeJS/VueJS on local computer (note: node_modules will not be on local).
+
+# build image: `docker build -f docker/Dockerfile-dev -t nioc/vue-dom:node-alpine-dev .`
+# start image: `docker run -it -p 8080:8080 --rm -v "$(pwd)":/app -v "/app/node_modules" --name vue-dom-1 nioc/vue-dom:node-alpine-dev`
+
+FROM node:lts-alpine
+
+# install vue-cli
+RUN npm install -g @vue/cli
+
+# install app dependencies
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+
+# start vue-cli serve
+EXPOSE 8080
+USER node
+CMD ["npm", "run", "serve"]

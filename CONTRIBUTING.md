@@ -4,17 +4,35 @@ The project is open and any contribution is welcome!
 
 #### Edit frontend (VueJS)
 
-In order to contribute to the VueJS frontend:
+In order to contribute to this VueJS frontend:
 
 0. Install prerequisite:
   - [Node.js](https://nodejs.org/)
   - npm `npm install npm@latest -g`
-  - Vue.js `npm install -g vue,`
-  - Vue-cli `npm install -g @vue/cli,`
+  - Vue-cli `npm install -g @vue/cli`
 1. Access the frontend folder in a shell `cd /var/www/vue-dom`
 2. Build the project `npm install` and wait for the downloads
-3. Start the node server `npm run serve`
+3. Start the vue-cli server `npm run serve`
 4. Edit the code!
+
+If you are using Docker, you can use the [Dockerfile-dev](/docker/Dockerfile-dev) to avoid installing vue-cli on your local computer:
+```
+docker build \
+-f docker/Dockerfile-dev \
+-t nioc/vue-dom:node-alpine-dev \
+.
+```
+
+And then run vue-cli serve in container:
+```
+docker run -it \
+-p 8080:8080 \
+--rm \
+-v "$(pwd)":/app \
+-v "/app/node_modules" \
+--name vue-dom-1 \
+nioc/vue-dom:node-alpine-dev
+```
 
 #### A little how-to for Github
 

@@ -1,7 +1,9 @@
+# this dockerfile allow download latest release and serve static files with nginx.
+
 # build image: `docker build -f Dockerfile -t nioc/vue-dom:nginx-alpine-latest --build-arg JSON_RPC_API_URL=https://192.168.1.50/core/api/jeeApi.php --build-arg WEBSOCKET_URL=wss://192.168.1.50/socket/ .`
 # start image: `docker run -d -p 80:80 --rm --name vue-dom-1 nioc/vue-dom:nginx-alpine-latest`
 
-FROM nginx:alpine
+FROM nginx:stable-alpine
 
 # declare arguments
 ARG JSON_RPC_API_URL
