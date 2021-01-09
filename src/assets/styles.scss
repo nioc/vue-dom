@@ -330,3 +330,46 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   content: " *";
   color: $danger;
 }
+
+.tree {
+  position: relative;
+
+  ul {
+    padding-left: 0.5em;
+
+    li {
+      position: relative;
+      padding-top: 0.5em;
+      padding-left: 1.5em;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+
+      &:before {
+        position: absolute;
+        top: 1.2em;
+        left: 0;
+        width: 1em;
+        height: 1px;
+        margin: auto;
+        content: '';
+        background-color: $grey-light;
+      }
+
+      &:after {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 1px;
+        height: 100%;
+        content: '';
+        background-color: $grey-light;
+      }
+
+      &:last-child:after {
+        height: 1.2em;
+      }
+    }
+  }
+}
