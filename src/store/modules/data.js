@@ -25,7 +25,6 @@ const getDefaultState = () => {
     equipments: {},
     states: {},
     actions: {},
-    roomsList: [],
     summaryList: [],
     statesStatistics: {},
     tagsList: [],
@@ -164,14 +163,55 @@ const mutations = {
     Object.assign(state, normalized.entities)
   },
 
+  // store all room (update existing data in store)
+  updateRooms (state, payload) {
+    const roomsUpdated = {}
+    payload.forEach((room) => {
+      const id = room.id
+      if (!state.rooms[id]) {
+        // room was not in store
+        roomsUpdated[id] = room
+        return
+      }
+      // get room in store and assign updated attributes (keep attribute not provided)
+      roomsUpdated[id] = state.rooms[id]
+      for (const key in room) {
+        roomsUpdated[id][key] = room[key]
+      }
+    })
+    if (Object.keys(roomsUpdated).length > 0) {
+      state.rooms = Object.assign({}, state.rooms, roomsUpdated)
+    }
+    // remove deleted rooms from store (not present in update)
+    const roomIds = payload.map((room) => room.id)
+    for (const key in state.rooms) {
+      if (!roomIds.includes(key)) {
+        delete state.rooms[key]
+      }
+    }
+  },
+
   // store specific room, equipments, states and actions normalized
   saveRoom (state, payload) {
     const normalized = normalize(payload, roomSchema)
-    state.roomsList.push(normalized.result)
-    Object.assign(state.rooms, normalized.entities.rooms)
+    if (Object.prototype.hasOwnProperty.call(state.rooms, payload.id)) {
+      for (const key in normalized.entities.rooms[payload.id]) {
+        state.rooms[payload.id][key] = normalized.entities.rooms[payload.id][key]
+      }
+    } else {
+      state.rooms[payload.id] = normalized.entities.rooms[payload.id]
+    }
     Object.assign(state.equipments, normalized.entities.equipments)
     Object.assign(state.states, normalized.entities.states)
     Object.assign(state.actions, normalized.entities.actions)
+  },
+
+  deleteRoom (state, roomId) {
+    delete state.rooms[roomId]
+    const index = state.roomsRaw.findIndex((room) => room.id === roomId)
+    if (index !== -1) {
+      state.roomsRaw.splice(index, 1)
+    }
   },
 
   // store specific room summary
@@ -305,7 +345,7 @@ const actions = {
         commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération du résumé global<br>${error.message}` }, { root: true })
       })
       // get all rooms
-      const rooms = await vue.$Provider.getRooms()
+      const rooms = await vue.$Provider.getRooms(true, true)
       if (rooms === undefined) {
         // no rooms to save
         return
@@ -328,6 +368,58 @@ const actions = {
       })
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des pièces<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxRefreshRooms ({ commit }) {
+    try {
+      // get all rooms without details
+      const rooms = await vue.$Provider.getRooms(false, false)
+      if (rooms === undefined) {
+        // no rooms to save
+        return
+      }
+      commit('updateRooms', rooms)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors du rafrichissement des pièces<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxSaveRoom ({ commit }, { room, isNew }) {
+    try {
+      if (isNew) {
+        room = await vue.$Provider.createRoom(room)
+      } else {
+        room = await vue.$Provider.updateRoom(room)
+      }
+      const _room = {
+        id: room.id,
+        isVisible: room.isVisible,
+        name: room.name,
+        parentId: room.parentId,
+      }
+      if (room.equipments) {
+        _room.equipments = room.equipments
+      }
+      if (room.summary) {
+        _room.summary = room.summary
+      }
+      commit('saveRoom', _room)
+      return room
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: error.message }, { root: true })
+      return false
+    }
+  },
+
+  async vxDeleteRoom ({ commit }, roomId) {
+    try {
+      await vue.$Provider.deleteRoom(roomId)
+      commit('deleteRoom', roomId)
+      return true
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: error.message }, { root: true })
+      return false
     }
   },
 

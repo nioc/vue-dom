@@ -127,13 +127,17 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
 import { CmdMixin } from '@/mixins/Cmd'
+import { AdminMixin } from '@/mixins/Admin'
 
 export default {
   name: 'Equipment',
   components: {
     Breadcrumb,
   },
-  mixins: [CmdMixin],
+  mixins: [
+    CmdMixin,
+    AdminMixin,
+  ],
   props: {
     id: {
       type: String,
@@ -148,7 +152,6 @@ export default {
         roomId: null,
         tags: [],
       },
-      rooms: [],
       newTag: '',
       isLoading: false,
     }
@@ -161,12 +164,8 @@ export default {
     if (!this.isNew) {
       this.getEquipment()
     }
-    this.getRooms()
   },
   methods: {
-    async getRooms () {
-      this.rooms = await this.$Provider.getRooms()
-    },
     async getEquipment () {
       this.isLoading = true
       this.equipment = Object.assign({}, this.equipment, await this.$Provider.getEquipment(this.id))

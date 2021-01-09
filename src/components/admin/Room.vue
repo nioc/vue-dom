@@ -95,6 +95,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
 import TimeAgo from '@/components/TimeAgo'
+import { AdminMixin } from '@/mixins/Admin'
 
 export default {
   name: 'Room',
@@ -102,6 +103,7 @@ export default {
     Breadcrumb,
     TimeAgo,
   },
+  mixins: [AdminMixin],
   props: {
     id: {
       type: String,
@@ -119,7 +121,6 @@ export default {
         isVisible: false,
         parentId: null,
       },
-      rooms: [],
       isLoading: false,
     }
   },
@@ -134,28 +135,25 @@ export default {
         this.room = Object.assign({}, this.room, this.proposal)
       }
     }
-    this.getParents()
   },
   methods: {
-    async getParents () {
-      this.rooms = await this.$Provider.getRooms()
-    },
     async getRoom () {
       this.isLoading = true
-      this.room = await this.$Provider.getRoom(this.id)
+      try {
+        this.room = await this.$Provider.getRoom(this.id, true)
+      } catch (error) {
+        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+      }
       this.isLoading = false
     },
     async saveRoom () {
       this.isLoading = true
-      try {
+      const result = await this.vxSaveRoom({ room: this.room, isNew: this.isNew })
+      if (result) {
         if (this.isNew) {
-          this.room = await this.$Provider.createRoom(this.room)
-          this.$router.replace({ name: this.$route.name, params: { id: this.room.id } })
-        } else {
-          await this.$Provider.updateRoom(this.room)
+          this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.room = Object.assign(this.room, result)
       }
       this.isLoading = false
     },
@@ -176,11 +174,8 @@ export default {
     },
     async removeRoom () {
       this.isLoading = true
-      try {
-        await this.$Provider.deleteRoom(this.room.id)
+      if (await this.vxDeleteRoom(this.room.id)) {
         this.$router.back()
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
