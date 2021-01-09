@@ -107,6 +107,11 @@ export default {
       type: String,
       required: true,
     },
+    proposal: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
   },
   data () {
     return {
@@ -124,6 +129,10 @@ export default {
   mounted () {
     if (!this.isNew) {
       this.getRoom()
+    } else {
+      if (this.proposal) {
+        this.room = Object.assign({}, this.room, this.proposal)
+      }
     }
     this.getParents()
   },
@@ -141,7 +150,7 @@ export default {
       try {
         if (this.isNew) {
           this.room = await this.$Provider.createRoom(this.room)
-          this.id = this.room.id
+          this.$router.replace({ name: this.$route.name, params: { id: this.room.id } })
         } else {
           await this.$Provider.updateRoom(this.room)
         }
@@ -151,18 +160,19 @@ export default {
       this.isLoading = false
     },
     async copyRoom () {
-      this.isLoading = true
-      try {
-        const roomCopy = await this.$Provider.createRoom({
-          name: 'Nouveau',
-          isVisible: this.room.isVisible,
-          parentId: this.room.parentId,
-        })
-        this.$router.push({ name: 'admin-room', params: { id: roomCopy.id } })
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-      }
-      this.isLoading = false
+      const proposal = Object.assign({}, this.room)
+      delete proposal.id
+      delete proposal.modificationDate
+      delete proposal.equipments
+      delete proposal.summaryStates
+      proposal.name = `${proposal.name} (copie)`
+      this.$router.push({
+        name: 'admin-room',
+        params: {
+          id: 'new',
+          proposal,
+        },
+      })
     },
     async removeRoom () {
       this.isLoading = true
