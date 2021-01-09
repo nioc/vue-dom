@@ -40,13 +40,16 @@
               </div>
             </div>
             <div class="buttons">
-              <button class="button is-primary" title="Sauvegarder" @click="saveRoom()">
+              <button class="button is-primary" title="Sauvegarder la pièce" @click="saveRoom">
                 <span class="icon"><i class="fa fa-save" /></span><span>Sauvegarder</span>
               </button>
-              <button v-if="!isNew" class="button is-light" title="Dupliquer" @click="copyRoom()">
+              <button v-if="!isNew" class="button is-light" title="Rafraichir la pièce" @click="getRoom">
+                <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
+              </button>
+              <button v-if="!isNew" class="button is-light" title="Dupliquer la pièce" @click="copyRoom">
                 <span class="icon"><i class="fa fa-copy" /></span><span>Dupliquer</span>
               </button>
-              <button v-if="!isNew" class="button is-danger" title="Supprimer" @click="removeRoom()">
+              <button v-if="!isNew" class="button is-danger" title="Supprimer la pièce" @click="removeRoom">
                 <span class="icon"><i class="fa fa-trash" /></span><span>Supprimer</span>
               </button>
             </div>
@@ -59,32 +62,39 @@
             </p>
           </header>
           <section class="card-content">
-            <table class="table is-fullwidth is-striped">
-              <thead>
-                <tr>
-                  <th>Nom</th>
-                  <th>Module</th>
-                  <th>Identifiant logique</th>
-                  <th>Statut</th>
-                  <th>Visibilité</th>
-                  <th>Dernière communication</th>
-                  <th>Batterie</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="equipment in room.equipments" :key="equipment.id">
-                  <td><router-link :to="{name: 'admin-equipment', params: {id: equipment.id}}">{{ equipment.name }}</router-link></td>
-                  <td>{{ equipment.module }}</td>
-                  <td>{{ equipment.logicalId }}</td>
-                  <td><i class="fas fa-fw" :class="equipment.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="equipment.isActive ? 'Actif' : 'Inactif'" /></td>
-                  <td><i class="fas fa-fw" :class="equipment.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="equipment.isVisible ? 'Visible' : 'Masqué'" /></td>
-                  <td>
-                    <time-ago v-if="equipment.lastCommunication" :date="equipment.lastCommunication" :drop-fixes="true" :title="equipment.lastCommunication | moment('LLL')" />
-                  </td>
-                  <td><span v-if="equipment.battery" :class="{'has-text-danger': equipment.battery < 10}">{{ equipment.battery }}%</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-wrapper">
+              <table class="table is-fullwidth is-striped">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Module</th>
+                    <th>Identifiant logique</th>
+                    <th>Statut</th>
+                    <th>Visibilité</th>
+                    <th>Dernière communication</th>
+                    <th>Batterie</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="equipment in room.equipments" :key="equipment.id">
+                    <td><router-link :to="{name: 'admin-equipment', params: {id: equipment.id}}">{{ equipment.name }}</router-link></td>
+                    <td>{{ equipment.module }}</td>
+                    <td>{{ equipment.logicalId }}</td>
+                    <td><i class="fas fa-fw" :class="equipment.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="equipment.isActive ? 'Actif' : 'Inactif'" /></td>
+                    <td><i class="fas fa-fw" :class="equipment.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="equipment.isVisible ? 'Visible' : 'Masqué'" /></td>
+                    <td>
+                      <time-ago v-if="equipment.lastCommunication" :date="equipment.lastCommunication" :drop-fixes="true" :title="equipment.lastCommunication | moment('LLL')" />
+                    </td>
+                    <td><span v-if="equipment.battery" :class="{'has-text-danger': equipment.battery < 10}">{{ equipment.battery }}%</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="buttons">
+              <button v-if="!isNew" class="button is-light is-primary" title="Ajouter un équipement" @click="addEquipment">
+                <span class="icon"><i class="fa fa-plus-circle" /></span><span>Ajouter</span>
+              </button>
+            </div>
           </section>
         </div>
       </div>
@@ -157,7 +167,7 @@ export default {
       }
       this.isLoading = false
     },
-    async copyRoom () {
+    copyRoom () {
       const proposal = Object.assign({}, this.room)
       delete proposal.id
       delete proposal.modificationDate
