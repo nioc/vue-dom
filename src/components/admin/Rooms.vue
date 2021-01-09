@@ -11,11 +11,7 @@
             <span class="icon is-small is-left"><i class="fas fa-search" /></span>
           </p>
         </div>
-        <ul class="content">
-          <li v-for="room in orderedFiltered" :key="room.id" :style="'padding-left: '+room.level*20+'px;'">
-            <router-link :to="{name: 'admin-room', params: {id: room.id}}" :class="{'has-text-danger': !room.isVisible}">{{ room.name }}</router-link>
-          </li>
-        </ul>
+        <rooms-tree :rooms="roomsTree" class="mb-5 tree" />
         <span class="buttons">
           <button class="button is-primary" @click="getRooms()">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
@@ -31,29 +27,30 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import RoomsTree from '@/components/admin/RoomsTree'
 
-function findChild (rooms, roomsOrdered, parent) {
-  if (parent.id !== null) {
-    roomsOrdered.push(parent)
-  }
+function setLevel (rooms, parentId, search) {
   const childs = []
-  rooms.forEach((room) => {
-    if (room.parentId === parent.id) {
-      room.level = parent.level + 1
-      childs.push(room)
-    }
-  })
-  childs.sort((a, b) => a.order - b.order)
-  childs.forEach((child) => {
-    roomsOrdered = findChild(rooms, roomsOrdered, child)
-  })
-  return roomsOrdered
+  rooms
+    .filter((room) => room.parentId === parentId)
+    .forEach((childRoom) => {
+      childRoom.childs = setLevel(rooms, childRoom.id, search)
+      if (childRoom.childs.length === 0) {
+        if (childRoom.name.toLowerCase().indexOf(search) > -1) {
+          childs.push(childRoom)
+        }
+      } else {
+        childs.push(childRoom)
+      }
+    })
+  return childs
 }
 
 export default {
   name: 'Rooms',
   components: {
     Breadcrumb,
+    RoomsTree,
   },
   data () {
     return {
@@ -62,8 +59,7 @@ export default {
     }
   },
   computed: {
-    filtered () { return this.rooms.filter((room) => room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
-    orderedFiltered () { return findChild(this.rooms, [], { id: null, level: 0 }).filter((room) => room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    roomsTree () { return setLevel(this.rooms, null, this.search.toLowerCase()) },
   },
   mounted () {
     this.getRooms()
@@ -74,10 +70,6 @@ export default {
     },
     createRoom () {
       this.$router.push({ name: 'admin-room', params: { id: 'new' } })
-    },
-    async deleteRoom (id) {
-      await this.$Provider.deleteRoom(id)
-      this.rooms.splice(this.rooms.findIndex((room) => room.id === id), 1)
     },
   },
 }
