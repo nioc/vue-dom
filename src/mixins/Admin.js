@@ -1,8 +1,20 @@
 import { createNamespacedHelpers } from 'vuex'
-const { mapGetters } = createNamespacedHelpers('data')
+const { mapState, mapGetters, mapActions } = createNamespacedHelpers('data')
 
 export const AdminMixin = {
   computed: {
-    ...mapGetters(['getRoomById']),
+    ...mapGetters([
+      'getRoomById',
+    ]),
+    ...mapState([
+      'rooms',
+    ]),
+  },
+  methods: {
+    ...mapActions([
+      'vxRefreshRooms',
+      'vxSaveRoom',
+      'vxDeleteRoom',
+    ]),
   },
 }

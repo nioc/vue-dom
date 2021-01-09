@@ -28,6 +28,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
 import RoomsTree from '@/components/admin/RoomsTree'
+import { AdminMixin } from '@/mixins/Admin'
 
 function setLevel (rooms, parentId, search) {
   const childs = []
@@ -52,21 +53,20 @@ export default {
     Breadcrumb,
     RoomsTree,
   },
+  mixins: [
+    AdminMixin,
+  ],
   data () {
     return {
       search: '',
-      rooms: [],
     }
   },
   computed: {
-    roomsTree () { return setLevel(this.rooms, null, this.search.toLowerCase()) },
-  },
-  mounted () {
-    this.getRooms()
+    roomsTree () { return setLevel(Object.values(this.rooms), null, this.search.toLowerCase()) },
   },
   methods: {
     async getRooms () {
-      this.rooms = await this.$Provider.getRooms()
+      this.vxRefreshRooms()
     },
     createRoom () {
       this.$router.push({ name: 'admin-room', params: { id: 'new' } })
