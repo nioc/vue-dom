@@ -75,19 +75,34 @@
             </div>
             <div class="field">
               <label class="label">Batterie</label>
-              <div class="control has-icons-left">
-                <input v-model="equipment.battery" class="input" type="text" placeholder="Pourcentage de batterie restant" readonly>
+              <div class="control has-icons-left has-icons-right">
+                <input v-model="equipment.battery" class="input" :class="{'is-danger': equipment.hasLowBattery}" type="text" placeholder="Pourcentage de batterie restant" readonly disabled>
                 <span class="icon is-small is-left">
                   <i class="fas fa-battery-three-quarters" />
+                </span>
+                <span v-if="equipment.hasLowBattery" class="icon is-small is-right has-text-danger">
+                  <i class="fa fa-battery-empty" />
+                </span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Délai d'alerte sans communication (minutes)</label>
+              <div class="control has-icons-left">
+                <input v-model="alertNoCommunicationDelay" class="input" type="number" placeholder="Exemple 60 pour 1 heure, vide si pas de d'alerte">
+                <span class="icon is-small is-left">
+                  <i class="far fa-bell" />
                 </span>
               </div>
             </div>
             <div class="field">
               <label class="label">Dernière communication</label>
-              <div class="control has-icons-left">
-                <input v-model="equipmentLastCommunication" class="input" type="datetime" placeholder="Date de dernière communication" readonly disabled>
+              <div class="control has-icons-left has-icons-right">
+                <input v-model="equipmentLastCommunication" class="input" :class="{'is-danger': equipment.hasNoCommunication}" type="datetime" placeholder="Date de dernière communication" readonly disabled>
                 <span class="icon is-small is-left">
                   <i class="far fa-clock" />
+                </span>
+                <span v-if="equipment.hasNoCommunication" class="icon is-small is-right has-text-danger">
+                  <i class="fa fa-comment-slash" />
                 </span>
               </div>
             </div>
@@ -107,14 +122,97 @@
               </span>
             </div>
             <div class="buttons">
-              <button class="button is-primary" title="Sauvegarder l'équipement" @click="saveEquipment()">
+              <button class="button is-primary" title="Sauvegarder l'équipement" @click="saveEquipment">
                 <span class="icon"><i class="fa fa-save" /></span><span>Sauvegarder</span>
               </button>
-              <button v-if="!isNew" class="button is-light" title="Dupliquer l'équipement" @click="copyEquipment()">
+              <button v-if="!isNew" class="button is-light" title="Rafraichir l'équipement" @click="getEquipment">
+                <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
+              </button>
+              <button v-if="!isNew" class="button is-light" title="Dupliquer l'équipement" @click="copyEquipment">
                 <span class="icon"><i class="fa fa-copy" /></span><span>Dupliquer</span>
               </button>
-              <button v-if="!isNew" class="button is-danger" title="Supprimer l'équipement" @click="removeEquipment()">
+              <button v-if="!isNew" class="button is-danger" title="Supprimer l'équipement" @click="removeEquipment">
                 <span class="icon"><i class="fa fa-trash" /></span><span>Supprimer</span>
+              </button>
+            </div>
+          </section>
+        </div>
+        <div class="card has-margin-bottom-6">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon"><i class="fa fa-eye" /></span><span>États</span>
+            </p>
+          </header>
+          <section class="card-content">
+            <div class="table-wrapper">
+              <table class="table is-fullwidth is-striped">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Module</th>
+                    <th>Id. logique</th>
+                    <th>Visibilité</th>
+                    <th>Type</th>
+                    <th>Dernière valeur</th>
+                    <th>Dernière collecte</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="state in equipment.states" :key="state.id">
+                    <td><router-link :to="{name: 'admin-state', params: {id: state.id}}">{{ state.name }}</router-link></td>
+                    <td>{{ state.module }}</td>
+                    <td>{{ state.logicalId }}</td>
+                    <td><i class="fas fa-fw" :class="state.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="state.isVisible ? 'Visible' : 'Masqué'" /></td>
+                    <td :title="state.genericType"><i class="fa-fw" :class="getIconClass(state)" /></td>
+                    <td>{{ state.value }} {{ state.unit }}</td>
+                    <td>
+                      <time-ago v-if="state.collectDate" :date="state.collectDate" :drop-fixes="true" :title="state.collectDate | moment('LLL')" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="buttons">
+              <button v-if="!isNew" class="button is-light is-primary" title="Ajouter un état" @click="addState">
+                <span class="icon"><i class="fa fa-plus-circle" /></span><span>Ajouter</span>
+              </button>
+            </div>
+          </section>
+        </div>
+        <div class="card has-margin-bottom-6">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon"><i class="fa fa-cogs" /></span><span>Actions</span>
+            </p>
+          </header>
+          <section class="card-content">
+            <div class="table-wrapper">
+              <table class="table is-fullwidth is-striped">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Module</th>
+                    <th>Id. logique</th>
+                    <th>Visibilité</th>
+                    <th>Type</th>
+                    <th>Retour d'état</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="action in equipment.actions" :key="action.id">
+                    <td><router-link :to="{name: 'admin-action', params: {id: action.id}}">{{ action.name }}</router-link></td>
+                    <td>{{ action.module }}</td>
+                    <td>{{ action.logicalId }}</td>
+                    <td><i class="fas fa-fw" :class="action.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="action.isVisible ? 'Visible' : 'Masqué'" /></td>
+                    <td :title="action.type"><i class="fa-fw" :class="getActionTypeClass(action.type)" /></td>
+                    <td :title="action.stateFeedbackId">{{ getStateById(action.stateFeedbackId).name || action.stateFeedbackId }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="buttons">
+              <button v-if="!isNew" class="button is-light is-primary" title="Ajouter une action" @click="addAction">
+                <span class="icon"><i class="fa fa-plus-circle" /></span><span>Ajouter</span>
               </button>
             </div>
           </section>
@@ -126,6 +224,7 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import TimeAgo from '@/components/TimeAgo'
 import { CmdMixin } from '@/mixins/Cmd'
 import { AdminMixin } from '@/mixins/Admin'
 
@@ -133,6 +232,7 @@ export default {
   name: 'Equipment',
   components: {
     Breadcrumb,
+    TimeAgo,
   },
   mixins: [
     CmdMixin,
@@ -163,7 +263,15 @@ export default {
   },
   computed: {
     isNew () { return this.id === 'new' },
-    equipmentLastCommunication () { return this.$moment(this.equipment.lastCommunication).format('LLL') },
+    equipmentLastCommunication () { return this.equipment.lastCommunication ? this.$moment(this.equipment.lastCommunication).format('LLL') : null },
+    alertNoCommunicationDelay: {
+      get: function () {
+        return this.equipment.alertNoCommunicationDelay
+      },
+      set: function (string) {
+        this.equipment.alertNoCommunicationDelay = parseInt(string)
+      },
+    },
   },
   mounted () {
     if (!this.isNew) {
@@ -201,6 +309,7 @@ export default {
       delete proposal.id
       delete proposal.logicalId
       delete proposal.battery
+      delete proposal.hasLowBattery
       delete proposal.lastCommunication
       delete proposal.hasNoCommunication
       delete proposal.actions
@@ -234,6 +343,30 @@ export default {
     },
     removeTag (index) {
       this.equipment.tags.splice(index, 1)
+    },
+    addState () {
+      this.$router.push({
+        name: 'admin-state',
+        params: {
+          id: 'new',
+          proposal: {
+            equipmentId: this.equipment.id,
+            module: this.equipment.module,
+          },
+        },
+      })
+    },
+    addAction () {
+      this.$router.push({
+        name: 'admin-action',
+        params: {
+          id: 'new',
+          proposal: {
+            equipmentId: this.equipment.id,
+            module: this.equipment.module,
+          },
+        },
+      })
     },
   },
 }

@@ -6,7 +6,7 @@
     <div class="hero-body has-padding-horizontal-7">
       <div class="container">
         <b-loading v-model="isLoading" :is-full-page="false" />
-        <b-table :data="processed" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="roomName" class="is-clickable content" @click="consultEquipment">
+        <b-table :data="processed" :paginated="true" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="roomName" class="is-clickable" @click="consultEquipment">
           <template v-for="column in columns">
             <b-table-column :key="column.id" v-bind="column">
               <template v-if="column.searchable" slot="searchable" slot-scope="props">
@@ -23,7 +23,7 @@
             </b-table-column>
           </template>
         </b-table>
-        <span class="buttons">
+        <span class="buttons has-padding-top-7">
           <button class="button is-primary" @click="getEquipments()">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
           </button>
@@ -96,6 +96,11 @@ export default {
           label: 'Batterie',
           sortable: true,
         },
+        {
+          field: 'tagsText',
+          label: 'Tags',
+          sortable: true,
+        },
       ],
     }
   },
@@ -103,6 +108,7 @@ export default {
     processed () {
       return this.arrEquipments.map((equipment) => {
         equipment.roomName = this.getRoomById(equipment.roomId).name || equipment.roomId
+        equipment.tagsText = equipment.tags.join(' • ')
         return equipment
       })
     },
