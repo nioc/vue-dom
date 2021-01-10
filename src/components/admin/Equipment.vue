@@ -143,6 +143,11 @@ export default {
       type: String,
       required: true,
     },
+    proposal: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
   },
   data () {
     return {
@@ -163,6 +168,10 @@ export default {
   mounted () {
     if (!this.isNew) {
       this.getEquipment()
+    } else {
+      if (this.proposal) {
+        this.equipment = Object.assign({}, this.equipment, this.proposal)
+      }
     }
   },
   methods: {
@@ -185,21 +194,23 @@ export default {
       }
       this.isLoading = false
     },
-    async copyEquipment () {
-      this.isLoading = true
-      try {
-        const equipmentCopy = await this.$Provider.createEquipment({
-          name: this.equipment.name + ' copie',
-          module: this.equipment.module,
-          isActive: this.equipment.isActive,
-          isVisible: this.equipment.isVisible,
-          roomId: this.equipment.roomId,
-        })
-        this.$router.push({ name: 'admin-equipment', params: { id: equipmentCopy.id } })
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-      }
-      this.isLoading = false
+    copyEquipment () {
+      const proposal = Object.assign({}, this.equipment)
+      delete proposal.id
+      delete proposal.logicalId
+      delete proposal.battery
+      delete proposal.lastCommunication
+      delete proposal.hasNoCommunication
+      delete proposal.actions
+      delete proposal.states
+      proposal.name = `${proposal.name} (copie)`
+      this.$router.push({
+        name: 'admin-equipment',
+        params: {
+          id: 'new',
+          proposal,
+        },
+      })
     },
     async removeEquipment () {
       this.isLoading = true
