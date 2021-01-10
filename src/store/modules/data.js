@@ -254,6 +254,48 @@ const mutations = {
     state.statesStatistics = Object.assign({}, state.statesStatistics, updated)
   },
 
+  // store updated equipments (batch)
+  updateEquipments (state, payload) {
+    const equipmentsUpdated = {}
+    payload.forEach(equipment => {
+      const id = equipment.id
+      if (!state.equipments[id]) {
+        // equipment was not in store
+        equipmentsUpdated[id] = equipment
+        return
+      }
+      const previousRoomId = state.equipments[id].roomId
+      equipmentsUpdated[id] = state.equipments[id]
+      for (const key in equipment) {
+        equipmentsUpdated[id][key] = equipment[key]
+      }
+      if (previousRoomId !== equipment.roomId) {
+        // equipment has moved
+        if (
+          Object.prototype.hasOwnProperty.call(state.equipments[id], 'roomId') &&
+          previousRoomId !== null
+        ) {
+          // remove from previous room
+          const index = state.rooms[previousRoomId].equipments.indexOf(equipment.id)
+          if (index !== -1) {
+            state.rooms[previousRoomId].equipments.splice(index, 1)
+          }
+        }
+        if (Object.prototype.hasOwnProperty.call(equipment, 'roomId') && equipment.roomId !== null) {
+          // add to new room
+          state.rooms[equipment.roomId].equipments.push(equipment.id)
+        }
+      }
+    })
+    if (Object.keys(equipmentsUpdated).length > 0) {
+      state.equipments = Object.assign({}, state.equipments, equipmentsUpdated)
+    }
+  },
+
+  deleteEquipment (state, equipmentId) {
+    delete state.equipments[equipmentId]
+  },
+
   // store updated states/actions (batch)
   updateStates (state, payload) {
     const statesUpdated = {}
@@ -416,6 +458,46 @@ const actions = {
     try {
       await vue.$Provider.deleteRoom(roomId)
       commit('deleteRoom', roomId)
+      return true
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: error.message }, { root: true })
+      return false
+    }
+  },
+
+  async vxRefreshEquipments ({ commit }) {
+    try {
+      // get all rooms without details
+      const equipments = await vue.$Provider.getEquipments(false, false)
+      if (equipments === undefined) {
+        // no equipments to save
+        return
+      }
+      commit('updateEquipments', equipments)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors du rafrichissement des équipements<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxSaveEquipment ({ commit }, { equipment, isNew }) {
+    try {
+      if (isNew) {
+        equipment = await vue.$Provider.createEquipment(equipment)
+      } else {
+        equipment = await vue.$Provider.updateEquipment(equipment)
+      }
+      commit('updateEquipments', [equipment])
+      return equipment
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: error.message }, { root: true })
+      return false
+    }
+  },
+
+  async vxDeleteEquipment ({ commit }, equipmentId) {
+    try {
+      await vue.$Provider.deleteEquipment(equipmentId)
+      commit('deleteEquipment', equipmentId)
       return true
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: error.message }, { root: true })

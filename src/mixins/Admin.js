@@ -8,13 +8,18 @@ export const AdminMixin = {
     ]),
     ...mapState([
       'rooms',
+      'equipments',
     ]),
+    arrEquipments () { return Object.values(this.equipments) },
   },
   methods: {
     ...mapActions([
       'vxRefreshRooms',
       'vxSaveRoom',
       'vxDeleteRoom',
+      'vxRefreshEquipments',
+      'vxSaveEquipment',
+      'vxDeleteEquipment',
     ]),
   },
 }

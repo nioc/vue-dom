@@ -50,7 +50,6 @@ export default {
   mixins: [AdminMixin],
   data () {
     return {
-      equipments: [],
       isLoading: false,
       columns: [
         {
@@ -102,19 +101,16 @@ export default {
   },
   computed: {
     processed () {
-      return this.equipments.map((equipment) => {
+      return this.arrEquipments.map((equipment) => {
         equipment.roomName = this.getRoomById(equipment.roomId).name || equipment.roomId
         return equipment
       })
     },
   },
-  mounted () {
-    this.getEquipments()
-  },
   methods: {
     async getEquipments () {
       this.isLoading = true
-      this.equipments = await this.$Provider.getEquipments()
+      await this.vxRefreshEquipments()
       this.isLoading = false
     },
     createEquipment () {

@@ -182,15 +182,17 @@ export default {
     },
     async saveEquipment () {
       this.isLoading = true
-      try {
+      const equipment = Object.assign({}, this.equipment)
+      delete equipment.battery
+      delete equipment.lastCommunication
+      delete equipment.actions
+      delete equipment.states
+      const result = await this.vxSaveEquipment({ equipment, isNew: this.isNew })
+      if (result) {
         if (this.isNew) {
-          this.equipment = await this.$Provider.createEquipment(this.equipment)
-          this.id = this.equipment.id
-        } else {
-          await this.$Provider.updateEquipment(this.equipment)
+          this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.equipment = Object.assign(this.equipment, result)
       }
       this.isLoading = false
     },
@@ -214,11 +216,8 @@ export default {
     },
     async removeEquipment () {
       this.isLoading = true
-      try {
-        await this.$Provider.deleteEquipment(this.equipment.id)
+      if (await this.vxDeleteEquipment(this.equipment.id)) {
         this.$router.back()
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
