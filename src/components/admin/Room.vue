@@ -189,6 +189,17 @@ export default {
       }
       this.isLoading = false
     },
+    addEquipment () {
+      this.$router.push({
+        name: 'admin-equipment',
+        params: {
+          id: 'new',
+          proposal: {
+            roomId: this.room.id,
+          },
+        },
+      })
+    },
   },
 }
 </script>
