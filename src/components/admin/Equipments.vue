@@ -107,9 +107,10 @@ export default {
   computed: {
     processed () {
       return this.arrEquipments.map((equipment) => {
-        equipment.roomName = this.getRoomById(equipment.roomId).name || equipment.roomId
-        equipment.tagsText = equipment.tags.join(' • ')
-        return equipment
+        const _equipment = Object.assign({}, equipment)
+        _equipment.roomName = this.getRoomById(_equipment.roomId).name || _equipment.roomId
+        _equipment.tagsText = _equipment.tags.join(' • ')
+        return _equipment
       })
     },
   },
