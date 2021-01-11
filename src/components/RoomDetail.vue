@@ -6,7 +6,7 @@
     <div class="hero-body">
       <div class="container">
         <ul>
-          <li v-for="equipmentId in room.equipments" :key="equipmentId">
+          <li v-for="equipmentId in equipments" :key="equipmentId">
             <equipment :id="equipmentId" />
           </li>
         </ul>
@@ -43,6 +43,7 @@ export default {
     room () { return this.getRoomById(this.id) },
     title () { return this.room.name },
     summary () { return this.getRoomSummaryById(this.id) },
+    equipments () { return this.getRoomVisiblesEquipment(this.id) },
   },
   watch: {
     title: {
