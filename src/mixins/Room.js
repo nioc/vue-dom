@@ -3,6 +3,9 @@ const { mapGetters } = createNamespacedHelpers('data')
 
 export const RoomMixin = {
   computed: {
-    ...mapGetters(['getRoomById']),
+    ...mapGetters([
+      'getRoomById',
+      'getRoomVisiblesEquipment',
+    ]),
   },
 }

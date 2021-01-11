@@ -13,7 +13,7 @@
               <i class="is-pulled-right fa" :class="props.expanded ? 'fa-caret-down' : 'fa-caret-up'" />
             </template>
             <b-menu-item :to="{name: 'rooms'}" label="Tous" tag="router-link" />
-            <b-menu-item v-for="room in roomsOrdered" :key="room.id" :to="{name: 'room', params: {id: room.id}}" :label="room.name" tag="router-link" />
+            <b-menu-item v-for="room in ordered" :key="room.id" :to="{name: 'room', params: {id: room.id}}" :label="room.name" tag="router-link" />
           </b-menu-item>
 
           <b-menu-item v-if="tagsList.length" icon="tags fa-fw fa-mr">
@@ -113,7 +113,7 @@ export default {
         this.setSidebarStatus(value)
       },
     },
-    ordered () { return this.roomsOrdered.filter((room) => room.equipment.length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    ordered () { return this.roomsOrdered.filter((room) => this.getRoomVisiblesEquipment(room.id).length > 0) },
     ...mapState(['hasSidebarOpened', 'roles']),
   },
   created () {

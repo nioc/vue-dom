@@ -38,7 +38,7 @@ export default {
     }
   },
   computed: {
-    ordered () { return this.roomsOrdered.filter((room) => room.equipments.length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    ordered () { return this.roomsOrdered.filter((room) => this.getRoomVisiblesEquipment(room.id).length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     summary () { return this.getRoomSummaryById(0) },
   },
 }

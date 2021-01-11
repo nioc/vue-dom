@@ -152,6 +152,12 @@ const getters = {
   getNotificationsCount: (state) => () => {
     return state.notifications.length
   },
+
+  // return room visibles equipments
+  getRoomVisiblesEquipment: (state) => (roomId) => {
+    return state.rooms[roomId].equipments
+      .filter((equipmentId) => state.equipments[equipmentId].isVisible)
+  },
 }
 
 const mutations = {

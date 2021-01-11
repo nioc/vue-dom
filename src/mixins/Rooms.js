@@ -1,5 +1,5 @@
 import { createNamespacedHelpers } from 'vuex'
-const { mapState, mapActions } = createNamespacedHelpers('data')
+const { mapState, mapGetters, mapActions } = createNamespacedHelpers('data')
 
 function findChild (rooms, roomsOrdered, parent) {
   if (parent.id !== null) {
@@ -22,6 +22,9 @@ export const RoomsMixin = {
   computed: {
     roomsOrdered () { return findChild(this.roomsRaw.filter((room) => room.isVisible), [], { id: null }) },
     ...mapState(['rooms', 'roomsRaw', 'tagsList']),
+    ...mapGetters([
+      'getRoomVisiblesEquipment',
+    ]),
   },
   methods: {
     ...mapActions(['loadRooms']),
