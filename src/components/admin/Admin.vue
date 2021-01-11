@@ -10,6 +10,7 @@
           <li><router-link :to="{name: 'admin-users'}"><i class="fa fa-users fa-fw fa-mr" />Utilisateurs</router-link></li>
           <li><router-link :to="{name: 'admin-rooms'}"><i class="fa fa-home fa-fw fa-mr" />Pièces</router-link></li>
           <li><router-link :to="{name: 'admin-equipments'}"><i class="fa fa-microchip fa-fw fa-mr" />Équipements</router-link></li>
+          <li><router-link :to="{name: 'admin-states'}"><i class="fa fa-eye fa-fw fa-mr" />États</router-link></li>
         </ul>
       </div>
     </div>

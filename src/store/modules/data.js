@@ -296,8 +296,28 @@ const mutations = {
     delete state.equipments[equipmentId]
   },
 
-  // store updated states/actions (batch)
+  // store updated states (batch)
   updateStates (state, payload) {
+    const statesUpdated = {}
+    payload.forEach((_state) => {
+      const id = _state.id
+      if (!state.states[id]) {
+        // state was not in store
+        statesUpdated[id] = _state
+        return
+      }
+      statesUpdated[id] = state.states[id]
+      for (const key in _state) {
+        statesUpdated[id][key] = _state[key]
+      }
+    })
+    if (Object.keys(statesUpdated).length > 0) {
+      state.states = Object.assign({}, state.states, statesUpdated)
+    }
+  },
+
+  // store updated states/actions (batch)
+  updateStatesActions (state, payload) {
     const statesUpdated = {}
     const actionsUpdated = {}
     const equipmentsUpdated = {}
@@ -330,6 +350,10 @@ const mutations = {
     if (Object.keys(equipmentsUpdated).length > 0) {
       state.equipments = Object.assign({}, state.equipments, equipmentsUpdated)
     }
+  },
+
+  deleteState (state, stateId) {
+    delete state.states[stateId]
   },
 
   // store tags
@@ -501,6 +525,46 @@ const actions = {
       return true
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: error.message }, { root: true })
+      return false
+    }
+  },
+
+  async vxRefreshStates ({ commit }) {
+    try {
+      // get all states
+      const states = await vue.$Provider.getStates()
+      if (states === undefined) {
+        // no states to save
+        return
+      }
+      commit('updateStates', states)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors du rafrichissement des états<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxSaveState ({ commit }, { state, isNew }) {
+    try {
+      if (isNew) {
+        state = await vue.$Provider.createState(state)
+      } else {
+        state = await vue.$Provider.updateState(state)
+      }
+      commit('updateStates', [state])
+      return state
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la sauvegarde de l'état<br>${error.message}` }, { root: true })
+      return false
+    }
+  },
+
+  async vxDeleteState ({ commit }, stateId) {
+    try {
+      await vue.$Provider.deleteState(stateId)
+      commit('deleteState', stateId)
+      return true
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression de l'état<br>${error.message}` }, { root: true })
       return false
     }
   },

@@ -350,7 +350,7 @@ export default {
         params: {
           id: 'new',
           proposal: {
-            equipmentId: this.equipment.id,
+            eqId: this.equipment.id,
             module: this.equipment.module,
           },
         },
@@ -362,7 +362,7 @@ export default {
         params: {
           id: 'new',
           proposal: {
-            equipmentId: this.equipment.id,
+            eqId: this.equipment.id,
             module: this.equipment.module,
           },
         },
