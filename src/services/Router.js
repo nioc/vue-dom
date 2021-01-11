@@ -149,6 +149,23 @@ const routes = [
       title: 'Admin équipement',
     },
   },
+  {
+    path: '/admin/states',
+    name: 'admin-states',
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/States'),
+    meta: {
+      title: 'Admin états',
+    },
+  },
+  {
+    path: '/admin/states/:id',
+    name: 'admin-state',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/State'),
+    meta: {
+      title: 'Admin état',
+    },
+  },
 ]
 
 // create router

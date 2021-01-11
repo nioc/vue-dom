@@ -5,12 +5,15 @@ export const AdminMixin = {
   computed: {
     ...mapGetters([
       'getRoomById',
+      'getEquipmentById',
     ]),
     ...mapState([
       'rooms',
       'equipments',
+      'states',
     ]),
     arrEquipments () { return Object.values(this.equipments) },
+    arrStates () { return Object.values(this.states) },
   },
   methods: {
     ...mapActions([
@@ -20,6 +23,9 @@ export const AdminMixin = {
       'vxRefreshEquipments',
       'vxSaveEquipment',
       'vxDeleteEquipment',
+      'vxRefreshStates',
+      'vxSaveState',
+      'vxDeleteState',
     ]),
   },
 }

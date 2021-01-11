@@ -127,7 +127,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     })
     // commit cmd::update batch
     if (updateCmds.length > 0) {
-      store.commit('data/updateStates', updateCmds)
+      store.commit('data/updateStatesActions', updateCmds)
     }
   }
 
