@@ -13,10 +13,10 @@
         </div>
         <rooms-tree :rooms="roomsTree" class="mb-5 tree" />
         <span class="buttons">
-          <button class="button is-primary" @click="getRooms()">
+          <button class="button is-primary" @click="getRooms">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
           </button>
-          <button class="button is-primary" @click="createRoom()">
+          <button class="button is-primary" @click="createRoom">
             <span class="icon"><i class="fa fa-plus-circle" /></span><span>Créer</span>
           </button>
         </span>
@@ -29,6 +29,7 @@
 import Breadcrumb from '@/components/Breadcrumb'
 import RoomsTree from '@/components/admin/RoomsTree'
 import { AdminMixin } from '@/mixins/Admin'
+const cloneDeep = require('lodash.clonedeep')
 
 function setLevel (rooms, parentId, search) {
   const childs = []
@@ -62,7 +63,7 @@ export default {
     }
   },
   computed: {
-    roomsTree () { return setLevel(Object.values(this.rooms), null, this.search.toLowerCase()) },
+    roomsTree () { return setLevel(Object.values(cloneDeep(this.rooms)), null, this.search.toLowerCase()) },
   },
   methods: {
     async getRooms () {
