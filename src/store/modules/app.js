@@ -22,6 +22,7 @@ const mutations = {
   // store user login and authentication status
   setUser (state, payload) {
     state.login = payload.login
+    state.id = payload.id
     state.isAuthenticated = payload.isAuthenticated
     state.roles = payload.roles
   },

@@ -48,6 +48,12 @@
             </template>
           </b-menu-item>
 
+          <b-menu-item v-if="hasRole('user')" icon="user fa-fw fa-mr" tag="router-link" :to="{name: 'profile'}">
+            <template slot="label">
+              Profile
+            </template>
+          </b-menu-item>
+
           <b-menu-item v-if="hasRole('admin')" icon="tools fa-fw fa-mr">
             <template slot="label" slot-scope="props">
               Admin

@@ -82,6 +82,14 @@ const routes = [
     },
   },
   {
+    path: '/profile',
+    name: 'profile',
+    component: () => import(/* webpackChunkName: "Profile" */ '@/components/Profile'),
+    meta: {
+      title: 'Profil',
+    },
+  },
+  {
     path: '/notifications',
     name: 'notifications',
     component: () => import(/* webpackChunkName: "Notifications" */ '@/components/Notifications'),
