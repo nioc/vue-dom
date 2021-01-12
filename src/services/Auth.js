@@ -3,9 +3,11 @@ import store from '@/store'
 
 // set authentication (API key, token, ...) and notify application user is authenticated
 function setAuthentication (login, authentication) {
-  const roles = new Vue().$Provider.getRoles(authentication)
-  new Vue().$Provider.setAuthentication(authentication)
-  store.commit('app/setUser', { isAuthenticated: true, login, roles })
+  const vue = new Vue()
+  const roles = vue.$Provider.getRoles(authentication)
+  const id = vue.$Provider.getUserId(authentication)
+  vue.$Provider.setAuthentication(authentication)
+  store.commit('app/setUser', { isAuthenticated: true, login, roles, id })
 }
 
 export default {

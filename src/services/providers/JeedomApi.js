@@ -158,6 +158,11 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       return []
     },
 
+    // return user identifier
+    getUserId (authentication) {
+      return undefined
+    },
+
     // suscribe to Jeedom events throught websocket
     openEventsListener (resetCounter, forceRefresh = false) {
       if (!store.state.app.hasNetwork) {
