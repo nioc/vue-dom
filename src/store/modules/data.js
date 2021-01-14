@@ -322,6 +322,26 @@ const mutations = {
     }
   },
 
+  // store updated actions (batch)
+  updateActions (state, payload) {
+    const actionsUpdated = {}
+    payload.forEach((_action) => {
+      const id = _action.id
+      if (!state.actions[id]) {
+        // action was not in store
+        actionsUpdated[id] = _action
+        return
+      }
+      actionsUpdated[id] = state.actions[id]
+      for (const key in _action) {
+        actionsUpdated[id][key] = _action[key]
+      }
+    })
+    if (Object.keys(actionsUpdated).length > 0) {
+      state.actions = Object.assign({}, state.actions, actionsUpdated)
+    }
+  },
+
   // store updated states/actions (batch)
   updateStatesActions (state, payload) {
     const statesUpdated = {}
@@ -360,6 +380,10 @@ const mutations = {
 
   deleteState (state, stateId) {
     delete state.states[stateId]
+  },
+
+  deleteAction (state, actionId) {
+    delete state.actions[actionId]
   },
 
   // store tags
@@ -571,6 +595,46 @@ const actions = {
       return true
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression de l'état<br>${error.message}` }, { root: true })
+      return false
+    }
+  },
+
+  async vxRefreshActions ({ commit }) {
+    try {
+      // get all actions
+      const actions = await vue.$Provider.getActions()
+      if (actions === undefined) {
+        // no actions to save
+        return
+      }
+      commit('updateActions', actions)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors du rafrichissement des actions<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxSaveAction ({ commit }, { action, isNew }) {
+    try {
+      if (isNew) {
+        action = await vue.$Provider.createAction(action)
+      } else {
+        action = await vue.$Provider.updateAction(action)
+      }
+      commit('updateActions', [action])
+      return action
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la sauvegarde de l'action<br>${error.message}` }, { root: true })
+      return false
+    }
+  },
+
+  async vxDeleteAction ({ commit }, actionId) {
+    try {
+      await vue.$Provider.deleteAction(actionId)
+      commit('deleteAction', actionId)
+      return true
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression de l'action<br>${error.message}` }, { root: true })
       return false
     }
   },
