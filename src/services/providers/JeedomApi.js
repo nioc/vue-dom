@@ -309,6 +309,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               id: jEqLogic.id,
               module: jEqLogic.eqType_name,
               name: jEqLogic.name,
+              isVisible: true,
               cmds: [],
               tags: jEqLogic.tags ? jEqLogic.tags.split(',') : [],
             }
