@@ -12,24 +12,26 @@
             <span class="icon is-small is-left"><i class="fas fa-search" /></span>
           </p>
         </div>
-        <table class="table is-striped is-fullwidth is-vertical-centered">
-          <thead>
-            <tr>
-              <th>Login</th>
-              <th>Adresse mail</th>
-              <th>Rôles</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in filtered" :key="user.id" @click="editUser(user.id)">
-              <td>{{ user.login }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.roles }}</td>
-              <td><i class="fas fa-fw" :class="user.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="user.isActive ? 'Actif' : 'Inactif'" /></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <table class="table is-striped is-fullwidth is-vertical-centered">
+            <thead>
+              <tr>
+                <th>Login</th>
+                <th>Adresse mail</th>
+                <th>Rôles</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in filtered" :key="user.id" @click="editUser(user.id)">
+                <td>{{ user.login }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles }}</td>
+                <td><i class="fas fa-fw" :class="user.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="user.isActive ? 'Actif' : 'Inactif'" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <span class="buttons">
           <button class="button is-primary" @click="getUsers()">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
