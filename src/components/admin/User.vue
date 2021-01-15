@@ -45,6 +45,9 @@
           <button class="button is-primary" title="Sauvegarder" @click="updateUser()">
             <span class="icon"><i class="fa fa-save" /></span><span>Sauvegarder</span>
           </button>
+          <button class="button is-light" title="Générer un token" @click="getToken()">
+            <span class="icon"><i class="fa fa-key" /></span><span>Générer un token</span>
+          </button>
           <button class="button is-danger" title="Supprimer l'utilisateur" @click="removeUser()">
             <span class="icon"><i class="fa fa-trash" /></span><span>Supprimer</span>
           </button>
@@ -102,6 +105,23 @@ export default {
         await this.$Provider.deleteUser(this.user.id)
         this.isLoading = false
         this.$router.back()
+      } catch (error) {
+        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+      }
+    },
+    async getToken () {
+      this.isLoading = true
+      try {
+        const tokens = await this.$Provider.getUserTokens(this.user.id)
+        tokens.sort((a, b) => this.$moment(b.issuedDate) - this.$moment(a.issuedDate))
+        this.$buefy.dialog.alert({
+          title: 'Refresh token',
+          message: `<span class="is-selectable-all">${tokens[0].token}</span>`,
+          hasIcon: true,
+          icon: 'key',
+          iconPack: 'fa',
+        })
+        this.isLoading = false
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

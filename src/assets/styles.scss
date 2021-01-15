@@ -326,9 +326,31 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   visibility: hidden;
 }
 
+.loading-overlay {
+  z-index: 29;
+}
+
 .is-required .label::after {
   content: " *";
   color: $danger;
+}
+
+.is-selectable {
+  -webkit-touch-callout: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.is-selectable-all {
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-touch-callout: all;
+  -webkit-user-select: all;
+  -moz-user-select: all;
+  -ms-user-select: text;
+  user-select: all;
 }
 
 .tree {
