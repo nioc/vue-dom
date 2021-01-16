@@ -191,6 +191,14 @@ const routes = [
       title: 'Admin action',
     },
   },
+  {
+    path: '/admin/system',
+    name: 'admin-system',
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/System'),
+    meta: {
+      title: 'Admin système',
+    },
+  },
 ]
 
 // create router
