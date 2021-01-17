@@ -8,10 +8,10 @@
         <ul>
           <li v-for="scenario in scenarios" :key="scenario.id" class="card has-margin-bottom-6">
             <header class="card-header">
-              <p class="card-header-title"><span v-if="scenario.group" class="has-margin-right-8 has-text-grey-light">[{{ scenario.group }}]</span>{{ scenario.display.name }}</p>
+              <p class="card-header-title"><span v-if="scenario.group" class="has-margin-right-8 has-text-grey-light">[{{ scenario.group }}]</span>{{ scenario.name }}</p>
             </header>
             <div class="card-content">
-              <p class="content">{{ scenario.description }}</p>
+              <p v-if="scenario.description" class="content">{{ scenario.description }}</p>
               <button v-if="(scenario.state === 'stop' || scenario.state === '')" class="button is-primary" @click="run(scenario.id)">
                 <span class="icon"><i class="fa fa-play-circle" /></span><span>Exécuter</span>
               </button>
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapGetters(['getScenarios']),
-    scenarios () { return this.getScenarios() },
+    scenarios () { return this.getScenarios().filter((scenario) => scenario.isVisible && scenario.isActive) },
   },
   created () {
     this.loadScenarios()

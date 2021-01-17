@@ -433,7 +433,15 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     async getScenarios () {
       try {
         const scenarios = await jsonRpcCall('scenario::all')
-        return scenarios.filter((scenario) => scenario.isVisible === '1')
+        return scenarios
+          .filter((scenario) => scenario.isVisible === '1' && scenario.isActive === '1')
+          .map((scenario) => {
+            scenario.isVisible = true
+            scenario.isActive = true
+            scenario.name = scenario.display.name
+            delete scenario.display
+            return scenario
+          })
       } catch (error) {
         console.error(error)
         throw error
