@@ -22,12 +22,14 @@
                 </span>
               </div>
             </div>
+
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
                 <b-switch v-model="room.isVisible">{{ room.isVisible ? 'Visible' : 'Masquée' }}</b-switch>
               </div>
             </div>
+
             <div class="field">
               <label class="label">Parent</label>
               <div class="control">
@@ -39,6 +41,7 @@
                 </div>
               </div>
             </div>
+
             <div class="buttons">
               <button class="button is-primary" title="Sauvegarder la pièce" @click="saveRoom">
                 <span class="icon"><i class="fa fa-save" /></span><span>Sauvegarder</span>
@@ -55,6 +58,7 @@
             </div>
           </section>
         </div>
+
         <div class="card has-margin-bottom-6">
           <header class="card-header">
             <p class="card-header-title">
@@ -97,6 +101,60 @@
             </div>
           </section>
         </div>
+
+        <div class="card has-margin-bottom-6">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon"><i class="fa fa-heartbeat" /></span><span>Résumé</span>
+            </p>
+          </header>
+          <section class="card-content">
+            <div class="table-wrapper">
+              <table class="table is-fullwidth is-striped is-vertical-centered">
+                <thead>
+                  <tr>
+                    <th>Etat</th>
+                    <th>Type</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(summary, index) in room.summaryStates" :key="index">
+                    <td>{{ getStateFullName(summary.state) }}</td>
+                    <td><i class="fa-fw" :class="getSummaryIconClass(summary.key.toLowerCase())" />{{ getSummaryTypeLabel(summary.key) }}</td>
+                    <td>
+                      <button class="button is-danger is-light" title="Retirer l'état du résumé" @click="removeSummaryState(index)">
+                        <span class="icon"><i class="fa fa-trash" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <options-autocomplete placeholder="Température" :search="newSummaryState.name" @select="setSummaryState" />
+                    </td>
+                    <td>
+                      <div class="field">
+                        <div class="control">
+                          <span class="select">
+                            <select v-model="newSummaryState.key">
+                              <option :value="null">Aucun</option>
+                              <option v-for="summaryKey in summaryKeys" :key="summaryKey.key" :value="summaryKey.key">{{ summaryKey.label }}</option>
+                            </select>
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <button class="button is-primary is-light" title="Ajouter l'état au résumé" :disabled="!isNewSummaryStateValid" @click="addSummaryState">
+                        <span class="icon"><i class="fa fa-plus" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   </section>
@@ -104,16 +162,22 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 import TimeAgo from '@/components/TimeAgo'
 import { AdminMixin } from '@/mixins/Admin'
+import { SummaryMixin } from '@/mixins/Summary'
 
 export default {
   name: 'Room',
   components: {
     Breadcrumb,
     TimeAgo,
+    OptionsAutocomplete,
   },
-  mixins: [AdminMixin],
+  mixins: [
+    AdminMixin,
+    SummaryMixin,
+  ],
   props: {
     id: {
       type: String,
@@ -132,10 +196,16 @@ export default {
         parentId: null,
       },
       isLoading: false,
+      newSummaryState: {
+        name: '',
+        state: null,
+        key: null,
+      },
     }
   },
   computed: {
     isNew () { return this.id === 'new' },
+    isNewSummaryStateValid () { return (this.newSummaryState.key !== null && this.newSummaryState.state) },
   },
   mounted () {
     if (!this.isNew) {
@@ -199,6 +269,31 @@ export default {
           },
         },
       })
+    },
+    setSummaryState (state) {
+      if (!state) {
+        this.newSummaryState.state = null
+        return
+      }
+      this.newSummaryState.name = state.name
+      this.newSummaryState.state = state.id
+      if (this.summaryKeys.some((summaryKey) => summaryKey.key === state.genericType)) {
+        // state type is known, set summary state type
+        this.newSummaryState.key = state.genericType
+      }
+    },
+    addSummaryState () {
+      if (this.room.summaryStates.findIndex((summaryState) => (summaryState.state === this.newSummaryState.state && summaryState.key === this.newSummaryState.key)) !== -1) {
+        this.$store.commit('app/setInformation', { type: 'is-warning', message: 'Cet état est déjà dans le résumé' })
+        return
+      }
+      this.room.summaryStates.push(Object.assign({}, this.newSummaryState))
+      this.newSummaryState.name = ''
+      this.newSummaryState.state = null
+      this.newSummaryState.key = null
+    },
+    removeSummaryState (index) {
+      this.room.summaryStates.splice(index, 1)
     },
   },
 }
