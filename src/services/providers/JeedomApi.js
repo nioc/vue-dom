@@ -322,8 +322,14 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               if (jEqLogic.status.battery) {
                 equipment.battery = jEqLogic.status.battery
               }
+              if (jEqLogic.status.batterydanger || jEqLogic.status.batterywarning) {
+                equipment.hasLowBattery = true
+              }
               if (jEqLogic.status.lastCommunication) {
                 equipment.lastCommunication = Vue.moment(jEqLogic.status.lastCommunication).format()
+              }
+              if (jEqLogic.status.timeout || jEqLogic.status.warning || jEqLogic.status.danger) {
+                equipment.hasNoCommunication = true
               }
             }
             // set equipment actions
