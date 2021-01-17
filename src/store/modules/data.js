@@ -91,7 +91,6 @@ const getters = {
         id: c.id,
         type: c.type,
         stateFeedbackId: c.stateFeedbackId,
-        genericType: c.genericType,
         isVisible: c.isVisible,
       })
     })
@@ -122,7 +121,6 @@ const getters = {
         id: c.id,
         type: c.type,
         stateFeedbackId: c.stateFeedbackId,
-        genericType: c.genericType,
         isVisible: c.isVisible,
       })
     })

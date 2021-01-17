@@ -2,7 +2,7 @@
   <div>
     <div class="is-flex-space-between has-margin-bottom-8">
       <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ state.name }}<a v-if="state.isHistorized" class="has-margin-left-8 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
-      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" true-value="1" false-value="0" :title="state.name" class="has-margin-bottom-8" @input="action" />
+      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :true-value="1" :false-value="0" :title="state.name" class="has-margin-bottom-8" @input="action" />
       <span v-else class="is-flex-space-between">
         <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light">
           <li class="statistics-item"><span class="has-padding-horizontal-8" title="Min">{{ statistics.min }}</span></li>
@@ -59,9 +59,9 @@ export default {
     unit () { return this.state.unit ? ' ' + this.state.unit : '' },
     action () {
       const actions = this.getActionsByEquipmentId(this.equipmentId)
-      const actionOn = actions.find((action) => action.stateFeedbackId === this.state.id && action.genericType === 'LIGHT_ON')
-      const actionOff = actions.find((action) => action.stateFeedbackId === this.state.id && action.genericType === 'LIGHT_OFF')
-      const actionSwitch = actions.find((action) => action.stateFeedbackId === this.state.id && action.genericType === 'LIGHT_SWITCH')
+      const actionOn = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch_on')
+      const actionOff = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch_off')
+      const actionSwitch = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch')
       if ((!actionOn || !actionOff) && !actionSwitch) {
         return
       }
@@ -74,7 +74,7 @@ export default {
       }
       return async (newValue) => {
         // execute action whose value is related to switch
-        const actionId = newValue === '1' ? actionOn.id : actionOff.id
+        const actionId = newValue === 1 ? actionOn.id : actionOff.id
         vm.executeAction({ id: actionId })
       }
     },

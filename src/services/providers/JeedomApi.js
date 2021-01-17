@@ -342,9 +342,24 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
                 eqId: jCmd.eqLogic_id,
                 module: jCmd.eqType,
                 type: jCmd.subType.replace('other', 'button'),
-                genericType: jCmd.generic_type,
                 isVisible: jCmd.isVisible === '1',
                 order: jCmd.order,
+              }
+              switch (jCmd.generic_type) {
+                case 'LIGHT_OFF':
+                case 'ENERGY_OFF':
+                  cmd.type = 'switch_off'
+                  break
+                case 'LIGHT_ON':
+                case 'ENERGY_ON':
+                  cmd.type = 'switch_on'
+                  break
+                case 'LIGHT_TOGGLE':
+                  cmd.type = 'switch'
+                  break
+                case 'LIGHT_SLIDER':
+                  cmd.type = 'slider'
+                  break
               }
               if (jCmd.display.icon) {
                 cmd.icon = convertIconClass(jCmd.display.icon)

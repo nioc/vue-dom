@@ -3,6 +3,7 @@
     <span class="icon is-icon-mobile"><i :class="iconClass" /></span><span class="is-hidden-mobile">{{ action.name }}</span>
   </button>
   <b-slider v-else-if="action.type === 'slider'" v-model="value" lazy class="has-margin-left-4 has-margin-top-8" :title="action.name" @change="actionSlider" />
+  <b-switch v-else-if="action.type === 'switch'" v-model="value" :true-value="1" :false-value="0" :title="action.name" class="has-margin-bottom-8" @input="actionSwitch" />
   <span v-else>{{ action }}</span>
 </template>
 
@@ -30,6 +31,9 @@ export default {
     },
     actionSlider: function (newValue) {
       this.executeAction({ id: this.action.id, options: { slider: newValue } })
+    },
+    actionSwitch: function (newValue) {
+      this.executeAction({ id: this.action.id, options: { params: { value: newValue } } })
     },
   },
 }

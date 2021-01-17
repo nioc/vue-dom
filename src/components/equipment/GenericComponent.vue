@@ -37,21 +37,21 @@ export default {
       const actions = this.getActionsByIds(this.equipment.actions).filter((action) => action.isVisible)
       this.getStatesByIds(this.equipment.states).filter((state) => state.isVisible).forEach(state => {
         if (state.type === 'boolean') {
-          // search for light switch on/off
-          const actionOn = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_ON')
-          const actionOff = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_OFF')
-          const actionSwitch = actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_SWITCH')
+          // search for switch and on/off actions
+          const actionOn = actions.find((action) => action.stateFeedbackId === state.id && action.type === 'switch_on')
+          const actionOff = actions.find((action) => action.stateFeedbackId === state.id && action.type === 'switch_off')
+          const actionSwitch = actions.find((action) => action.stateFeedbackId === state.id && action.type === 'switch')
           if (actionOn && actionOff) {
             // do not display button for on/off actions
             actionsHiddenList.push(actionOn.id, actionOff.id)
           }
           if (actionSwitch) {
-            // do not display button for on/off actions
+            // do not display button for switch actions
             actionsHiddenList.push(actionSwitch.id)
           }
           statesList.push(state.id)
         } else if (state.type === 'numeric') {
-          if (!actions.find((action) => action.stateFeedbackId === state.id && action.genericType === 'LIGHT_SLIDER')) {
+          if (!actions.find((action) => action.stateFeedbackId === state.id && action.type === 'slider')) {
             // do not display slider state
             statesList.push(state.id)
           }
