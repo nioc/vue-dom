@@ -65,6 +65,7 @@
             <b-menu-item :to="{name: 'admin-equipments'}" label="Équipement" tag="router-link" />
             <b-menu-item :to="{name: 'admin-states'}" label="États" tag="router-link" />
             <b-menu-item :to="{name: 'admin-actions'}" label="Actions" tag="router-link" />
+            <b-menu-item :to="{name: 'admin-scenarios'}" label="Scénarios" tag="router-link" />
           </b-menu-item>
 
         </b-menu-list>

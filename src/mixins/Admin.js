@@ -6,6 +6,7 @@ export const AdminMixin = {
     ...mapGetters([
       'getRoomById',
       'getEquipmentById',
+      'getStateById',
     ]),
     ...mapState([
       'rooms',
@@ -23,11 +24,18 @@ export const AdminMixin = {
           name: state.name,
           eqId: state.eqId,
           module: state.module,
+          type: state.type,
+          genericType: state.genericType,
+          isVisible: state.isVisible,
           equipmentName: null,
+          equipmentIsVisible: null,
+          equipmentIsActive: null,
         }
         if (_state.eqId) {
           const equipment = this.getEquipmentById(state.eqId)
           _state.equipmentName = equipment.name
+          _state.equipmentIsVisible = equipment.isVisible
+          _state.equipmentIsActive = equipment.isActive
         }
         return _state
       }).sort((a, b) => {
@@ -38,8 +46,50 @@ export const AdminMixin = {
         return 0
       })
     },
+    arrActionsWithEquipmentName () {
+      return this.arrActions.map((action) => {
+        const _action = {
+          id: action.id,
+          name: action.name,
+          eqId: action.eqId,
+          module: action.module,
+          isAsk: action.isAsk,
+          isVisible: action.isVisible,
+          equipmentName: null,
+          equipmentIsVisible: null,
+          equipmentIsActive: null,
+        }
+        if (_action.eqId) {
+          const equipment = this.getEquipmentById(action.eqId)
+          _action.equipmentName = equipment.name
+          _action.equipmentIsVisible = equipment.isVisible
+          _action.equipmentIsActive = equipment.isActive
+        }
+        return _action
+      }).sort((a, b) => {
+        if (a.equipmentName < b.equipmentName) { return -1 }
+        if (a.equipmentName > b.equipmentName) { return 1 }
+        if (a.name < b.name) { return -1 }
+        if (a.name > b.name) { return 1 }
+        return 0
+      })
+    },
   },
   methods: {
+    getStateFullName (stateId) {
+      let stateFullName = stateId
+      const state = this.getStateById(stateId)
+      if (state.name) {
+        stateFullName = state.name
+      }
+      if (state.eqId) {
+        const equipment = this.getEquipmentById(state.eqId)
+        if (equipment.name) {
+          stateFullName = `${equipment.name} > ${stateFullName}`
+        }
+      }
+      return stateFullName
+    },
     getActionTypeClass (type) {
       switch (type) {
         case 'button':
