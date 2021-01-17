@@ -137,7 +137,7 @@ export default {
           service: this.search.service,
           limit: this.search.limit,
         })
-        this.logs.map((log) => { log.isNew = this.$moment(log.timestamp).isAfter(this.lastLogsRead) })
+        this.logs.forEach((log) => { log.isNew = this.$moment(log.timestamp).isAfter(this.lastLogsRead) })
         this.lastLogsFetch = new Date()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })

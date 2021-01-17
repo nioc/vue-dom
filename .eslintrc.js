@@ -52,6 +52,7 @@ module.exports = {
     'object-curly-spacing': 'error',
     'vue/space-unary-ops': 'error',
     'space-unary-ops': 'error',
+    'vue/no-mutating-props': 'off',
   },
   parserOptions: {
     parser: 'babel-eslint',

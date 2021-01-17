@@ -244,7 +244,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     let title = to.meta.title
     const params = to.params
-    for (var property in params) {
+    for (const property in params) {
       title = title.replace(':' + property, params[property])
     }
     document.title = title + ' | ' + custom.title

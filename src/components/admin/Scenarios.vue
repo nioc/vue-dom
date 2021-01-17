@@ -12,7 +12,7 @@
               <template v-if="column.searchable" slot="searchable" slot-scope="props">
                 <b-input v-model="props.filters[props.column.field]" placeholder="Rechercher..." icon="search" size="is-small" />
               </template>
-              <template v-slot="props">
+              <template #default="props">
                 <router-link v-if="column.field==='name'" :to="{name: 'admin-scenario', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
                 <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
                 <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
