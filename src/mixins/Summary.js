@@ -2,6 +2,31 @@ import { createNamespacedHelpers } from 'vuex'
 const { mapGetters } = createNamespacedHelpers('data')
 
 export const SummaryMixin = {
+  data () {
+    return {
+      summaryKeys: [
+        {
+          key: 'TEMPERATURE',
+          label: 'Température',
+        }, {
+          key: 'LIGHT',
+          label: 'Lumières',
+        }, {
+          key: 'HUMIDITY',
+          label: 'Humidité',
+        }, {
+          key: 'POWER',
+          label: 'Puissance',
+        }, {
+          key: 'DOWNLOAD',
+          label: 'Download',
+        }, {
+          key: 'UPLOAD',
+          label: 'Upload',
+        },
+      ],
+    }
+  },
   computed: {
     ...mapGetters(['getRoomSummaryById']),
   },
@@ -38,6 +63,10 @@ export const SummaryMixin = {
           return ' Ko/s'
       }
       return ''
+    },
+    getSummaryTypeLabel (key) {
+      const summaryKey = this.summaryKeys.find((summaryKey) => summaryKey.key === key)
+      return summaryKey ? summaryKey.label : key
     },
   },
 }
