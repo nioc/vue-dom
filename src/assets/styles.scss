@@ -353,6 +353,21 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   user-select: all;
 }
 
+.scenario-element:not(:last-child) {
+  margin-bottom: 0.75rem;
+}
+.scenario-element > fieldset {
+  width: 100%;
+}
+.scenario-element .scenario-rule,
+.scenario-element .scenario-ask {
+  border-left: lightgray solid;
+}
+
+.autocomplete .dropdown-menu {
+  min-width: unset;
+}
+
 .tree {
   position: relative;
 

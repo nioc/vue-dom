@@ -199,6 +199,24 @@ const routes = [
       title: 'Admin système',
     },
   },
+  {
+    path: '/admin/scenarios',
+    name: 'admin-scenarios',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Scenarios'),
+    meta: {
+      title: 'Admin scénarios',
+    },
+  },
+  {
+    path: '/admin/scenarios/:id',
+    name: 'admin-scenario',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Scenario'),
+    meta: {
+      title: 'Admin scénario',
+    },
+  },
 ]
 
 // create router
