@@ -80,7 +80,7 @@ export default {
         },
         {
           field: 'equipmentName',
-          label: 'Equipement',
+          label: 'Équipement',
           searchable: true,
           sortable: true,
         },
