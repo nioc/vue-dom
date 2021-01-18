@@ -162,16 +162,19 @@
               <label class="label">Paramètre</label>
               <div class="field has-addons mb-0">
                 <div class="control has-icons-left is-expanded">
-                  <input v-model.lazy="params" class="input is-family-code" :class="{'is-danger': hasParamsError}" type="text" placeholder="Valeur du paramètre à fournir lors de l'action">
+                  <input v-if="action.paramsType==='number'" v-model.lazy.number="params" class="input is-family-code" :class="{'is-danger': hasParamsError}" type="number" placeholder="Valeur du paramètre à fournir lors de l'action">
+                  <input v-else v-model.lazy="params" class="input is-family-code" :class="{'is-danger': hasParamsError}" type="text" placeholder="Valeur du paramètre à fournir lors de l'action">
                   <span class="icon is-small is-left">
                     <i class="fas fa-code" />
                   </span>
                 </div>
                 <div class="control">
                   <div class="select" :class="{'is-danger': hasParamsError}">
-                    <select v-model="action.paramsType">
+                    <select v-model="action.paramsType" @change="formatParams(action.params)">
                       <option value="json">JSON</option>
                       <option value="string">String</option>
+                      <option value="number">Numérique</option>
+                      <option value="boolean">Booléen</option>
                     </select>
                   </div>
                 </div>
@@ -302,25 +305,15 @@ export default {
       get: function () {
         switch (this.action.paramsType) {
           case 'json':
-            return (this.action.params) ? JSON.stringify(this.action.params, null, 1) : ''
+            return Object.prototype.hasOwnProperty.call(this.action, 'params') ? JSON.stringify(this.action.params, null, 1) : ''
+          case 'number':
+            return Object.prototype.hasOwnProperty.call(this.action, 'params') ? parseFloat(this.action.params).toString() : ''
           default:
             return this.action.params
         }
       },
       set: function (string) {
-        this.jsonError = null
-        switch (this.action.paramsType) {
-          case 'json':
-            try {
-              this.action.params = JSON.parse(string)
-            } catch (error) {
-              this.jsonError = error.message
-            }
-            break
-          default:
-            this.action.params = string
-            break
-        }
+        this.formatParams(string)
       },
     },
   },
@@ -385,6 +378,41 @@ export default {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
       this.isLoading = false
+    },
+    formatParams (params) {
+      this.jsonError = null
+      switch (this.action.paramsType) {
+        case 'json':
+          try {
+            this.action.params = JSON.parse(params)
+          } catch (error) {
+            this.jsonError = error.message
+          }
+          break
+        case 'boolean':
+          try {
+            this.action.params = Boolean(JSON.parse(params))
+          } catch (error) {
+            this.action.params = null
+            this.action.params = false
+          }
+          break
+        case 'number':
+          this.action.params = parseFloat(params)
+          if (isNaN(this.action.params)) {
+            this.action.params = 0
+          }
+          break
+        case 'string':
+          if (typeof params === 'string') {
+            this.action.params = params
+          } else {
+            this.action.params = JSON.stringify(params)
+          }
+          break
+        default:
+          this.action.params = params
+      }
     },
     addOption () {
       if (!this.action.options) {
