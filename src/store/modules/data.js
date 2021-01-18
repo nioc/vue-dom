@@ -455,12 +455,23 @@ const actions = {
       })
       commit('saveTags', [...new Set(tagsList)])
       // get rooms summary
-      rooms.forEach(async (room) => {
-        for (const key in room.summary) {
-          const value = await vue.$Provider.getRoomSummary(room.id, key)
-          commit('saveRoomSummary', { id: room.id, key, value })
+      let hasRoomSummary = false
+      rooms.forEach((room) => {
+        if (room.summary && Array.isArray(room.summary)) {
+          hasRoomSummary = true
+          room.summary.forEach((summary) => {
+            commit('saveRoomSummary', { id: room.id, key: summary.key, value: summary.value })
+          })
         }
       })
+      if (!hasRoomSummary) {
+        rooms.forEach(async (room) => {
+          for (const key in room.summary) {
+            const value = await vue.$Provider.getRoomSummary(room.id, key)
+            commit('saveRoomSummary', { id: room.id, key, value })
+          }
+        })
+      }
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des pièces<br>${error.message}` }, { root: true })
     }
