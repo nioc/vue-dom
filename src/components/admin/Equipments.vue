@@ -16,7 +16,7 @@
                 <router-link v-if="column.field==='name'" :to="{name: 'admin-equipment', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
                 <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
                 <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
-                <time-ago v-else-if="column.field==='lastCommunication' && props.row.lastCommunication" :date="props.row.lastCommunication" :drop-fixes="true" :title="props.row.lastCommunication | moment('LLL')" />
+                <time-ago v-else-if="column.field==='lastCommunication' && props.row.lastCommunication" :date="props.row.lastCommunication" :drop-fixes="true" :title="props.row.lastCommunication | moment('LLL')" :class="{'has-text-danger': props.row.hasNoCommunication}" />
                 <span v-else-if="column.field==='battery' && props.row.battery" :class="{'has-text-danger': props.row.battery < 10}">{{ props.row.battery }}%</span>
                 <span v-else>{{ props.row[column.field] }}</span>
               </template>
@@ -87,13 +87,18 @@ export default {
           sortable: true,
         },
         {
+          field: 'battery',
+          label: 'Batterie',
+          sortable: true,
+        },
+        {
           field: 'lastCommunication',
           label: 'Dernière communication',
           sortable: true,
         },
         {
-          field: 'battery',
-          label: 'Batterie',
+          field: 'alertNoCommunicationDelay',
+          label: 'Délai d\'alerte',
           sortable: true,
         },
         {
