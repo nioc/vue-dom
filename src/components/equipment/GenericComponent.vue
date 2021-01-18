@@ -56,6 +56,12 @@ export default {
             statesList.push(state.id)
           }
         } else if (state.type === 'string') {
+          // search for select action
+          const actionSelect = actions.find((action) => action.stateFeedbackId === state.id && action.type === 'select')
+          if (actionSelect) {
+            // do not display dropdown for select actions
+            actionsHiddenList.push(actionSelect.id)
+          }
           statesList.push(state.id)
         }
       })

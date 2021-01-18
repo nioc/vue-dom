@@ -373,6 +373,17 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               if (jCmd.configuration.maxValue && jCmd.configuration.maxValue !== '') {
                 cmd.maxValue = parseInt(jCmd.configuration.maxValue)
               }
+              if (jCmd.configuration.listValue) {
+                cmd.options = jCmd.configuration.listValue
+                  .split(';')
+                  .map((option) => {
+                    const valueLabel = option.split('|')
+                    return {
+                      value: valueLabel[0],
+                      label: valueLabel[1] || valueLabel[0],
+                    }
+                  })
+              }
               return cmd
             })
             // set equipment states

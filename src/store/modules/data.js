@@ -92,6 +92,7 @@ const getters = {
         type: c.type,
         stateFeedbackId: c.stateFeedbackId,
         isVisible: c.isVisible,
+        options: c.options,
       })
     })
     return actions
