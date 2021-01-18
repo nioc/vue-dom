@@ -46,7 +46,7 @@
               <span class="file-icon"><i class="fas fa-cloud-upload-alt" /></span>
               <span class="file-label">Importer</span>
             </span>
-            <span class="file-name" :class="{'has-text-grey-light': file}">{{ file.name || 'Charger une sauvegarde' }}</span>
+            <span class="file-name" :class="{'has-text-grey-light': file}">{{ file.name || 'fichier.json' }}</span>
           </label>
         </div>
       </span>

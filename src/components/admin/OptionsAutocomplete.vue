@@ -11,6 +11,7 @@
     keep-first
     :custom-class="autocompleteClass"
     :append-to-body="true"
+    style="min-width: 150px;"
     @typing="autocompleteClass = 'is-danger'"
     @select="selectOption"
   >
