@@ -13,6 +13,7 @@ export const AdminMixin = {
       'equipments',
       'states',
       'actions',
+      'tagsList',
     ]),
     arrEquipments () { return Object.values(this.equipments) },
     arrStates () { return Object.values(this.states) },

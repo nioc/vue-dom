@@ -364,7 +364,7 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   border-left: lightgray solid;
 }
 
-.autocomplete .dropdown-menu {
+body > .autocomplete .dropdown-menu {
   min-width: unset;
 }
 

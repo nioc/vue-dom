@@ -108,18 +108,19 @@
             </div>
             <div class="field">
               <label class="label">Tags</label>
-              <div class="control has-icons-left">
-                <input v-model="newTag" class="input" type="text" placeholder="Nouveau tag" @change="addTag">
-                <span class="icon is-small is-left">
-                  <i class="fas fa-tags" />
-                </span>
-              </div>
-            </div>
-            <div class="tags">
-              <span v-for="(tag, index) in equipment.tags" :key="tag" class="tag is-light is-medium">
-                {{ tag }}
-                <button class="delete is-small" title="Retirer ce tag" @click="equipment.tags.splice(index, 1)" />
-              </span>
+              <b-taginput
+                v-model="equipment.tags"
+                :data="filteredTags"
+                autocomplete
+                allow-new
+                open-on-focus
+                icon="tags"
+                dropdown-position="top"
+                placeholder="Nouveau tag"
+                aria-close-label="Retirer ce tag"
+                @typing="getFilteredTags"
+                @input="getFilteredTags()"
+              />
             </div>
             <div class="buttons">
               <button class="button is-primary" title="Sauvegarder l'équipement" @click="saveEquipment">
@@ -257,7 +258,7 @@ export default {
         roomId: null,
         tags: [],
       },
-      newTag: '',
+      filteredTags: [],
       isLoading: false,
     }
   },
@@ -286,6 +287,7 @@ export default {
     async getEquipment () {
       this.isLoading = true
       this.equipment = Object.assign({}, this.equipment, await this.$Provider.getEquipment(this.id))
+      this.getFilteredTags()
       this.isLoading = false
     },
     async saveEquipment () {
@@ -330,19 +332,14 @@ export default {
       }
       this.isLoading = false
     },
-    addTag () {
-      if (this.newTag) {
-        if (!this.equipment.tags) {
-          this.equipment.tags = []
-        }
-        if (!this.equipment.tags.includes(this.newTag)) {
-          this.equipment.tags.push(this.newTag)
-        }
-        this.newTag = ''
-      }
-    },
-    removeTag (index) {
-      this.equipment.tags.splice(index, 1)
+    getFilteredTags (query) {
+      this.filteredTags = this.tagsList.filter((tag) => {
+        // remove tags already present and filter with query if provided
+        return (!this.equipment.tags.includes(tag) && (query === undefined || tag
+          .toLowerCase()
+          .indexOf(query.toLowerCase()) >= 0)
+        )
+      })
     },
     addState () {
       this.$router.push({
