@@ -75,7 +75,7 @@
                       </td>
                       <td>
                         <div class="field is-required">
-                          <options-autocomplete v-if="newTrigger.type === 'state'" placeholder="Etat de déclenchement" :search="newTrigger.name" @select="selectState" />
+                          <options-autocomplete v-if="newTrigger.type === 'state'" placeholder="Etat de déclenchement" :value="newTrigger.value" @select="selectState" />
                           <div v-else class="control has-icons-left">
                             <input v-model="newTrigger.dateValue" class="input" type="text" placeholder="ss mm hh jj MMM JJJ">
                             <span class="icon is-small is-left">
@@ -210,7 +210,6 @@ export default {
         type: 'state',
         value: null,
         dateValue: '0 * * * * *',
-        name: '',
       },
     }
   },
@@ -298,12 +297,9 @@ export default {
       this.scenario.elements.splice(index + 1, 0, this.scenario.elements.splice(index, 1)[0])
     },
     selectState (option) {
-      if (!option) {
-        this.newTrigger.id = null
-        return
+      if (option) {
+        this.newTrigger.value = option.id
       }
-      this.newTrigger.value = option.id
-      this.newTrigger.name = option.name
     },
     addTrigger () {
       if (this.newTrigger.type === 'state' && this.newTrigger.value === null) {
@@ -316,7 +312,6 @@ export default {
         type: this.newTrigger.type,
         value: (this.newTrigger.type === 'state') ? this.newTrigger.value : this.newTrigger.dateValue,
       })
-      this.newTrigger.name = ''
       this.newTrigger.value = null
     },
     removeTrigger (index) {

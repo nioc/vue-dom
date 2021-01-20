@@ -130,7 +130,7 @@
                   </tr>
                   <tr>
                     <td>
-                      <options-autocomplete placeholder="Température" :search="newSummaryState.name" @select="setSummaryState" />
+                      <options-autocomplete placeholder="Température" :value="newSummaryState.state" @select="setSummaryState" />
                     </td>
                     <td>
                       <div class="field">
@@ -197,7 +197,6 @@ export default {
       },
       isLoading: false,
       newSummaryState: {
-        name: '',
         state: null,
         key: null,
       },
@@ -271,15 +270,12 @@ export default {
       })
     },
     setSummaryState (state) {
-      if (!state) {
-        this.newSummaryState.state = null
-        return
-      }
-      this.newSummaryState.name = state.name
-      this.newSummaryState.state = state.id
-      if (this.summaryKeys.some((summaryKey) => summaryKey.key === state.genericType)) {
-        // state type is known, set summary state type
-        this.newSummaryState.key = state.genericType
+      if (state) {
+        this.newSummaryState.state = state.id
+        if (this.summaryKeys.some((summaryKey) => summaryKey.key === state.genericType)) {
+          // state type is known, set summary state type
+          this.newSummaryState.key = state.genericType
+        }
       }
     },
     addSummaryState () {
@@ -288,7 +284,6 @@ export default {
         return
       }
       this.room.summaryStates.push(Object.assign({}, this.newSummaryState))
-      this.newSummaryState.name = ''
       this.newSummaryState.state = null
       this.newSummaryState.key = null
     },

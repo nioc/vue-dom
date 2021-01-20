@@ -1,5 +1,6 @@
 <template>
   <b-autocomplete
+    ref="autocomplete"
     v-model="searchInput"
     :data="filteredOptions"
     field="name"
@@ -35,9 +36,9 @@ export default {
       type: String,
       default: 'state',
     },
-    search: {
+    value: {
       type: String,
-      default: '',
+      default: null,
     },
     placeholder: {
       type: String,
@@ -81,22 +82,20 @@ export default {
           return 'eye'
       }
     },
-    filteredOptions () {
-      let collections = []
+    options () {
       switch (this.type) {
         case 'state':
-          collections = this.arrStatesWithEquipmentName
-          break
+          return this.arrStatesWithEquipmentName
         case 'action':
-          collections = this.arrActionsWithEquipmentName
-          break
+          return this.arrActionsWithEquipmentName
         case 'ask':
-          collections = this.arrActionsWithEquipmentName.filter((action) => action.isAsk)
-          break
+          return this.arrActionsWithEquipmentName.filter((action) => action.isAsk)
         default:
-          break
+          return []
       }
-      return collections.filter((option) => {
+    },
+    filteredOptions () {
+      return this.options.filter((option) => {
         if (!Object.prototype.hasOwnProperty.call(option, 'name') || !option.name) {
           return false
         }
@@ -108,22 +107,41 @@ export default {
     },
   },
   watch: {
-    search: {
+    value: {
       // reset input from parent
-      immediate: true,
-      handler (search) {
-        this.searchInput = search
+      handler (value) {
+        if (this.value === null) {
+          this.searchInput = ''
+          this.autocompleteClass = ''
+          return
+        }
+        this.setSelected(value)
       },
     },
+  },
+  mounted () {
+    if (this.value !== null) {
+      this.setSelected(this.value)
+    }
   },
   methods: {
     selectOption (option) {
       if (!option) {
+        // emit null value, allowing parent to clear its id
         this.$emit('select', null)
         return
       }
       this.autocompleteClass = ''
       this.$emit('select', option)
+    },
+    setSelected (value) {
+      const selected = this.options.find((option) => option.id === value)
+      if (selected === undefined) {
+        this.autocompleteClass = 'is-danger'
+        return
+      }
+      this.$refs.autocomplete.setSelected(selected)
+      this.autocompleteClass = ''
     },
   },
 }

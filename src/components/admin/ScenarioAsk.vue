@@ -4,7 +4,7 @@
       <div class="field-body">
 
         <div class="field is-required is-narrow">
-          <options-autocomplete type="ask" placeholder="XMPP" :search="currentAskAction.name" @select="selectAction" />
+          <options-autocomplete type="ask" placeholder="XMPP" :value="scenarioAsk.id" @select="selectAction" />
         </div>
 
         <div class="field has-addons">
@@ -99,10 +99,6 @@ export default {
   data () {
     return {
       isLoading: false,
-      currentAskAction: {
-        id: null,
-        name: '',
-      },
       paramsClass: '',
     }
   },
@@ -143,17 +139,6 @@ export default {
       }
     },
   },
-  watch: {
-    'scenarioAsk.id': {
-      immediate: true,
-      handler (id) {
-        this.currentAskAction = {
-          id,
-          name: id && Object.prototype.hasOwnProperty.call(this.actions, id) ? this.actions[id].name : '',
-        }
-      },
-    },
-  },
   created () {
     if (!this.scenarioAsk.paramsType) {
       this.scenarioAsk.paramsType = 'string'
@@ -161,17 +146,9 @@ export default {
   },
   methods: {
     selectAction (option) {
-      if (!option) {
-        if (this.scenarioAsk.id) {
-          this.currentAskAction.id = this.scenarioAsk.id
-          return
-        }
-        this.scenarioAsk.id = null
-        return
+      if (option) {
+        this.scenarioAsk.id = option.id
       }
-      this.currentAskAction.id = option.id
-      this.currentAskAction.name = option.name
-      this.scenarioAsk.id = option.id
     },
     addOnElement (collection, type = 'action') {
       if (!collection) {

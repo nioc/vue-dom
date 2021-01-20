@@ -2,7 +2,7 @@
   <div class="field is-horizontal">
     <div class="field-body">
       <div class="field is-required is-narrow">
-        <options-autocomplete type="action" placeholder="Alerte" :search="currentAction.name" @select="selectAction" />
+        <options-autocomplete type="action" placeholder="Alerte" :value="scenarioAction.id" @select="selectAction" />
       </div>
 
       <div class="field has-addons">
@@ -63,10 +63,6 @@ export default {
   },
   data () {
     return {
-      currentAction: {
-        id: null,
-        name: '',
-      },
       paramsClass: '',
     }
   },
@@ -107,17 +103,6 @@ export default {
       }
     },
   },
-  watch: {
-    'scenarioAction.id': {
-      immediate: true,
-      handler (id) {
-        this.currentAction = {
-          id,
-          name: id && Object.prototype.hasOwnProperty.call(this.actions, id) ? this.actions[id].name : '',
-        }
-      },
-    },
-  },
   created () {
     if (!this.scenarioAction.paramsType) {
       this.scenarioAction.paramsType = 'string'
@@ -125,17 +110,9 @@ export default {
   },
   methods: {
     selectAction (option) {
-      if (!option) {
-        if (this.scenarioAction.id) {
-          this.currentAction.id = this.scenarioAction.id
-          return
-        }
-        this.scenarioAction.id = null
-        return
+      if (option) {
+        this.scenarioAction.id = option.id
       }
-      this.currentAction.id = option.id
-      this.currentAction.name = option.name
-      this.scenarioAction.id = option.id
     },
   },
 }
