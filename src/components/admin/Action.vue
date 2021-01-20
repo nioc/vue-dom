@@ -38,17 +38,7 @@
               <label class="label">Equipement</label>
               <div class="control">
                 <div class="field has-addons">
-                  <div class="control has-icons-left">
-                    <span class="select">
-                      <select v-model="action.eqId">
-                        <option :value="null" disabled>Aucun</option>
-                        <option v-for="equipment in equipments" :key="equipment.id" :value="equipment.id">{{ equipment.name }}</option>
-                      </select>
-                    </span>
-                    <span class="icon is-small is-left">
-                      <i class="fas fa-microchip" />
-                    </span>
-                  </div>
+                  <options-autocomplete type="equipment" placeholder="Équipement" :value="action.eqId" @select="setEquipmentId" />
                   <div v-if="action.eqId" class="control">
                     <router-link class="button is-primary" :to="{name: 'admin-equipment', params: {id: action.eqId}}" title="Consulter l'équipement"><span class="icon" style="height: 40px;width: 40px;"><i class="fa fa-external-link-square-alt" /></span></router-link>
                   </div>
@@ -190,22 +180,7 @@
               <label class="label">Retour d'état</label>
               <div class="control">
                 <div class="field has-addons">
-                  <div class="control has-icons-left">
-                    <span class="select">
-                      <select v-model="action.stateFeedbackId" title="État mis à jour par cette action">
-                        <option :value="undefined">Aucun</option>
-                        <optgroup label="Cet équipement">
-                          <option v-for="state in arrStatesWithEquipmentName.filter((_state) => _state.eqId === action.eqId)" :key="state.id" :value="state.id">{{ state.name }}</option>
-                        </optgroup>
-                        <optgroup label="Autres équipements">
-                          <option v-for="state in arrStatesWithEquipmentName.filter((_state) => _state.eqId !== action.eqId)" :key="state.id" :value="state.id">{{ state.name }} (#{{ state.eqId }} {{ state.equipmentName }})</option>
-                        </optgroup>
-                      </select>
-                    </span>
-                    <span class="icon is-small is-left">
-                      <i class="fas fa-eye" />
-                    </span>
-                  </div>
+                  <options-autocomplete type="state" title="État mis à jour par cette action" placeholder="État mis à jour" :value="action.stateFeedbackId" @select="setStateFeedbackId" />
                   <div v-if="action.stateFeedbackId" class="control">
                     <router-link class="button is-primary" :to="{name: 'admin-state', params: {id: action.stateFeedbackId}}" title="Consulter l'état"><span class="icon" style="height: 40px;width: 40px;"><i class="fa fa-external-link-square-alt" /></span></router-link>
                   </div>
@@ -258,6 +233,7 @@
 import draggable from 'vuedraggable'
 import Breadcrumb from '@/components/Breadcrumb'
 import IconPicker from '@/components/admin/IconPicker'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 import { AdminMixin } from '@/mixins/Admin'
 
 export default {
@@ -266,6 +242,7 @@ export default {
     Breadcrumb,
     draggable,
     IconPicker,
+    OptionsAutocomplete,
   },
   mixins: [
     AdminMixin,
@@ -288,6 +265,7 @@ export default {
         isVisible: false,
         type: 'button',
         paramsType: 'string',
+        stateFeedbackId: null,
       },
       isLoading: false,
       jsonError: null,
@@ -424,6 +402,20 @@ export default {
     },
     removeOption (index) {
       this.action.options.splice(index, 1)
+    },
+    setEquipmentId (equipment) {
+      if (!equipment) {
+        this.action.eqId = null
+        return
+      }
+      this.action.eqId = equipment.id
+    },
+    setStateFeedbackId (state) {
+      if (!state) {
+        this.action.stateFeedbackId = null
+        return
+      }
+      this.action.stateFeedbackId = state.id
     },
   },
 }

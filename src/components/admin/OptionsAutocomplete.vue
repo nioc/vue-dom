@@ -7,7 +7,7 @@
     :group-field="groupField"
     :placeholder="placeholder"
     :icon="icon"
-    :title="title"
+    :title="titleComputed"
     open-on-focus
     keep-first
     :custom-class="autocompleteClass"
@@ -17,7 +17,8 @@
     @select="selectOption"
   >
     <template slot-scope="props">
-      <span :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.equipmentIsVisible || !props.option.equipmentIsActive}">{{ props.option.name }}</span>
+      <span v-if="type==='equipment'" :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.isActive || !props.option.roomIsVisible}">{{ props.option.name }}</span>
+      <span v-else :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.equipmentIsVisible || !props.option.equipmentIsActive}">{{ props.option.name }}</span>
     </template>
     <template slot="empty">Aucune correspondance</template>
   </b-autocomplete>
@@ -44,6 +45,10 @@ export default {
       type: String,
       default: 'Etat',
     },
+    title: {
+      type: String,
+      default: null,
+    },
   },
   data () {
     return {
@@ -54,6 +59,8 @@ export default {
   computed: {
     groupField () {
       switch (this.type) {
+        case 'equipment':
+          return 'roomName'
         case 'state':
         case 'action':
         case 'ask':
@@ -61,11 +68,16 @@ export default {
           return 'equipmentName'
       }
     },
-    title () {
+    titleComputed () {
+      if (this.title) {
+        return this.title
+      }
       switch (this.type) {
         case 'action':
         case 'ask':
           return 'Action à utiliser'
+        case 'equipment':
+          return 'Équipement à utiliser'
         case 'state':
         default:
           return 'Etat à utiliser'
@@ -73,6 +85,8 @@ export default {
     },
     icon () {
       switch (this.type) {
+        case 'equipment':
+          return 'microchip'
         case 'action':
           return 'cogs'
         case 'ask':
@@ -90,6 +104,8 @@ export default {
           return this.arrActionsWithEquipmentName
         case 'ask':
           return this.arrActionsWithEquipmentName.filter((action) => action.isAsk)
+        case 'equipment':
+          return this.arrEquipmentsWithRoomName
         default:
           return []
       }

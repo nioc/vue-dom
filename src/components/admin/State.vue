@@ -38,17 +38,7 @@
               <label class="label">Equipement</label>
               <div class="control">
                 <div class="field has-addons">
-                  <div class="control has-icons-left">
-                    <span class="select">
-                      <select v-model="state.eqId">
-                        <option :value="null">Aucun</option>
-                        <option v-for="equipment in equipments" :key="equipment.id" :value="equipment.id">{{ equipment.name }}</option>
-                      </select>
-                    </span>
-                    <span class="icon is-small is-left">
-                      <i class="fas fa-microchip" />
-                    </span>
-                  </div>
+                  <options-autocomplete type="equipment" placeholder="Équipement" :value="state.eqId" @select="setEquipmentId" />
                   <div v-if="state.eqId" class="control">
                     <router-link class="button is-primary" :to="{name: 'admin-equipment', params: {id: state.eqId}}" title="Consulter l'équipement"><span class="icon" style="height: 40px;width: 40px;"><i class="fa fa-external-link-square-alt" /></span></router-link>
                   </div>
@@ -197,6 +187,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
 import IconPicker from '@/components/admin/IconPicker'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 import { AdminMixin } from '@/mixins/Admin'
 
 export default {
@@ -204,6 +195,7 @@ export default {
   components: {
     Breadcrumb,
     IconPicker,
+    OptionsAutocomplete,
   },
   mixins: [
     AdminMixin,
@@ -283,6 +275,13 @@ export default {
         this.$router.back()
       }
       this.isLoading = false
+    },
+    setEquipmentId (equipment) {
+      if (!equipment) {
+        this.state.eqId = null
+        return
+      }
+      this.state.eqId = equipment.id
     },
   },
 }
