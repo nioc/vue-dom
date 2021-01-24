@@ -75,6 +75,32 @@ export const AdminMixin = {
         return 0
       })
     },
+    arrEquipmentsWithRoomName () {
+      return this.arrEquipments.map((equipment) => {
+        const _equipment = {
+          id: equipment.id,
+          name: equipment.name,
+          module: equipment.module,
+          isActive: equipment.isActive,
+          isVisible: equipment.isVisible,
+          roomId: equipment.roomId,
+          roomName: null,
+          roomIsVisible: null,
+        }
+        if (_equipment.roomId) {
+          const room = this.getRoomById(equipment.roomId)
+          _equipment.roomName = room.name
+          _equipment.roomIsVisible = room.isVisible
+        }
+        return _equipment
+      }).sort((a, b) => {
+        if (a.roomName < b.roomName) { return -1 }
+        if (a.roomName > b.roomName) { return 1 }
+        if (a.name < b.name) { return -1 }
+        if (a.name > b.name) { return 1 }
+        return 0
+      })
+    },
   },
   methods: {
     getStateFullName (stateId) {
