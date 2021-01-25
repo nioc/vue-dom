@@ -1,16 +1,14 @@
 import moment from 'moment'
-import config, { setVueInstance } from 'buefy/src/utils/config'
-
-import { Switch, Slider, Checkbox, Toast, Dialog, Table, Datetimepicker, Input, Sidebar, Menu, Autocomplete, Taginput, Collapse, Loading } from 'buefy/src/components'
+import { ConfigProgrammatic, Switch, Slider, Checkbox, Toast, Dialog, Table, Datetimepicker, Input, Sidebar, Menu, Autocomplete, Taginput, Collapse, Loading } from 'buefy'
 
 const Buefy = {
   install (Vue, options = {}) {
-    setVueInstance(Vue)
-    // options
-    config.defaultIconPack = 'fas'
-    config.defaultDayNames = moment.weekdaysMin()
-    config.defaultMonthNames = moment.months().map((month) => month[0].toUpperCase() + month.slice(1))
-    config.defaultFirstDayOfWeek = 1
+    ConfigProgrammatic.setOptions({
+      defaultIconPack: 'fas',
+      defaultDayNames: moment.weekdaysMin(),
+      defaultMonthNames: moment.months().map((month) => month[0].toUpperCase() + month.slice(1)),
+      defaultFirstDayOfWeek: 1,
+    })
     // components
     Vue.use(Switch)
     Vue.use(Slider)
