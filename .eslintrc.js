@@ -55,6 +55,6 @@ module.exports = {
     'vue/no-mutating-props': 'off',
   },
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: '@babel/eslint-parser',
   },
 }
