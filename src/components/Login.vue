@@ -25,7 +25,7 @@
               </div>
               <div class="field has-text-left has-padding-left-7">
                 <b-checkbox v-model="credentials.remember" :class="{'has-text-grey-light': !credentials.remember}">
-                  {{ rememberLabel }}
+                  Rester connecté
                 </b-checkbox>
               </div>
               <div class="field">
@@ -64,9 +64,6 @@ export default {
   computed: {
     isDisabled () {
       return this.isLoading || !this.credentials.login || !this.credentials.password || !this.hasNetwork
-    },
-    rememberLabel () {
-      return this.credentials.remember ? 'Rester connecté' : 'Ne pas stocker mes informations de connexion'
     },
     ...mapState(['hasNetwork']),
   },
