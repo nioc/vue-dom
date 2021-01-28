@@ -189,6 +189,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import IconPicker from '@/components/admin/IconPicker'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 import { AdminMixin } from '@/mixins/Admin'
+import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 
 export default {
   name: 'State',
@@ -199,6 +200,7 @@ export default {
   },
   mixins: [
     AdminMixin,
+    UnsavedChangesGuardMixin,
   ],
   props: {
     id: {
@@ -229,6 +231,7 @@ export default {
     if (!this.isNew) {
       this.getState()
     } else {
+      this.addUnsavedChangesGuard('state')
       if (this.proposal) {
         this.state = Object.assign({}, this.state, this.proposal)
       }
@@ -238,6 +241,7 @@ export default {
     async getState () {
       this.isLoading = true
       this.state = await this.$Provider.getState(this.id)
+      this.addUnsavedChangesGuard('state')
       this.isLoading = false
     },
     async saveState () {
@@ -247,6 +251,7 @@ export default {
       delete state.date
       const result = await this.vxSaveState({ state, isNew: this.isNew })
       if (result) {
+        this.addUnsavedChangesGuard('state')
         if (this.isNew) {
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
@@ -267,11 +272,12 @@ export default {
           id: 'new',
           proposal,
         },
-      })
+      }).catch(() => {})
     },
     async removeState () {
       this.isLoading = true
       if (await this.vxDeleteState(this.state.id)) {
+        this.removeUnsavedChangesGuard('state')
         this.$router.back()
       }
       this.isLoading = false

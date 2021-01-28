@@ -235,6 +235,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import IconPicker from '@/components/admin/IconPicker'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 import { AdminMixin } from '@/mixins/Admin'
+import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 
 export default {
   name: 'Action',
@@ -246,6 +247,7 @@ export default {
   },
   mixins: [
     AdminMixin,
+    UnsavedChangesGuardMixin,
   ],
   props: {
     id: {
@@ -299,6 +301,7 @@ export default {
     if (!this.isNew) {
       this.getAction()
     } else {
+      this.addUnsavedChangesGuard('action')
       if (this.proposal) {
         this.action = Object.assign({}, this.action, this.proposal)
       }
@@ -314,6 +317,7 @@ export default {
       if (this.action.paramsType === 'json') {
         this.jsonError = null
       }
+      this.addUnsavedChangesGuard('action')
       this.isLoading = false
     },
     async saveAction () {
@@ -321,6 +325,7 @@ export default {
       const action = Object.assign({}, this.action)
       const result = await this.vxSaveAction({ action, isNew: this.isNew })
       if (result) {
+        this.addUnsavedChangesGuard('action')
         if (this.isNew) {
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
@@ -339,11 +344,12 @@ export default {
           id: 'new',
           proposal,
         },
-      })
+      }).catch(() => {})
     },
     async removeAction () {
       this.isLoading = true
       if (await this.vxDeleteAction(this.action.id)) {
+        this.removeUnsavedChangesGuard('action')
         this.$router.back()
       }
       this.isLoading = false

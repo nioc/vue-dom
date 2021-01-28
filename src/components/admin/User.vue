@@ -59,12 +59,16 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 
 export default {
   name: 'Users',
   components: {
     Breadcrumb,
   },
+  mixins: [
+    UnsavedChangesGuardMixin,
+  ],
   props: {
     id: {
       type: String,
@@ -88,12 +92,14 @@ export default {
       if (!this.user.roles) {
         this.user.roles = []
       }
+      this.addUnsavedChangesGuard('user')
       this.isLoading = false
     },
     async updateUser () {
       this.isLoading = true
       try {
         await this.$Provider.updateUser(this.user)
+        this.addUnsavedChangesGuard('user')
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
@@ -104,6 +110,7 @@ export default {
       try {
         await this.$Provider.deleteUser(this.user.id)
         this.isLoading = false
+        this.removeUnsavedChangesGuard('user')
         this.$router.back()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })

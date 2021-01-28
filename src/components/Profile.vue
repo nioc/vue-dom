@@ -87,6 +87,7 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState } = createNamespacedHelpers('app')
 
@@ -95,6 +96,9 @@ export default {
   components: {
     Breadcrumb,
   },
+  mixins: [
+    UnsavedChangesGuardMixin,
+  ],
   data () {
     return {
       user: {},
@@ -111,6 +115,7 @@ export default {
   methods: {
     async getProfile () {
       this.user = await this.$Provider.getUser(this.id)
+      this.addUnsavedChangesGuard('user')
     },
     async getTokens () {
       this.tokens = await this.$Provider.getUserTokens(this.id)
@@ -121,8 +126,8 @@ export default {
       delete _user.modificationDate
       try {
         this.user = await this.$Provider.updateUser(_user)
+        this.addUnsavedChangesGuard('user')
       } catch (error) {
-        console.error(error)
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
     },
@@ -130,8 +135,8 @@ export default {
       try {
         await this.$Provider.updateUserPassword(this.user.id, this.user.password)
         this.user.password = undefined
+        this.addUnsavedChangesGuard('user')
       } catch (error) {
-        console.error(error)
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
     },
@@ -140,7 +145,6 @@ export default {
         await this.$Provider.deleteUserToken(this.id, tokenId)
         this.tokens.splice(this.tokens.findIndex((token) => token.id === tokenId), 1)
       } catch (error) {
-        console.error(error)
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
     },

@@ -228,6 +228,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import TimeAgo from '@/components/TimeAgo'
 import { CmdMixin } from '@/mixins/Cmd'
 import { AdminMixin } from '@/mixins/Admin'
+import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 
 export default {
   name: 'Equipment',
@@ -238,6 +239,7 @@ export default {
   mixins: [
     CmdMixin,
     AdminMixin,
+    UnsavedChangesGuardMixin,
   ],
   props: {
     id: {
@@ -278,6 +280,7 @@ export default {
     if (!this.isNew) {
       this.getEquipment()
     } else {
+      this.addUnsavedChangesGuard('equipment')
       if (this.proposal) {
         this.equipment = Object.assign({}, this.equipment, this.proposal)
       }
@@ -287,6 +290,7 @@ export default {
     async getEquipment () {
       this.isLoading = true
       this.equipment = Object.assign({}, this.equipment, await this.$Provider.getEquipment(this.id))
+      this.addUnsavedChangesGuard('equipment')
       this.getFilteredTags()
       this.isLoading = false
     },
@@ -299,6 +303,7 @@ export default {
       delete equipment.states
       const result = await this.vxSaveEquipment({ equipment, isNew: this.isNew })
       if (result) {
+        this.addUnsavedChangesGuard('equipment')
         if (this.isNew) {
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
@@ -323,11 +328,12 @@ export default {
           id: 'new',
           proposal,
         },
-      })
+      }).catch(() => {})
     },
     async removeEquipment () {
       this.isLoading = true
       if (await this.vxDeleteEquipment(this.equipment.id)) {
+        this.removeUnsavedChangesGuard('equipment')
         this.$router.back()
       }
       this.isLoading = false
@@ -351,7 +357,7 @@ export default {
             module: this.equipment.module,
           },
         },
-      })
+      }).catch(() => {})
     },
     addAction () {
       this.$router.push({
@@ -363,7 +369,7 @@ export default {
             module: this.equipment.module,
           },
         },
-      })
+      }).catch(() => {})
     },
   },
 }

@@ -166,6 +166,7 @@ import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 import TimeAgo from '@/components/TimeAgo'
 import { AdminMixin } from '@/mixins/Admin'
 import { SummaryMixin } from '@/mixins/Summary'
+import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 
 export default {
   name: 'Room',
@@ -177,6 +178,7 @@ export default {
   mixins: [
     AdminMixin,
     SummaryMixin,
+    UnsavedChangesGuardMixin,
   ],
   props: {
     id: {
@@ -210,6 +212,7 @@ export default {
     if (!this.isNew) {
       this.getRoom()
     } else {
+      this.addUnsavedChangesGuard('room')
       if (this.proposal) {
         this.room = Object.assign({}, this.room, this.proposal)
       }
@@ -220,6 +223,7 @@ export default {
       this.isLoading = true
       try {
         this.room = await this.$Provider.getRoom(this.id, true)
+        this.addUnsavedChangesGuard('room')
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
@@ -229,6 +233,7 @@ export default {
       this.isLoading = true
       const result = await this.vxSaveRoom({ room: this.room, isNew: this.isNew })
       if (result) {
+        this.addUnsavedChangesGuard('room')
         if (this.isNew) {
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
@@ -249,11 +254,12 @@ export default {
           id: 'new',
           proposal,
         },
-      })
+      }).catch(() => {})
     },
     async removeRoom () {
       this.isLoading = true
       if (await this.vxDeleteRoom(this.room.id)) {
+        this.removeUnsavedChangesGuard('room')
         this.$router.back()
       }
       this.isLoading = false
@@ -267,7 +273,7 @@ export default {
             roomId: this.room.id,
           },
         },
-      })
+      }).catch(() => {})
     },
     setSummaryState (state) {
       if (state) {

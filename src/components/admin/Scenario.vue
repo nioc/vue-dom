@@ -173,6 +173,7 @@ import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 
 import { AdminMixin } from '@/mixins/Admin'
 import { AdminScenarioMixin } from '@/mixins/AdminScenario'
+import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 
 export default {
   name: 'Scenario',
@@ -184,6 +185,7 @@ export default {
   mixins: [
     AdminMixin,
     AdminScenarioMixin,
+    UnsavedChangesGuardMixin,
   ],
   props: {
     id: {
@@ -226,11 +228,13 @@ export default {
         this.isLoading = true
         try {
           this.scenario = await this.$Provider.getScenario(this.id)
+          this.addUnsavedChangesGuard('scenario')
         } catch (error) {
           this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
         }
         this.isLoading = false
       } else {
+        this.addUnsavedChangesGuard('scenario')
         if (this.proposal) {
           this.scenario = Object.assign({}, this.scenario, this.proposal)
         }
@@ -241,9 +245,11 @@ export default {
       try {
         if (this.isNew) {
           this.scenario = await this.$Provider.createScenario(this.scenario)
+          this.addUnsavedChangesGuard('scenario')
           this.$router.replace({ name: this.$route.name, params: { id: this.scenario.id } })
         } else {
           this.scenario = await this.$Provider.updateScenario(this.scenario)
+          this.addUnsavedChangesGuard('scenario')
         }
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
@@ -254,6 +260,7 @@ export default {
       this.isLoading = true
       try {
         await this.$Provider.deleteScenario(this.scenario.id)
+        this.removeUnsavedChangesGuard('scenario')
         this.$router.back()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
@@ -271,7 +278,7 @@ export default {
           id: 'new',
           proposal,
         },
-      })
+      }).catch(() => {})
     },
     async testScenario () {
       this.isLoading = true
