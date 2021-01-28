@@ -325,11 +325,12 @@ export default {
       const action = Object.assign({}, this.action)
       const result = await this.vxSaveAction({ action, isNew: this.isNew })
       if (result) {
-        this.addUnsavedChangesGuard('action')
         if (this.isNew) {
+          this.removeUnsavedChangesGuard('action')
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.action = Object.assign(this.action, result)
+        this.addUnsavedChangesGuard('action')
       }
       this.isLoading = false
     },

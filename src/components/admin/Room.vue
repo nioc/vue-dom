@@ -233,11 +233,12 @@ export default {
       this.isLoading = true
       const result = await this.vxSaveRoom({ room: this.room, isNew: this.isNew })
       if (result) {
-        this.addUnsavedChangesGuard('room')
         if (this.isNew) {
+          this.removeUnsavedChangesGuard('room')
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.room = Object.assign(this.room, result)
+        this.addUnsavedChangesGuard('room')
       }
       this.isLoading = false
     },

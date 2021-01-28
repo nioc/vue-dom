@@ -251,11 +251,12 @@ export default {
       delete state.date
       const result = await this.vxSaveState({ state, isNew: this.isNew })
       if (result) {
-        this.addUnsavedChangesGuard('state')
         if (this.isNew) {
+          this.removeUnsavedChangesGuard('state')
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.state = Object.assign(this.state, result)
+        this.addUnsavedChangesGuard('state')
       }
       this.isLoading = false
     },

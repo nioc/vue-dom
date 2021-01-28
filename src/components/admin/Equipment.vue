@@ -303,11 +303,12 @@ export default {
       delete equipment.states
       const result = await this.vxSaveEquipment({ equipment, isNew: this.isNew })
       if (result) {
-        this.addUnsavedChangesGuard('equipment')
         if (this.isNew) {
+          this.removeUnsavedChangesGuard('equipment')
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.equipment = Object.assign(this.equipment, result)
+        this.addUnsavedChangesGuard('equipment')
       }
       this.isLoading = false
     },
