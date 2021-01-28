@@ -38,7 +38,7 @@ function setLevel (rooms, parentId, search) {
     .forEach((childRoom) => {
       childRoom.childs = setLevel(rooms, childRoom.id, search)
       if (childRoom.childs.length === 0) {
-        if (childRoom.name.toLowerCase().indexOf(search) > -1) {
+        if (Object.prototype.hasOwnProperty.call(childRoom, 'name') && childRoom.name && childRoom.name.toLowerCase().indexOf(search) > -1) {
           childs.push(childRoom)
         }
       } else {
