@@ -170,10 +170,10 @@
               <button v-if="!isNew" class="button is-light" title="Rafraichir l'état" @click="getState">
                 <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
               </button>
-              <button class="button is-light" title="Dupliquer l'état" @click="copyState">
+              <button v-if="!isNew" class="button is-light" title="Dupliquer l'état" @click="copyState">
                 <span class="icon"><i class="fa fa-copy" /></span><span>Dupliquer</span>
               </button>
-              <button class="button is-danger" title="Supprimer l'état" @click="removeState">
+              <button v-if="!isNew" class="button is-danger" title="Supprimer l'état" @click="removeState">
                 <span class="icon"><i class="fa fa-trash" /></span><span>Supprimer</span>
               </button>
             </div>
