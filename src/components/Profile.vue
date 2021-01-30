@@ -31,7 +31,7 @@
             </div>
             <div class="field">
               <div class="control">
-                <button class="button is-primary" @click="updateUser">
+                <button class="button is-primary" @click="updateProfile">
                   <span class="icon"><i class="fa fa-save" /></span><span>Sauvegarder</span>
                 </button>
               </div>
@@ -114,18 +114,26 @@ export default {
   },
   methods: {
     async getProfile () {
-      this.user = await this.$Provider.getUser(this.id)
-      this.addUnsavedChangesGuard('user')
+      try {
+        this.user = await this.$Provider.getMyProfile()
+        this.addUnsavedChangesGuard('user')
+      } catch (error) {
+        this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération du profil<br/>${error.message}` })
+      }
     },
     async getTokens () {
-      this.tokens = await this.$Provider.getUserTokens(this.id)
+      try {
+        this.tokens = await this.$Provider.getMyTokens()
+      } catch (error) {
+        this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des tokens<br/>${error.message}` })
+      }
     },
-    async updateUser () {
+    async updateProfile () {
       const _user = Object.assign({}, this.user)
       delete _user.password
       delete _user.modificationDate
       try {
-        this.user = await this.$Provider.updateUser(_user)
+        this.user = await this.$Provider.updateMyProfile(_user)
         this.addUnsavedChangesGuard('user')
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
@@ -133,7 +141,7 @@ export default {
     },
     async updatePassword () {
       try {
-        await this.$Provider.updateUserPassword(this.user.id, this.user.password)
+        await this.$Provider.updateMyPassword(this.user.password)
         this.user.password = undefined
         this.addUnsavedChangesGuard('user')
       } catch (error) {
@@ -142,7 +150,7 @@ export default {
     },
     async deleteToken (tokenId) {
       try {
-        await this.$Provider.deleteUserToken(this.id, tokenId)
+        await this.$Provider.deleteMyToken(tokenId)
         this.tokens.splice(this.tokens.findIndex((token) => token.id === tokenId), 1)
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
