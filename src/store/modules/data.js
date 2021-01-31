@@ -342,11 +342,33 @@ const mutations = {
       if (!state.states[id]) {
         // state was not in store
         statesUpdated[id] = _state
+        if (Object.prototype.hasOwnProperty.call(_state, 'eqId') && _state.eqId !== null) {
+          // add state to equipment
+          state.equipments[_state.eqId].states.push(_state.id)
+        }
         return
       }
-      statesUpdated[id] = state.states[id]
+      const previousEqId = state.states[id].eqId
+      statesUpdated[id] = Object.assign({}, state.states[id])
       for (const key in _state) {
         statesUpdated[id][key] = _state[key]
+      }
+      if (previousEqId !== _state.eqId) {
+        // state has moved to another equipment
+        if (
+          Object.prototype.hasOwnProperty.call(state.states[id], 'eqId') &&
+          previousEqId !== null
+        ) {
+          // remove state from previous equipment
+          const index = state.equipments[previousEqId].states.indexOf(_state.id)
+          if (index !== -1) {
+            state.equipments[previousEqId].states.splice(index, 1)
+          }
+        }
+        if (Object.prototype.hasOwnProperty.call(_state, 'eqId') && _state.eqId !== null) {
+          // add state to new equipment
+          state.equipments[_state.eqId].states.push(_state.id)
+        }
       }
     })
     if (Object.keys(statesUpdated).length > 0) {
@@ -362,11 +384,33 @@ const mutations = {
       if (!state.actions[id]) {
         // action was not in store
         actionsUpdated[id] = _action
+        if (Object.prototype.hasOwnProperty.call(_action, 'eqId') && _action.eqId !== null) {
+          // add to equipment
+          state.equipments[_action.eqId].actions.push(_action.id)
+        }
         return
       }
-      actionsUpdated[id] = state.actions[id]
+      const previousEqId = state.actions[id].eqId
+      actionsUpdated[id] = Object.assign({}, state.actions[id])
       for (const key in _action) {
         actionsUpdated[id][key] = _action[key]
+      }
+      if (previousEqId !== _action.eqId) {
+        // action has moved to another equipment
+        if (
+          Object.prototype.hasOwnProperty.call(state.actions[id], 'eqId') &&
+          previousEqId !== null
+        ) {
+          // remove action from previous equipment
+          const index = state.equipments[previousEqId].actions.indexOf(_action.id)
+          if (index !== -1) {
+            state.equipments[previousEqId].actions.splice(index, 1)
+          }
+        }
+        if (Object.prototype.hasOwnProperty.call(_action, 'eqId') && _action.eqId !== null) {
+          // add action to new equipment
+          state.equipments[_action.eqId].actions.push(_action.id)
+        }
       }
     })
     if (Object.keys(actionsUpdated).length > 0) {
@@ -410,12 +454,24 @@ const mutations = {
     }
   },
 
-  deleteState (state, stateId) {
+  deleteState (state, { stateId, eqId }) {
     delete state.states[stateId]
+    if (eqId) {
+      const index = state.equipments[eqId].states.indexOf(stateId)
+      if (index !== -1) {
+        state.equipments[eqId].states.splice(index, 1)
+      }
+    }
   },
 
-  deleteAction (state, actionId) {
+  deleteAction (state, { actionId, eqId }) {
     delete state.actions[actionId]
+    if (eqId) {
+      const index = state.equipments[eqId].actions.indexOf(actionId)
+      if (index !== -1) {
+        state.equipments[eqId].actions.splice(index, 1)
+      }
+    }
   },
 
   // store tags
