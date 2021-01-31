@@ -149,9 +149,9 @@ export default {
       }
       this.open = false
     },
-    logout () {
+    async logout () {
       this.$Provider.closeEventsListener()
-      Auth.logout()
+      await Auth.logout()
       this.$router.replace({ name: 'login' })
     },
     ...mapMutations(['setSidebarStatus']),

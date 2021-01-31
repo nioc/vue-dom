@@ -29,7 +29,11 @@ export default {
   },
 
   // clear local storage and store
-  logout () {
+  async logout () {
+    try {
+      await new Vue().$Provider.logout()
+    } catch (error) {
+    }
     store.dispatch('clear')
     localStorage.clear()
     sessionStorage.clear()
