@@ -266,7 +266,18 @@ const mutations = {
       const id = equipment.id
       if (!state.equipments[id]) {
         // equipment was not in store
+        // add actions and states attributes if not provided
+        if (!equipment.actions) {
+          equipment.actions = []
+        }
+        if (!equipment.states) {
+          equipment.states = []
+        }
         equipmentsUpdated[id] = equipment
+        if (Object.prototype.hasOwnProperty.call(equipment, 'roomId') && equipment.roomId !== null) {
+          // add equipment to room
+          state.rooms[equipment.roomId].equipments.push(equipment.id)
+        }
         // handle equipment tags
         if (Object.prototype.hasOwnProperty.call(equipment, 'tags')) {
           // get new tags to add to tags list
@@ -322,7 +333,7 @@ const mutations = {
     }
   },
 
-  deleteEquipment (state, equipmentId) {
+  deleteEquipment (state, { equipmentId, roomId }) {
     if (Object.prototype.hasOwnProperty.call(state.equipments, equipmentId)) {
       state.equipments[equipmentId].tags
         .filter((tag) => !Object.values(state.equipments).some((equipment) => equipment.id !== equipmentId && equipment.tags.includes(tag)))
@@ -330,6 +341,12 @@ const mutations = {
           const index = state.tagsList.indexOf(removedTag)
           state.tagsList.splice(index, 1)
         })
+      if (roomId) {
+        const index = state.rooms[roomId].equipments.indexOf(equipmentId)
+        if (index !== -1) {
+          state.rooms[roomId].equipments.splice(index, 1)
+        }
+      }
       delete state.equipments[equipmentId]
     }
   },
