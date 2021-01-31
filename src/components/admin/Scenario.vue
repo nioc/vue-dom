@@ -17,9 +17,19 @@
             <div class="field is-required">
               <label class="label">Nom</label>
               <div class="control has-icons-left">
-                <input v-model="scenario.name" class="input" type="text">
+                <input v-model="scenario.name" class="input" type="text" placeholder="Nom court du scénario">
                 <span class="icon is-small is-left">
                   <i class="fas fa-tag" />
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Description</label>
+              <div class="control has-icons-left">
+                <input v-model="scenario.description" class="input" type="text" placeholder="Description des traitements du scénario">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-info" />
                 </span>
               </div>
             </div>
