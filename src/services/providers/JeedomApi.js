@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, store = null, statisticsPeriod = 86400000) {
+const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, store = null, statisticsPeriod = 86400000, trendPeriod = 3600000, trendThreshold = 0.1) {
   const socketMaxTry = 3
   const readDelay = 5000
   let apiKey = null
@@ -499,16 +499,34 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       }
       params.startTime = Vue.moment(startTime).format('YYYY-MM-DD HH:mm:ss')
       params.endTime = Vue.moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+      const result = {
+        min: null,
+        max: null,
+        avg: null,
+        trend: null,
+      }
       try {
         const statistics = await jsonRpcCall('cmd::getStatistique', params)
-        if (statistics.count === '0') {
-          return null
+        if (statistics.count !== '0') {
+          result.min = Number.parseFloat(Number.parseFloat(statistics.min).toPrecision(3))
+          result.avg = Number.parseFloat(Number.parseFloat(statistics.avg).toPrecision(3))
+          result.max = Number.parseFloat(Number.parseFloat(statistics.max).toPrecision(3))
         }
-        return {
-          min: Number.parseFloat(Number.parseFloat(statistics.min).toPrecision(3)),
-          avg: Number.parseFloat(Number.parseFloat(statistics.avg).toPrecision(3)),
-          max: Number.parseFloat(Number.parseFloat(statistics.max).toPrecision(3)),
+        params.startTime = Vue.moment(new Date(endTime.getTime() - trendPeriod)).format('YYYY-MM-DD HH:mm:ss')
+        const trendThresholdCoef = 10
+        const trend = await jsonRpcCall('cmd::getTendance', params)
+        if (trend <= -trendThreshold * trendThresholdCoef) {
+          result.trend = -2
+        } else if (trend <= -trendThreshold) {
+          result.trend = -1
+        } else if (trend < trendThreshold) {
+          result.trend = 0
+        } else if (trend < trendThreshold * trendThresholdCoef) {
+          result.trend = 1
+        } else {
+          result.trend = 2
         }
+        return result
       } catch (error) {
         console.error(error)
         throw error

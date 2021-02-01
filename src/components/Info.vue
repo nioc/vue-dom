@@ -14,6 +14,7 @@
           <li class="statistics-item"><span class="has-padding-horizontal-8" title="Moyenne">{{ statistics.avg }}</span></li>
           <li class="statistics-item"><span class="has-padding-horizontal-8" title="Max">{{ statistics.max }}</span></li>
         </ul>
+        <i v-if="statistics && statistics.trend !== null" class="fas fa-long-arrow-alt-right has-text-grey-light has-margin-horizontal-8" :class="trendClass" />
         <i v-if="state.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow has-margin-right-8" :style="`transform: rotate(${135+parseInt(state.currentValue)}deg);`" />
         <span class="has-text-weight-semi-bold">{{ state.currentValue }}{{ unit }}</span>
       </span>
@@ -100,9 +101,27 @@ export default {
       return actionSelect.options
     },
     statistics () { return this.getStateStatisticsById(this.id) },
+    trendClass () {
+      let trendClass = ''
+      switch (this.statistics.trend) {
+        case -2:
+          trendClass = 'trend-down-strong'
+          break
+        case -1:
+          trendClass = 'trend-down'
+          break
+        case 1:
+          trendClass = 'trend-up'
+          break
+        case 2:
+          trendClass = 'trend-up-strong'
+          break
+      }
+      return trendClass
+    },
   },
   created () {
-    if (this.state.isHistorized && this.state.type !== 'boolean') {
+    if (this.state.isHistorized && this.state.type === 'numeric') {
       this.loadStateStatistics(this.state.id)
     }
   },
@@ -114,5 +133,17 @@ export default {
 }
 .statistics-item:not(:last-child)::after {
   content: "|";
+}
+.trend-up {
+  transform: rotate(-20deg);
+}
+.trend-up-strong {
+  transform: rotate(-40deg);
+}
+.trend-down {
+  transform: rotate(20deg);
+}
+.trend-down-strong {
+  transform: rotate(40deg);
 }
 </style>

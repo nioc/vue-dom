@@ -13,6 +13,8 @@ export default {
           provider.websocketUrl,
           options.store,
           provider.statisticsPeriod,
+          provider.trendPeriod,
+          provider.trendThreshold,
         )
         break
       }
