@@ -79,6 +79,7 @@
                     <option value="string">String</option>
                     <option value="numeric">Numérique</option>
                     <option value="boolean">Booléen</option>
+                    <option value="object">Objet</option>
                   </select>
                 </div>
                 <div class="icon is-small is-left">
@@ -146,7 +147,7 @@
             <div class="field">
               <label class="label">Dernière valeur</label>
               <div class="control has-icons-left">
-                <input v-model="state.currentValue" class="input" type="text" placeholder="Dernière valeur" readonly>
+                <input v-model="currentValue" class="input" type="text" placeholder="Dernière valeur" readonly>
                 <span class="icon is-small is-left">
                   <i class="fas fa-code" />
                 </span>
@@ -226,6 +227,7 @@ export default {
   computed: {
     isNew () { return this.id === 'new' },
     statecollectDate () { return this.state.date ? this.$moment(this.state.date).format('LLL') : null },
+    currentValue () { return this.state.type === 'object' ? JSON.stringify(this.state.currentValue) : this.state.currentValue },
   },
   mounted () {
     if (!this.isNew) {

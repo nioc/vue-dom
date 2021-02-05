@@ -91,6 +91,16 @@ export const CmdMixin = {
       }
       return 'fa fa-question'
     },
+    getFormattedStateCurrentValue (state, limit = 30) {
+      let formattedValue = state.currentValue
+      if (state.type === 'object' && formattedValue) {
+        formattedValue = JSON.stringify(formattedValue)
+      }
+      if (formattedValue && formattedValue.length > limit) {
+        formattedValue = formattedValue.substring(0, limit) + '…'
+      }
+      return formattedValue
+    },
     ...mapActions(['executeAction', 'loadStateStatistics']),
   },
 }

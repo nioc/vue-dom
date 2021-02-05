@@ -124,6 +124,7 @@ export default {
       return this.arrStates.map((state) => {
         const _state = Object.assign({}, state)
         _state.equipmentName = this.getEquipmentById(state.eqId).name || state.eqId
+        _state.currentValue = this.getFormattedStateCurrentValue(state)
         return _state
       })
     },

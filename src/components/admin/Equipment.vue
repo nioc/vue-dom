@@ -165,7 +165,7 @@
                     <td>{{ state.logicalId }}</td>
                     <td><i class="fas fa-fw" :class="state.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="state.isVisible ? 'Visible' : 'Masqué'" /></td>
                     <td :title="state.genericType"><i class="fa-fw" :class="getIconClass(state)" /></td>
-                    <td>{{ state.currentValue }} {{ state.unit }}</td>
+                    <td>{{ getFormattedStateCurrentValue(state) }} {{ state.unit }}</td>
                     <td>
                       <time-ago v-if="state.date" :date="state.date" :drop-fixes="true" :title="state.date | moment('LLL')" />
                     </td>
