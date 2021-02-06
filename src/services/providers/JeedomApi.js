@@ -62,9 +62,12 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     events.result.forEach((event) => {
       switch (event.name) {
         case 'cmd::update': {
+          // convert boolean value
+          const state = store.getters['data/getStateById'](event.option.cmd_id)
+          const currentValue = (state && state.type === 'boolean') ? event.option.value === 1 : event.option.value
           updateCmds.push({
             id: event.option.cmd_id,
-            currentValue: event.option.value,
+            currentValue,
             collectDate: event.option.collectDate,
           })
           break
@@ -314,7 +317,6 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               module: jEqLogic.eqType_name,
               name: jEqLogic.name,
               isVisible: true,
-              cmds: [],
               tags: jEqLogic.tags ? jEqLogic.tags.split(',') : [],
             }
             if (jEqLogic.configuration.type) {
@@ -338,8 +340,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
             }
             // set equipment actions
             equipment.actions = jEqLogic.cmds.filter((jCmd) => jCmd.type === 'action').sort((a, b) => a.order - b.order).map((jCmd) => {
-              // construct cmd
-              const cmd = {
+              const action = {
                 id: jCmd.id,
                 logicalId: jCmd.logicalId,
                 name: jCmd.name,
@@ -352,33 +353,33 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               switch (jCmd.generic_type) {
                 case 'LIGHT_OFF':
                 case 'ENERGY_OFF':
-                  cmd.type = 'switch_off'
+                  action.type = 'switch_off'
                   break
                 case 'LIGHT_ON':
                 case 'ENERGY_ON':
-                  cmd.type = 'switch_on'
+                  action.type = 'switch_on'
                   break
                 case 'LIGHT_TOGGLE':
-                  cmd.type = 'switch'
+                  action.type = 'switch'
                   break
                 case 'LIGHT_SLIDER':
-                  cmd.type = 'slider'
+                  action.type = 'slider'
                   break
               }
               if (jCmd.display.icon) {
-                cmd.icon = convertIconClass(jCmd.display.icon)
+                action.icon = convertIconClass(jCmd.display.icon)
               }
               if (jCmd.value) {
-                cmd.stateFeedbackId = jCmd.value.replace(/#/g, '')
+                action.stateFeedbackId = jCmd.value.replace(/#/g, '')
               }
               if (jCmd.configuration.minValue && jCmd.configuration.minValue !== '') {
-                cmd.minValue = parseInt(jCmd.configuration.minValue)
+                action.minValue = parseInt(jCmd.configuration.minValue)
               }
               if (jCmd.configuration.maxValue && jCmd.configuration.maxValue !== '') {
-                cmd.maxValue = parseInt(jCmd.configuration.maxValue)
+                action.maxValue = parseInt(jCmd.configuration.maxValue)
               }
               if (jCmd.configuration.listValue) {
-                cmd.options = jCmd.configuration.listValue
+                action.options = jCmd.configuration.listValue
                   .split(';')
                   .map((option) => {
                     const valueLabel = option.split('|')
@@ -388,12 +389,11 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
                     }
                   })
               }
-              return cmd
+              return action
             })
             // set equipment states
             equipment.states = jEqLogic.cmds.filter((jCmd) => jCmd.type === 'info').sort((a, b) => a.order - b.order).map((jCmd) => {
-              // construct cmd
-              const cmd = {
+              const state = {
                 id: jCmd.id,
                 logicalId: jCmd.logicalId,
                 name: jCmd.name,
@@ -407,16 +407,19 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
                 currentValue: jCmd.state,
                 unit: jCmd.unite,
               }
+              if (state.type === 'boolean') {
+                state.currentValue = state.currentValue === 1
+              }
               if (jCmd.display.icon) {
-                cmd.icon = convertIconClass(jCmd.display.icon)
+                state.icon = convertIconClass(jCmd.display.icon)
               }
               if (jCmd.configuration.minValue && jCmd.configuration.minValue !== '') {
-                cmd.minValue = parseInt(jCmd.configuration.minValue)
+                state.minValue = parseInt(jCmd.configuration.minValue)
               }
               if (jCmd.configuration.maxValue && jCmd.configuration.maxValue !== '') {
-                cmd.maxValue = parseInt(jCmd.configuration.maxValue)
+                state.maxValue = parseInt(jCmd.configuration.maxValue)
               }
-              return cmd
+              return state
             })
             return equipment
           })

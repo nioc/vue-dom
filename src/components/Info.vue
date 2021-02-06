@@ -2,7 +2,7 @@
   <div>
     <div class="is-flex-space-between has-margin-bottom-8">
       <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ state.name }}<a v-if="state.isHistorized" class="has-margin-left-8 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
-      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :true-value="1" :false-value="0" :title="state.name" class="has-margin-bottom-8" @input="action" />
+      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" class="has-margin-bottom-8" @input="action" />
       <div v-else-if="state.type === 'string' && action" lazy class="select has-margin-left-4" :title="state.name">
         <select v-model="value" @change="action">
           <option v-for="option in actionOptions" :key="option.value" :value="option.value">{{ option.label || option.value }}</option>
@@ -75,19 +75,19 @@ export default {
       const vm = this
       if (actionSwitch) {
         return async (newValue) => {
-        // execute action with switch value
+          // execute action with switch value
           vm.executeAction({ id: actionSwitch.id, options: { value: newValue } })
         }
       }
       if (actionSelect) {
         return async (newValue) => {
-        // execute action with select value
+          // execute action with select value
           vm.executeAction({ id: actionSelect.id, options: { select: newValue.target.value } })
         }
       }
       return async (newValue) => {
         // execute action whose value is related to switch
-        const actionId = newValue === 1 ? actionOn.id : actionOff.id
+        const actionId = newValue ? actionOn.id : actionOff.id
         vm.executeAction({ id: actionId })
       }
     },

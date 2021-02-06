@@ -8,7 +8,7 @@
       <option v-for="option in action.options" :key="option.value" :value="option.value">{{ option.label || option.value }}</option>
     </select>
   </div>
-  <b-switch v-else-if="action.type === 'switch'" v-model="value" :true-value="1" :false-value="0" :title="action.name" class="has-margin-bottom-8" @input="actionSwitch" />
+  <b-switch v-else-if="action.type === 'switch'" v-model="value" :title="action.name" class="has-margin-bottom-8" @input="actionSwitch" />
   <span v-else>{{ action }}</span>
 </template>
 
