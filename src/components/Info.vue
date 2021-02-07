@@ -25,7 +25,7 @@
         <button class="delete" title="Fermer" @click="hasHistoryDisplayed = false" />
       </div>
       <div class="message-body has-margin-bottom-7 has-padding-8">
-        <history :id="state.id" :name="state.name" />
+        <history :id="state.id" :name="state.name" :has-steps="state.type === 'boolean'" />
       </div>
     </div>
   </div>

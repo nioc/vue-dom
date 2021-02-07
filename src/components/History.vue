@@ -32,6 +32,10 @@ export default {
       type: String,
       required: true,
     },
+    hasSteps: {
+      type: Boolean,
+      default: false,
+    },
   },
   data () {
     return {
@@ -57,6 +61,7 @@ export default {
           {
             label: this.name,
             data: history.map((point) => point.value),
+            steppedLine: this.hasSteps,
           },
         ],
         labels: history.map((point) => point.date),
