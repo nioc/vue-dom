@@ -99,9 +99,29 @@
             </div>
 
             <div v-if="state.type==='numeric'" class="field">
+              <label class="label">Seuil d'alerte valeur basse</label>
+              <div class="control has-icons-left">
+                <input v-model.number="state.lowValueThreshold" class="input" type="number" placeholder="Valeur en dessous de laquelle l'état est en alerte">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-level-down-alt" />
+                </span>
+              </div>
+            </div>
+
+            <div v-if="state.type==='numeric'" class="field">
+              <label class="label">Seuil d'alerte valeur haute</label>
+              <div class="control has-icons-left">
+                <input v-model.number="state.highValueThreshold" class="input" type="number" placeholder="Valeur au dessus de laquelle l'état est en alerte">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-level-up-alt" />
+                </span>
+              </div>
+            </div>
+
+            <div v-if="state.type==='numeric'" class="field">
               <label class="label">Valeur minimale</label>
               <div class="control has-icons-left">
-                <input v-model="state.minValue" class="input" type="number" placeholder="Valeur minimale">
+                <input v-model.number="state.minValue" class="input" type="number" placeholder="Valeur minimale pour affichage dans une jauge">
                 <span class="icon is-small is-left">
                   <i class="fas fa-level-down-alt" />
                 </span>
@@ -111,7 +131,7 @@
             <div v-if="state.type==='numeric'" class="field">
               <label class="label">Valeur maximale</label>
               <div class="control has-icons-left">
-                <input v-model="state.maxValue" class="input" type="number" placeholder="Valeur maximale">
+                <input v-model.number="state.maxValue" class="input" type="number" placeholder="Valeur maximale pour affichage dans une jauge">
                 <span class="icon is-small is-left">
                   <i class="fas fa-level-up-alt" />
                 </span>
