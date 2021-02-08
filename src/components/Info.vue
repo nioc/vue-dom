@@ -122,7 +122,7 @@ export default {
   },
   created () {
     if (this.state.isHistorized && this.state.type === 'numeric') {
-      this.loadStateStatistics(this.state.id)
+      this.vxLoadStateStatistics(this.state.id)
     }
   },
 }

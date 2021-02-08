@@ -41,13 +41,13 @@ export default {
     scenarios () { return this.getScenarios().filter((scenario) => scenario.isVisible && scenario.isActive) },
   },
   created () {
-    this.loadScenarios()
+    this.vxLoadScenarios()
   },
   methods: {
     run (id) {
       this.$Provider.changeScenarioState(id, 'run')
     },
-    ...mapActions(['loadScenarios']),
+    ...mapActions(['vxLoadScenarios']),
   },
 }
 </script>

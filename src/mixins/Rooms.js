@@ -27,6 +27,6 @@ export const RoomsMixin = {
     ]),
   },
   methods: {
-    ...mapActions(['loadRooms']),
+    ...mapActions(['vxLoadRooms']),
   },
 }

@@ -27,7 +27,7 @@
           Pas de notifications
         </div>
         <span class="buttons">
-          <button class="button is-primary" @click="loadNotifications">
+          <button class="button is-primary" @click="vxLoadNotifications">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
           </button>
           <button v-if="notifications.length" class="button is-danger" @click="clear">
@@ -53,14 +53,14 @@ export default {
     ...mapState(['notifications']),
   },
   mounted () {
-    this.loadNotifications()
+    this.vxLoadNotifications()
   },
   methods: {
-    ...mapActions(['loadNotifications']),
+    ...mapActions(['vxLoadNotifications']),
     async clear () {
       try {
         await this.$Provider.clearNotifications()
-        this.loadNotifications()
+        this.vxLoadNotifications()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

@@ -135,7 +135,7 @@ export default {
       return this.roles.includes(role)
     },
     refreshData () {
-      this.loadRooms()
+      this.vxLoadRooms()
       this.open = false
     },
     setDarkMode () {

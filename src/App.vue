@@ -31,7 +31,7 @@ export default {
   watch: {
     isAuthenticated: function () {
       if (this.isAuthenticated) {
-        this.loadRooms()
+        this.vxLoadRooms()
       }
       this.openEventsListener()
     },
@@ -76,7 +76,7 @@ export default {
     }
     // load rooms
     if (this.isAuthenticated) {
-      this.loadRooms()
+      this.vxLoadRooms()
     }
     // handle connectivity
     this.setNetworkStatus(window.navigator.onLine)
@@ -120,7 +120,7 @@ export default {
         this.$Provider.openEventsListener(true, false)
       }
     },
-    ...mapActions(['loadRooms']),
+    ...mapActions(['vxLoadRooms']),
     ...mapMutations(['setNetworkStatus']),
   },
 }

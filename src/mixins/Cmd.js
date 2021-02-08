@@ -101,6 +101,6 @@ export const CmdMixin = {
       }
       return formattedValue
     },
-    ...mapActions(['vxExecuteAction', 'loadStateStatistics']),
+    ...mapActions(['vxExecuteAction', 'vxLoadStateStatistics']),
   },
 }

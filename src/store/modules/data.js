@@ -533,7 +533,7 @@ const mutations = {
 const actions = {
 
   // call API and store rooms list
-  async loadRooms ({ commit }) {
+  async vxLoadRooms ({ commit }) {
     try {
       // get global summary
       vue.$Provider.getSummary().then((summary) => {
@@ -756,7 +756,7 @@ const actions = {
   },
 
   // call API and store state statistics
-  async loadStateStatistics ({ commit, state }, id) {
+  async vxLoadStateStatistics ({ commit, state }, id) {
     try {
       const statistics = await vue.$Provider.getStatistics(id)
       if (statistics === undefined) {
@@ -779,7 +779,7 @@ const actions = {
   },
 
   // call API and store scenarios
-  async loadScenarios ({ commit }) {
+  async vxLoadScenarios ({ commit }) {
     try {
       const scenarios = await vue.$Provider.getScenarios()
       if (scenarios === undefined) {
@@ -792,7 +792,7 @@ const actions = {
   },
 
   // call API and store notifications
-  async loadNotifications ({ commit }) {
+  async vxLoadNotifications ({ commit }) {
     try {
       const notifications = await vue.$Provider.getNotifications()
       if (notifications === undefined) {
