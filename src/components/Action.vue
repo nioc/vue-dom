@@ -32,16 +32,16 @@ export default {
   },
   methods: {
     execute: function () {
-      this.executeAction({ id: this.action.id })
+      this.vxExecuteAction({ id: this.action.id })
     },
     actionSlider: function (newValue) {
-      this.executeAction({ id: this.action.id, options: { slider: newValue } })
+      this.vxExecuteAction({ id: this.action.id, options: { slider: newValue } })
     },
     actionSelect: function (newValue) {
-      this.executeAction({ id: this.action.id, options: { select: newValue.target.value } })
+      this.vxExecuteAction({ id: this.action.id, options: { select: newValue.target.value } })
     },
     actionSwitch: function (newValue) {
-      this.executeAction({ id: this.action.id, options: { params: { value: newValue } } })
+      this.vxExecuteAction({ id: this.action.id, options: { params: { value: newValue } } })
     },
   },
 }

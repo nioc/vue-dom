@@ -76,19 +76,19 @@ export default {
       if (actionSwitch) {
         return async (newValue) => {
           // execute action with switch value
-          vm.executeAction({ id: actionSwitch.id, options: { value: newValue } })
+          vm.vxExecuteAction({ id: actionSwitch.id, options: { value: newValue } })
         }
       }
       if (actionSelect) {
         return async (newValue) => {
           // execute action with select value
-          vm.executeAction({ id: actionSelect.id, options: { select: newValue.target.value } })
+          vm.vxExecuteAction({ id: actionSelect.id, options: { select: newValue.target.value } })
         }
       }
       return async (newValue) => {
         // execute action whose value is related to switch
         const actionId = newValue ? actionOn.id : actionOff.id
-        vm.executeAction({ id: actionId })
+        vm.vxExecuteAction({ id: actionId })
       }
     },
     actionOptions () {

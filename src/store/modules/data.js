@@ -769,7 +769,7 @@ const actions = {
   },
 
   // execute an action by calling API
-  async executeAction ({ commit }, action) {
+  async vxExecuteAction ({ commit }, action) {
     try {
       await vue.$Provider.executeAction(action.id, action.options)
     } catch (error) {
