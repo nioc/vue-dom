@@ -89,10 +89,12 @@ const getters = {
       const c = getters.getActionById(actionId)
       actions.push({
         id: c.id,
+        name: c.name,
         type: c.type,
         stateFeedbackId: c.stateFeedbackId,
         isVisible: c.isVisible,
         options: c.options,
+        needsConfirm: c.needsConfirm,
       })
     })
     return actions

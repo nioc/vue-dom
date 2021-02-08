@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     execute: function () {
-      this.vxExecuteAction({ id: this.action.id })
+      this.checkConfirmAndExecuteAction(this.action, { id: this.action.id })
     },
     actionSlider: function (newValue) {
       this.vxExecuteAction({ id: this.action.id, options: { slider: newValue } })

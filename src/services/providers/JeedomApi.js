@@ -349,6 +349,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
                 type: jCmd.subType.replace('other', 'button'),
                 isVisible: jCmd.isVisible === '1',
                 order: jCmd.order,
+                needsConfirm: false,
               }
               switch (jCmd.generic_type) {
                 case 'LIGHT_OFF':
@@ -377,6 +378,9 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               }
               if (jCmd.configuration.maxValue && jCmd.configuration.maxValue !== '') {
                 action.maxValue = parseInt(jCmd.configuration.maxValue)
+              }
+              if (jCmd.configuration.actionConfirm && jCmd.configuration.actionConfirm === '1') {
+                action.needsConfirm = true
               }
               if (jCmd.configuration.listValue) {
                 action.options = jCmd.configuration.listValue
@@ -453,6 +457,10 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       const params = { id: actionId }
       if (options) {
         params.options = options
+        if (options.isConfirmed) {
+          params.confirmAction = '1'
+          delete options.isConfirmed
+        }
       }
       try {
         return await jsonRpcCall('cmd::execCmd', params)

@@ -63,6 +63,13 @@
               </div>
             </div>
 
+            <div class="field is-required">
+              <div class="control">
+                <label class="label">Requiert une confirmation lors de l'exécution</label>
+                <b-switch v-model="action.needsConfirm">{{ action.needsConfirm ? 'Oui' : 'Non' }}</b-switch>
+              </div>
+            </div>
+
             <div class="field">
               <div class="control">
                 <label class="label">Utilisable pour une demande utilisateur</label>

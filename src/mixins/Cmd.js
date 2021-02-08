@@ -101,6 +101,33 @@ export const CmdMixin = {
       }
       return formattedValue
     },
+    async checkConfirmAndExecuteAction (action, args) {
+      if (action.needsConfirm) {
+        return new Promise((resolve, reject) => {
+          this.$buefy.dialog.confirm({
+            type: 'is-primary',
+            title: 'Confirmation du lancement d\'action',
+            message: `Confirmez-vous l'exécution de l'action "${action.name}" ?`,
+            hasIcon: true,
+            icon: 'cogs',
+            iconPack: 'fa',
+            confirmText: 'Oui',
+            cancelText: 'Annuler',
+            onConfirm: () => {
+              if (!args.options) {
+                args.options = {}
+              }
+              args.options.isConfirmed = true
+              this.vxExecuteAction(args)
+              resolve(true)
+            },
+            onCancel: () => resolve(false),
+          })
+        })
+      }
+      this.vxExecuteAction(args)
+      return true
+    },
     ...mapActions(['vxExecuteAction', 'vxLoadStateStatistics']),
   },
 }
