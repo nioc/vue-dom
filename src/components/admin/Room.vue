@@ -258,12 +258,24 @@ export default {
       }).catch(() => {})
     },
     async removeRoom () {
-      this.isLoading = true
-      if (await this.vxDeleteRoom(this.room.id)) {
-        this.removeUnsavedChangesGuard('room')
-        this.$router.back()
-      }
-      this.isLoading = false
+      this.$buefy.dialog.confirm({
+        type: 'is-danger',
+        title: 'Confirmation de suppression',
+        message: '<p>La pièce sera supprimée.</p><p>Souhaitez-vous continuer ?</p>',
+        hasIcon: true,
+        icon: 'trash',
+        iconPack: 'fa',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler',
+        onConfirm: async () => {
+          this.isLoading = true
+          if (await this.vxDeleteRoom(this.room.id)) {
+            this.removeUnsavedChangesGuard('room')
+            this.$router.back()
+          }
+          this.isLoading = false
+        },
+      })
     },
     addEquipment () {
       this.$router.push({

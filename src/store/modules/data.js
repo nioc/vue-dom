@@ -664,10 +664,10 @@ const actions = {
     }
   },
 
-  async vxDeleteEquipment ({ commit }, equipmentId) {
+  async vxDeleteEquipment ({ commit }, { equipmentId, roomId }) {
     try {
       await vue.$Provider.deleteEquipment(equipmentId)
-      commit('deleteEquipment', equipmentId)
+      commit('deleteEquipment', { equipmentId, roomId })
       return true
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: error.message }, { root: true })
@@ -704,10 +704,10 @@ const actions = {
     }
   },
 
-  async vxDeleteState ({ commit }, stateId) {
+  async vxDeleteState ({ commit }, { stateId, eqId }) {
     try {
       await vue.$Provider.deleteState(stateId)
-      commit('deleteState', stateId)
+      commit('deleteState', { stateId, eqId })
       return true
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression de l'état<br>${error.message}` }, { root: true })
@@ -744,10 +744,10 @@ const actions = {
     }
   },
 
-  async vxDeleteAction ({ commit }, actionId) {
+  async vxDeleteAction ({ commit }, { actionId, eqId }) {
     try {
       await vue.$Provider.deleteAction(actionId)
-      commit('deleteAction', actionId)
+      commit('deleteAction', { actionId, eqId })
       return true
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression de l'action<br>${error.message}` }, { root: true })

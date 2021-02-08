@@ -298,12 +298,24 @@ export default {
       }).catch(() => {})
     },
     async removeState () {
-      this.isLoading = true
-      if (await this.vxDeleteState(this.state.id)) {
-        this.removeUnsavedChangesGuard('state')
-        this.$router.back()
-      }
-      this.isLoading = false
+      this.$buefy.dialog.confirm({
+        type: 'is-danger',
+        title: 'Confirmation de suppression',
+        message: '<p>L\'état sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
+        hasIcon: true,
+        icon: 'trash',
+        iconPack: 'fa',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler',
+        onConfirm: async () => {
+          this.isLoading = true
+          if (await this.vxDeleteState({ stateId: this.state.id, eqId: this.state.eqId })) {
+            this.removeUnsavedChangesGuard('state')
+            this.$router.back()
+          }
+          this.isLoading = false
+        },
+      })
     },
     setEquipmentId (equipment) {
       if (!equipment) {

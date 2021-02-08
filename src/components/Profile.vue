@@ -149,12 +149,24 @@ export default {
       }
     },
     async deleteToken (tokenId) {
-      try {
-        await this.$Provider.deleteMyToken(tokenId)
-        this.tokens.splice(this.tokens.findIndex((token) => token.id === tokenId), 1)
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-      }
+      this.$buefy.dialog.confirm({
+        type: 'is-danger',
+        title: 'Confirmation de suppression',
+        message: '<p>Le jeton sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
+        hasIcon: true,
+        icon: 'trash',
+        iconPack: 'fa',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler',
+        onConfirm: async () => {
+          try {
+            await this.$Provider.deleteMyToken(tokenId)
+            this.tokens.splice(this.tokens.findIndex((token) => token.id === tokenId), 1)
+          } catch (error) {
+            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+          }
+        },
+      })
     },
   },
 }

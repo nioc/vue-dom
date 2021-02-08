@@ -106,15 +106,27 @@ export default {
       this.isLoading = false
     },
     async removeUser () {
-      this.isLoading = true
-      try {
-        await this.$Provider.deleteUser(this.user.id)
-        this.isLoading = false
-        this.removeUnsavedChangesGuard('user')
-        this.$router.back()
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-      }
+      this.$buefy.dialog.confirm({
+        type: 'is-danger',
+        title: 'Confirmation de suppression',
+        message: '<p>L\'utilisateur sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
+        hasIcon: true,
+        icon: 'trash',
+        iconPack: 'fa',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler',
+        onConfirm: async () => {
+          this.isLoading = true
+          try {
+            await this.$Provider.deleteUser(this.user.id)
+            this.removeUnsavedChangesGuard('user')
+            this.$router.back()
+          } catch (error) {
+            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+          }
+          this.isLoading = false
+        },
+      })
     },
     async requestToken () {
       this.isLoading = true

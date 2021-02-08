@@ -348,12 +348,24 @@ export default {
       }).catch(() => {})
     },
     async removeAction () {
-      this.isLoading = true
-      if (await this.vxDeleteAction(this.action.id)) {
-        this.removeUnsavedChangesGuard('action')
-        this.$router.back()
-      }
-      this.isLoading = false
+      this.$buefy.dialog.confirm({
+        type: 'is-danger',
+        title: 'Confirmation de suppression',
+        message: '<p>L\'action sera supprimée.</p><p>Souhaitez-vous continuer ?</p>',
+        hasIcon: true,
+        icon: 'trash',
+        iconPack: 'fa',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler',
+        onConfirm: async () => {
+          this.isLoading = true
+          if (await this.vxDeleteAction({ actionId: this.action.id, eqId: this.action.eqId })) {
+            this.removeUnsavedChangesGuard('action')
+            this.$router.back()
+          }
+          this.isLoading = false
+        },
+      })
     },
     async executeAction () {
       this.isLoading = true

@@ -332,12 +332,24 @@ export default {
       }).catch(() => {})
     },
     async removeEquipment () {
-      this.isLoading = true
-      if (await this.vxDeleteEquipment(this.equipment.id)) {
-        this.removeUnsavedChangesGuard('equipment')
-        this.$router.back()
-      }
-      this.isLoading = false
+      this.$buefy.dialog.confirm({
+        type: 'is-danger',
+        title: 'Confirmation de suppression',
+        message: '<p>L\'équipement sera supprimé ainsi que ses actions et états.</p><p>Souhaitez-vous continuer ?</p>',
+        hasIcon: true,
+        icon: 'trash',
+        iconPack: 'fa',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler',
+        onConfirm: async () => {
+          this.isLoading = true
+          if (await this.vxDeleteEquipment({ equipmentId: this.equipment.id, roomId: this.equipment.roomId })) {
+            this.removeUnsavedChangesGuard('equipment')
+            this.$router.back()
+          }
+          this.isLoading = false
+        },
+      })
     },
     getFilteredTags (query) {
       this.filteredTags = this.tagsList.filter((tag) => {

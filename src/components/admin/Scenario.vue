@@ -267,15 +267,27 @@ export default {
       this.isLoading = false
     },
     async removeScenario () {
-      this.isLoading = true
-      try {
-        await this.$Provider.deleteScenario(this.scenario.id)
-        this.removeUnsavedChangesGuard('scenario')
-        this.$router.back()
-      } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-      }
-      this.isLoading = false
+      this.$buefy.dialog.confirm({
+        type: 'is-danger',
+        title: 'Confirmation de suppression',
+        message: '<p>Le scénario sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
+        hasIcon: true,
+        icon: 'trash',
+        iconPack: 'fa',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler',
+        onConfirm: async () => {
+          this.isLoading = true
+          try {
+            await this.$Provider.deleteScenario(this.scenario.id)
+            this.removeUnsavedChangesGuard('scenario')
+            this.$router.back()
+          } catch (error) {
+            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+          }
+          this.isLoading = false
+        },
+      })
     },
     copyScenario () {
       const proposal = Object.assign({}, this.scenario)
