@@ -361,7 +361,11 @@ const mutations = {
       if (!state.states[id]) {
         // state was not in store
         statesUpdated[id] = _state
-        if (Object.prototype.hasOwnProperty.call(_state, 'eqId') && _state.eqId !== null) {
+        if (
+          Object.prototype.hasOwnProperty.call(_state, 'eqId') &&
+          _state.eqId !== null &&
+          Object.prototype.hasOwnProperty.call(state.equipments, _state.eqId)
+        ) {
           // add state to equipment
           state.equipments[_state.eqId].states.push(_state.id)
         }
@@ -376,7 +380,8 @@ const mutations = {
         // state has moved to another equipment
         if (
           Object.prototype.hasOwnProperty.call(state.states[id], 'eqId') &&
-          previousEqId !== null
+          previousEqId !== null &&
+          Object.prototype.hasOwnProperty.call(state.equipments, previousEqId)
         ) {
           // remove state from previous equipment
           const index = state.equipments[previousEqId].states.indexOf(_state.id)
@@ -384,7 +389,11 @@ const mutations = {
             state.equipments[previousEqId].states.splice(index, 1)
           }
         }
-        if (Object.prototype.hasOwnProperty.call(_state, 'eqId') && _state.eqId !== null) {
+        if (
+          Object.prototype.hasOwnProperty.call(_state, 'eqId') &&
+          _state.eqId !== null &&
+          Object.prototype.hasOwnProperty.call(state.equipments, _state.eqId)
+        ) {
           // add state to new equipment
           state.equipments[_state.eqId].states.push(_state.id)
         }
@@ -403,7 +412,11 @@ const mutations = {
       if (!state.actions[id]) {
         // action was not in store
         actionsUpdated[id] = _action
-        if (Object.prototype.hasOwnProperty.call(_action, 'eqId') && _action.eqId !== null) {
+        if (
+          Object.prototype.hasOwnProperty.call(_action, 'eqId') &&
+          _action.eqId !== null &&
+          Object.prototype.hasOwnProperty.call(state.equipments, _action.eqId)
+        ) {
           // add to equipment
           state.equipments[_action.eqId].actions.push(_action.id)
         }
@@ -418,7 +431,8 @@ const mutations = {
         // action has moved to another equipment
         if (
           Object.prototype.hasOwnProperty.call(state.actions[id], 'eqId') &&
-          previousEqId !== null
+          previousEqId !== null &&
+          Object.prototype.hasOwnProperty.call(state.equipments, previousEqId)
         ) {
           // remove action from previous equipment
           const index = state.equipments[previousEqId].actions.indexOf(_action.id)
@@ -426,7 +440,11 @@ const mutations = {
             state.equipments[previousEqId].actions.splice(index, 1)
           }
         }
-        if (Object.prototype.hasOwnProperty.call(_action, 'eqId') && _action.eqId !== null) {
+        if (
+          Object.prototype.hasOwnProperty.call(_action, 'eqId') &&
+          _action.eqId !== null &&
+          Object.prototype.hasOwnProperty.call(state.equipments, _action.eqId)
+        ) {
           // add action to new equipment
           state.equipments[_action.eqId].actions.push(_action.id)
         }
