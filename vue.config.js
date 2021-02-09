@@ -1,9 +1,16 @@
+const { DefinePlugin } = require('webpack')
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
+const GitRevisionPlugin = require('git-revision-webpack-plugin')
+const gitRevisionPlugin = new GitRevisionPlugin({ branch: true })
+
 module.exports = {
   configureWebpack: {
     plugins: [
       new MomentLocalesPlugin({
         localesToKeep: ['fr'],
+      }),
+      new DefinePlugin({
+        gitVersion: JSON.stringify(gitRevisionPlugin.version() + '-' + gitRevisionPlugin.branch()),
       }),
     ],
   },

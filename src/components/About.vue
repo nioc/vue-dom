@@ -13,7 +13,7 @@
           <div class="control">
             <div class="tags has-addons">
               <span class="tag is-dark">Version installée</span>
-              <span class="tag" :class="[isUpToDate ? 'is-success': 'is-danger']">{{ version.installed }}</span>
+              <span class="tag" :class="[isUpToDate ? 'is-success': 'is-danger']" :title="gitVersion">{{ version.installed }}</span>
             </div>
           </div>
           <div class="control">
@@ -50,6 +50,8 @@ export default {
         latest: null,
         latestLink: null,
       },
+      // eslint-disable-next-line no-undef
+      gitVersion,
       description: vueDom.description,
       license: {
         id: license,
