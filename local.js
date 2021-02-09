@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-// eslint-disable-next-line no-var
+// eslint-disable-next-line no-unused-vars, no-var
 var custom = {
   title: 'VueDom',
   provider: {

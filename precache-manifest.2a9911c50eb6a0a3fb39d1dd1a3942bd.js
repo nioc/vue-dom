@@ -1,18 +1,18 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "712e34746228e98432f9",
+    "revision": "669d351922778b06069d",
     "url": "css/Admin.d34831d6.css"
   },
   {
-    "revision": "4a3877eaf8c0d3cb3347",
+    "revision": "bb706e1f3de0401b6d6b",
     "url": "css/Rain.1980135c.css"
   },
   {
-    "revision": "8a5fc23bd6c802384ca3",
-    "url": "css/app.81ef5751.css"
+    "revision": "35535bea31e91441e94c",
+    "url": "css/app.1f2d1ece.css"
   },
   {
-    "revision": "3ad8071120e36a0ed9dd",
+    "revision": "531b46fa0187b0cad476",
     "url": "css/chunk-vendors.01f91894.css"
   },
   {
@@ -160,43 +160,43 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "img/ms-icon-70x70.png"
   },
   {
-    "revision": "4d79f4f03572e50f3dddd107c9b42d3c",
+    "revision": "c22e2cc80b8f72e439454044a98c7cb3",
     "url": "index.html"
   },
   {
-    "revision": "d3bdf1f69a76dbd7646c",
-    "url": "js/About.51d6a6e9.js"
+    "revision": "2f17bc6de99287ae7ddb",
+    "url": "js/About.53cb15ee.js"
   },
   {
-    "revision": "712e34746228e98432f9",
-    "url": "js/Admin.2173a04b.js"
+    "revision": "669d351922778b06069d",
+    "url": "js/Admin.23147ff4.js"
   },
   {
-    "revision": "d610c7b5c1a7f62f024a",
-    "url": "js/Notifications.a2bc129e.js"
+    "revision": "31d207418ca491f6d8b8",
+    "url": "js/Notifications.b55696c1.js"
   },
   {
-    "revision": "2543e770899e9d279449",
-    "url": "js/Profile.3d73082f.js"
+    "revision": "d52123e88a410882aa75",
+    "url": "js/Profile.37a12caa.js"
   },
   {
-    "revision": "4a3877eaf8c0d3cb3347",
-    "url": "js/Rain.bce490c2.js"
+    "revision": "bb706e1f3de0401b6d6b",
+    "url": "js/Rain.32e41355.js"
   },
   {
-    "revision": "3953c1e9a439211bcc6f",
-    "url": "js/Scenarios.26bd6e7f.js"
+    "revision": "023a492feb37c40bbd4d",
+    "url": "js/Scenarios.3b10012b.js"
   },
   {
-    "revision": "8a5fc23bd6c802384ca3",
-    "url": "js/app.c9d6d9a3.js"
+    "revision": "35535bea31e91441e94c",
+    "url": "js/app.5caf9895.js"
   },
   {
-    "revision": "3ad8071120e36a0ed9dd",
-    "url": "js/chunk-vendors.e7893071.js"
+    "revision": "531b46fa0187b0cad476",
+    "url": "js/chunk-vendors.d06a6c3e.js"
   },
   {
-    "revision": "3a04325d98099d2cf58a58254a7fe629",
+    "revision": "0b33d352472d9de371bd6275ecc1a589",
     "url": "local.js"
   },
   {
