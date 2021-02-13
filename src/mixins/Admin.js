@@ -7,17 +7,20 @@ export const AdminMixin = {
       'getRoomById',
       'getEquipmentById',
       'getStateById',
+      'getActionById',
     ]),
     ...mapState([
       'rooms',
       'equipments',
       'states',
       'actions',
+      'channels',
       'tagsList',
     ]),
     arrEquipments () { return Object.values(this.equipments) },
     arrStates () { return Object.values(this.states) },
     arrActions () { return Object.values(this.actions) },
+    arrChannels () { return Object.values(this.channels) },
     arrStatesWithEquipmentName () {
       return this.arrStates.map((state) => {
         const _state = {
@@ -56,6 +59,7 @@ export const AdminMixin = {
           module: action.module,
           isAsk: action.isAsk,
           isVisible: action.isVisible,
+          stateFeedbackId: action.stateFeedbackId,
           equipmentName: null,
           equipmentIsVisible: null,
           equipmentIsActive: null,
@@ -148,6 +152,9 @@ export const AdminMixin = {
       'vxRefreshActions',
       'vxSaveAction',
       'vxDeleteAction',
+      'vxRefreshChannels',
+      'vxSaveChannel',
+      'vxDeleteChannel',
     ]),
   },
 }

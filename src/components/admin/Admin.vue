@@ -14,6 +14,7 @@
           <li><router-link :to="{name: 'admin-states'}"><i class="fa fa-eye fa-fw fa-mr" />États</router-link></li>
           <li><router-link :to="{name: 'admin-actions'}"><i class="fa fa-cogs fa-fw fa-mr" />Actions</router-link></li>
           <li><router-link :to="{name: 'admin-scenarios'}"><i class="fa fa-brain fa-fw fa-mr" />Scénarios</router-link></li>
+          <li><router-link :to="{name: 'admin-channels'}"><i class="fa fa-comments fa-fw fa-mr" />Canaux de communication</router-link></li>
         </ul>
       </div>
     </div>

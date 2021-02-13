@@ -29,6 +29,7 @@ const getDefaultState = () => {
     statesStatistics: {},
     tagsList: [],
     scenarios: {},
+    channels: {},
     notifications: [],
   }
 }
@@ -491,6 +492,25 @@ const mutations = {
     }
   },
 
+  updateChannels (state, payload) {
+    const channelsUpdated = {}
+    payload.forEach((_channel) => {
+      const id = _channel.id
+      if (!state.channels[id]) {
+        // channel was not in store
+        channelsUpdated[id] = _channel
+        return
+      }
+      channelsUpdated[id] = Object.assign({}, state.channels[id])
+      for (const key in _channel) {
+        channelsUpdated[id][key] = _channel[key]
+      }
+    })
+    if (Object.keys(channelsUpdated).length > 0) {
+      state.channels = Object.assign({}, state.channels, channelsUpdated)
+    }
+  },
+
   deleteState (state, { stateId, eqId }) {
     delete state.states[stateId]
     if (eqId) {
@@ -509,6 +529,10 @@ const mutations = {
         state.equipments[eqId].actions.splice(index, 1)
       }
     }
+  },
+
+  deleteChannel (state, { channelId }) {
+    delete state.channels[channelId]
   },
 
   // store tags
@@ -822,6 +846,46 @@ const actions = {
       commit('saveNotifications', notifications)
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des notifications<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxRefreshChannels ({ commit }) {
+    try {
+      // get all channels
+      const channels = await vue.$Provider.getChannels()
+      if (channels === undefined) {
+        // no channels to save
+        return
+      }
+      commit('updateChannels', channels)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors du rafraichissement des canaux<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxSaveChannel ({ commit }, { channel, isNew }) {
+    try {
+      if (isNew) {
+        channel = await vue.$Provider.createChannel(channel)
+      } else {
+        channel = await vue.$Provider.updateChannel(channel)
+      }
+      commit('updateChannels', [channel])
+      return channel
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la sauvegarde du canal<br>${error.message}` }, { root: true })
+      return false
+    }
+  },
+
+  async vxDeleteChannel ({ commit }, { channelId }) {
+    try {
+      await vue.$Provider.deleteChannel(channelId)
+      commit('deleteChannel', { channelId })
+      return true
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression du canal<br>${error.message}` }, { root: true })
+      return false
     }
   },
 }

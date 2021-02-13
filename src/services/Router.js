@@ -217,6 +217,24 @@ const routes = [
       title: 'Admin scénario',
     },
   },
+  {
+    path: '/admin/channels',
+    name: 'admin-channels',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Channels'),
+    meta: {
+      title: 'Admin canaux de communication',
+    },
+  },
+  {
+    path: '/admin/channels/:id',
+    name: 'admin-channel',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Channel'),
+    meta: {
+      title: 'Admin canal de communication',
+    },
+  },
 ]
 
 // create router
