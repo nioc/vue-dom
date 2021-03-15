@@ -1,5 +1,6 @@
+.dockerignore
+.gitignore
 **/dist
 **/node_modules
 **/.github
-**/.git
 **/docs

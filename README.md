@@ -2,7 +2,7 @@
 
 [![license: AGPLv3](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![GitHub release](https://img.shields.io/github/release/nioc/vue-dom.svg)](https://github.com/nioc/vue-dom/releases/latest)
-[![Build Status](https://travis-ci.org/nioc/vue-dom.svg?branch=master)](https://travis-ci.org/nioc/vue-dom)
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/nioc/vue-dom)](https://hub.docker.com/r/nioc/vue-dom/builds)
 
 Vue-dom is a web front end for home automation software (currently only support [Jeedom](https://www.jeedom.com)).
 
@@ -24,8 +24,10 @@ Check out the [live demo](https://nioc.github.io/vue-dom/) (since using mock dat
 
 ## Installation
 
+### As a local Apache/Nginx virtual host
+
 For basic use, you just have to:
--    download [latest release](https://github.com/nioc/vue-dom/releases/latest) tar.gz archive,
+-    download [latest release](https://github.com/nioc/vue-dom/releases/latest) archive,
 -    unarchive in `/var/www/vue-dom/`,
 -    add following lines in Apache virtual hosts `/etc/apache2/sites-enabled/default-ssl.conf` and `/etc/apache2/sites-enabled/000-default.conf`, inside `<VirtualHost>` section:
       ``` conf
@@ -39,18 +41,30 @@ For basic use, you just have to:
       ```
 -   set your back end (Jeedom) url in `/var/www/vue-dom/local.js`.
 
-If you are using Docker, you can download the [Dockerfile](/docker/Dockerfile) and build image with your own url:
+### As docker container
+
+If you are using Docker, you can pull the [Docker image](https://hub.docker.com/r/nioc/vue-dom) and run with your own url:
 ```
-docker build \
--f Dockerfile \
--t nioc/vue-dom:nginx-alpine-latest \
---build-arg JSON_RPC_API_URL=https://192.168.1.50/core/api/jeeApi.php \
---build-arg WEBSOCKET_URL=wss://192.168.1.50/socket/ .
+docker run -p 80:80 --rm \
+-e TITLE="VueDom - Home" \
+-e PROVIDER="system: 'jeedom', jsonRpcApiUrl: 'https://192.168.1.50/core/api/jeeApi.php', websocketUrl: 'wss://192.168.1.50/socket/', statisticsPeriod: 86400000, trendPeriod: 7200000, trendThreshold: 0.1," \
+-e COMPONENTS="SynologyRouterManager: 'SynologyRouterManager', NetatmoSecurity: 'NetatmoSecurity'," \
+--name vue-dom-1 \
+nioc/vue-dom:latest
 ```
 
-And then run application in container:
-```
-docker run -d -p 80:80 --rm --name vue-dom-1 nioc/vue-dom:nginx-alpine-latest
+Or run service in a `docker-compose.yml` file:
+``` yml
+version: "3.4"
+services:
+  vue-dom:
+    image: nioc/vue-dom:latest
+    ports:
+      - "80:80"
+    environment:
+      TITLE: VueDom - Home
+      PROVIDER: "system: 'jeedom', jsonRpcApiUrl: 'https://192.168.1.50/core/api/jeeApi.php', websocketUrl: 'wss://192.168.1.50/socket/', statisticsPeriod: 86400000, trendPeriod: 7200000, trendThreshold: 0.1,"
+      COMPONENTS: "SynologyRouterManager: 'SynologyRouterManager', NetatmoSecurity: 'NetatmoSecurity',"
 ```
 
 For more advanced use (adding your own component, style, ...), you have to follow the [contributing guide](CONTRIBUTING.md) and edit Vue code.
