@@ -65,6 +65,9 @@
               <button v-if="!isNew" class="button is-light" title="Dupliquer le canal" @click="copyChannel">
                 <span class="icon"><i class="fa fa-copy" /></span><span>Dupliquer</span>
               </button>
+              <button v-if="!isNew" class="button is-warning" title="Réinitialiser l'état d'attente d'une réponse utilisateur" @click="resetChannel">
+                <span class="icon"><i class="fa fa-comment-slash" /></span><span>Réinitialiser</span>
+              </button>
               <button v-if="!isNew" class="button is-danger" title="Supprimer le canal" @click="removeChannel">
                 <span class="icon"><i class="fa fa-trash" /></span><span>Supprimer</span>
               </button>
@@ -180,6 +183,12 @@ export default {
           this.isLoading = false
         },
       })
+    },
+    async resetChannel () {
+      const channel = Object.assign({}, this.channel)
+      channel.hasPendingRequest = false
+      await this.vxSaveChannel({ channel, isNew: false })
+      this.getChannel()
     },
     setInput (state) {
       if (!state) {
