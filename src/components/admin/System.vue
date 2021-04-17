@@ -7,6 +7,7 @@
       <div class="container">
         <system-jobs />
         <system-logs />
+        <system-metrics />
         <system-database />
       </div>
     </div>
@@ -17,6 +18,7 @@
 import Breadcrumb from '@/components/Breadcrumb'
 import SystemJobs from '@/components/admin/SystemJobs'
 import SystemLogs from '@/components/admin/SystemLogs'
+import SystemMetrics from '@/components/admin/SystemMetrics'
 import SystemDatabase from '@/components/admin/SystemDatabase'
 
 export default {
@@ -25,6 +27,7 @@ export default {
     Breadcrumb,
     SystemJobs,
     SystemLogs,
+    SystemMetrics,
     SystemDatabase,
   },
 }
