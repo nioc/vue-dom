@@ -120,7 +120,7 @@ export default {
       this.rule.criterias.push({ type: 'any', criterias: [], onValidElements: [], onInvalidElements: [] })
     },
     addCriteria () {
-      this.rule.criterias.push({ fact: null, operator: 'e', value: null })
+      this.rule.criterias.push(this.createScenarioElement('criteria'))
     },
     addOnElement (collection, type = 'action') {
       if (!collection) {

@@ -4,7 +4,7 @@
       <div class="field-body">
 
         <div class="field is-required is-narrow">
-          <options-autocomplete type="ask" placeholder="XMPP" :value="scenarioAsk.id" @select="selectAction" />
+          <options-autocomplete type="channel" placeholder="XMPP" :value="scenarioAsk.id" @select="selectChannel" />
         </div>
 
         <div class="field has-addons">
@@ -133,9 +133,9 @@ export default {
         case 'jsonata':
           return '{"json":"Etat 15 a pour valeur "&_15} ou \'Etat #15 = \'&_15'
         case 'json':
-          return '{"attribut": "valeur", "isJson": true, "min": 0}'
+          return '{"attribut": "Text de la demande", "isJson": true, "min": 0}'
         default:
-          return 'valeur'
+          return 'Texte de la demande'
       }
     },
   },
@@ -145,8 +145,19 @@ export default {
     }
   },
   methods: {
-    selectAction (option) {
+    selectChannel (option) {
       if (option) {
+        if (this.scenarioAsk.onValidElements.length === 0) {
+          // create default rule
+          const answerRule = this.createScenarioElement('rule')
+          this.scenarioAsk.onValidElements.push(answerRule)
+        }
+        if (this.scenarioAsk.onValidElements.length === 1 && this.scenarioAsk.onValidElements[0].definition.criterias.length === 0) {
+          // create default criteria with "answer" state of the channel
+          const answerCriteria = this.createScenarioElement('criteria')
+          answerCriteria.fact = this.channels[option.id].input
+          this.scenarioAsk.onValidElements[0].definition.criterias.push(answerCriteria)
+        }
         this.scenarioAsk.id = option.id
       }
     },

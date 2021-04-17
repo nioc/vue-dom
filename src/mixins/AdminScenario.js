@@ -1,7 +1,7 @@
 export const AdminScenarioMixin = {
   methods: {
     createScenarioElement (type) {
-      const element = { type }
+      let element = { type }
       switch (type) {
         case 'rule':
           element.definition = {
@@ -9,6 +9,13 @@ export const AdminScenarioMixin = {
             criterias: [],
             onValidElements: [],
             onInvalidElements: [],
+          }
+          break
+        case 'criteria':
+          element = {
+            fact: null,
+            operator: 'e',
+            value: null,
           }
           break
         case 'action':
@@ -20,6 +27,10 @@ export const AdminScenarioMixin = {
           break
         case 'ask':
           element.definition = {
+            id: null,
+            paramsType: 'string',
+            params: null,
+            timeout: null,
             onValidElements: [],
             onTimeoutElements: [],
           }

@@ -18,6 +18,7 @@
   >
     <template slot-scope="props">
       <span v-if="type==='equipment'" :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.isActive || !props.option.roomIsVisible}">{{ props.option.name }}</span>
+      <span v-else-if="type==='channel'">{{ props.option.name }}</span>
       <span v-else :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.equipmentIsVisible || !props.option.equipmentIsActive}">{{ props.option.name }}</span>
     </template>
     <template slot="empty">Aucune correspondance</template>
@@ -61,6 +62,8 @@ export default {
       switch (this.type) {
         case 'equipment':
           return 'roomName'
+        case 'channel':
+          return null
         case 'state':
         case 'action':
         case 'ask':
@@ -78,6 +81,8 @@ export default {
           return 'Action à utiliser'
         case 'equipment':
           return 'Équipement à utiliser'
+        case 'channel':
+          return 'Canal de communication à utiliser'
         case 'state':
         default:
           return 'Etat à utiliser'
@@ -89,6 +94,7 @@ export default {
           return 'microchip'
         case 'action':
           return 'cogs'
+        case 'channel':
         case 'ask':
           return 'comments'
         case 'state':
@@ -104,6 +110,8 @@ export default {
           return this.arrActionsWithEquipmentName
         case 'ask':
           return this.arrActionsWithEquipmentName.filter((action) => action.isAsk)
+        case 'channel':
+          return this.arrChannels
         case 'equipment':
           return this.arrEquipmentsWithRoomName
         default:
