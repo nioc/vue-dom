@@ -325,6 +325,10 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   user-select: all;
 }
 
+.card-header-title .icon {
+  margin-right: 0.75rem;
+}
+
 .scenario-element:not(:last-child) {
   margin-bottom: 0.75rem;
 }
