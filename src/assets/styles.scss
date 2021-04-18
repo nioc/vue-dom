@@ -168,34 +168,6 @@ a {
   content: "\00a0";
 }
 
-$indexSizes: ( 1, 2, 3, 4, 5, 6, 7, 8);
-$bulmaSizes: ( $size-1, $size-2, $size-3, $size-4, $size-5, $size-6, $size-7, 0.5em );
-$positions: ( "top", "left", "bottom", "right" );
-$attributes: ( "margin", "padding" );
-$i: 1;
-@each $size in $indexSizes {
-  $sizeem: nth($bulmaSizes, $i);
-  $i: $i+1;
-  @each $attribute in $attributes {
-    .has-#{$attribute}-#{$size} {
-      #{$attribute}: $sizeem !important;
-    }
-    .has-#{$attribute}-horizontal-#{$size} {
-      #{$attribute}-left: $sizeem !important;
-      #{$attribute}-right: $sizeem !important;
-    }
-    .has-#{$attribute}-vertical-#{$size} {
-      #{$attribute}-top: $sizeem !important;
-      #{$attribute}-bottom: $sizeem !important;
-    }
-    @each $position in $positions {
-      .has-#{$attribute}-#{$position}-#{$size} {
-        #{$attribute}-#{$position}: $sizeem !important;
-      }
-    }
-  }
-}
-
 @each $name, $pair in $colors {
   $color: nth($pair, 1);
   .buttons.has-addons .button.is-#{$name} {

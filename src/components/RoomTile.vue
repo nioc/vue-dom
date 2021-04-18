@@ -1,9 +1,9 @@
 <template>
   <router-link :to="{name: 'room', params: {id: room.id}}" class="column" style="min-width: max-content">
-    <div class="notification  has-padding-3 is-primary has-text-centered">
+    <div class="notification  p-5 is-primary has-text-centered">
       <span class="subtitle">{{ room.name }}</span>
       <span class="is-size-7">
-        <span v-for="info in summary.keys" :key="info.key" class="has-padding-left-8"><i class="fa fa-fw" :class="getSummaryIconClass(info.key)" />{{ info.value }}{{ getSummaryUnit(info.key) }}</span>
+        <span v-for="info in summary.keys" :key="info.key" class="pl-2"><i class="fa fa-fw" :class="getSummaryIconClass(info.key)" />{{ info.value }}{{ getSummaryUnit(info.key) }}</span>
       </span>
     </div>
   </router-link>

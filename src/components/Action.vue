@@ -2,13 +2,13 @@
   <button v-if="action.type === 'button'" class="button is-rounded is-primary is-light" :title="action.name" @click="execute">
     <span class="icon is-icon-mobile"><i :class="iconClass" /></span><span class="is-hidden-mobile">{{ action.name }}</span>
   </button>
-  <b-slider v-else-if="action.type === 'slider'" v-model="value" lazy class="has-margin-left-4 has-margin-top-8" :title="action.name" @change="actionSlider" />
-  <div v-else-if="action.type === 'select'" lazy class="select has-margin-left-4 has-margin-top-8" :title="action.name">
+  <b-slider v-else-if="action.type === 'slider'" v-model="value" lazy class="ml-5 mt-2" :title="action.name" @change="actionSlider" />
+  <div v-else-if="action.type === 'select'" lazy class="select ml-5 mt-2" :title="action.name">
     <select v-model="value" @change="actionSelect">
       <option v-for="option in action.options" :key="option.value" :value="option.value">{{ option.label || option.value }}</option>
     </select>
   </div>
-  <b-switch v-else-if="action.type === 'switch'" v-model="value" :title="action.name" class="has-margin-bottom-8" @input="actionSwitch" />
+  <b-switch v-else-if="action.type === 'switch'" v-model="value" :title="action.name" class="mb-2" @input="actionSwitch" />
   <span v-else>{{ action }}</span>
 </template>
 

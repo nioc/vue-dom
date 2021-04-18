@@ -1,8 +1,8 @@
 <template>
   <div>
     <info v-for="state in attributes.states" :id="state" :key="state" :equipment-id="equipment.id" />
-    <div v-if="attributes.actions.length > 0" class="is-flex-space-between has-margin-bottom-8">
-      <span><i class="fa-fw fa fa-tools has-margin-right-6" />Actions</span>
+    <div v-if="attributes.actions.length > 0" class="is-flex-space-between mb-2">
+      <span><i class="fa-fw fa fa-tools mr-4" />Actions</span>
       <span class="buttons is-right has-addons is-flex-grow">
         <action v-for="action in attributes.actions" :id="action" :key="action" />
       </span>

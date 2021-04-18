@@ -3,7 +3,7 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'notifications'}, icon: 'fa-bell', text: 'Notifications', isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
         <table v-if="notifications.length" class="table is-striped is-fullwidth">
           <thead>

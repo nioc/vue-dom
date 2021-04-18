@@ -3,7 +3,7 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-states'}, icon: 'fa-eye', text: 'États', isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
         <b-loading v-model="isLoading" :is-full-page="false" />
         <b-table :data="processed" :paginated="true" checkable :header-checkable="false" :checked-rows.sync="checkedRows" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="equipmentName" class="is-clickable" @click="consultState">

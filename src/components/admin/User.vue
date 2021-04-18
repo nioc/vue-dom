@@ -3,7 +3,7 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-users'}, icon: 'fa-users', text: 'Utilisateurs'}, {link: {name: 'admin-user', params: {id}}, text: user.login, isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container box">
         <b-loading v-model="isLoading" :is-full-page="false" />
         <div class="field is-required">

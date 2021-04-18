@@ -1,5 +1,5 @@
 <template>
-  <div class="field is-horizontal has-padding-left-6">
+  <div class="field is-horizontal pl-4">
     <div class="field-body">
       <div class="field is-narrow">
         <options-autocomplete type="state" placeholder="Température" :value="criteria.fact" @select="selectState" />

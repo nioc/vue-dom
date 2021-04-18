@@ -1,5 +1,5 @@
 <template>
-  <div class="scenario-rule has-padding-left-6 has-margin-vertical-7">
+  <div class="scenario-rule pl-4 my-3">
     <div class="field is-horizontal">
       <div class="field-body">
 
@@ -64,22 +64,22 @@
     <scenario-criteria v-for="(criteria, criteriaIndex) in rule.criterias" v-else :key="'c'+criteriaIndex" :criteria="criteria" :index="criteriaIndex" :length="rule.criterias.length" class="field is-horizontal" @remove="(index) => remove(rule.criterias, index)" @up="(index) => up(rule.criterias, index)" @down="(index) => down(rule.criterias, index)" />
 
     <div class="field is-horizontal">
-      <span class="tag is-light is-info is-large has-margin-right-7"><span class="is-size-6">Alors</span></span>
+      <span class="tag is-light is-info is-large mr-3"><span class="is-size-6">Alors</span></span>
       <button class="button is-primary is-light" title="Ajouter une action" @click="addOnElement(rule.onValidElements, 'action')">
         <span class="icon"><i class="fa fa-plus-circle" /></span>
         <span>Action</span>
       </button>
     </div>
-    <scenario-element v-for="(element, elementIndex) in rule.onValidElements" :key="'v'+elementIndex" :element="element" :index="elementIndex" :length="rule.onValidElements.length" class="has-padding-left-6" @remove="(index) => remove(rule.onValidElements, index)" @up="(index) => up(rule.onValidElements, index)" @down="(index) => down(rule.onValidElements, index)" />
+    <scenario-element v-for="(element, elementIndex) in rule.onValidElements" :key="'v'+elementIndex" :element="element" :index="elementIndex" :length="rule.onValidElements.length" class="pl-4" @remove="(index) => remove(rule.onValidElements, index)" @up="(index) => up(rule.onValidElements, index)" @down="(index) => down(rule.onValidElements, index)" />
 
     <div class="field is-horizontal">
-      <span class="tag is-light is-info is-large has-margin-right-7"><span class="is-size-6">Sinon</span></span>
+      <span class="tag is-light is-info is-large mr-3"><span class="is-size-6">Sinon</span></span>
       <button class="button is-primary is-light" title="Ajouter une action" @click="addOnElement(rule.onInvalidElements, 'action')">
         <span class="icon"><i class="fa fa-plus-circle" /></span>
         <span>Action</span>
       </button>
     </div>
-    <scenario-element v-for="(element, elementIndex) in rule.onInvalidElements" :key="'i'+elementIndex" :element="element" :index="elementIndex" :length="rule.onInvalidElements.length" class="has-padding-left-6" @remove="(index) => remove(rule.onInvalidElements, index)" @up="(index) => up(rule.onInvalidElements, index)" @down="(index) => down(rule.onInvalidElements, index)" />
+    <scenario-element v-for="(element, elementIndex) in rule.onInvalidElements" :key="'i'+elementIndex" :element="element" :index="elementIndex" :length="rule.onInvalidElements.length" class="pl-4" @remove="(index) => remove(rule.onInvalidElements, index)" @up="(index) => up(rule.onInvalidElements, index)" @down="(index) => down(rule.onInvalidElements, index)" />
 
   </div>
 </template>

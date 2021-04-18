@@ -1,10 +1,10 @@
 <template>
-  <article class="card has-margin-bottom-6">
+  <article class="card mb-4">
     <header class="card-header">
       <p class="card-header-title">{{ equipment.name }}</p>
       <aside class="card-header-icon is-size-7-mobile">
         <span v-if="equipment.battery" :class="[equipment.hasLowBattery ? 'has-text-danger' : 'has-text-grey']"><i class="fa-mr" :class="getBatteryLevelIconClass(equipment.battery)" />{{ equipment.battery }}%</span>
-        <span v-if="equipment.lastCommunication" :title="equipment.lastCommunication | moment('LLLL')" :class="[equipment.hasNoCommunication ? 'has-text-danger' : 'has-text-grey']" class="has-margin-left-8"><i class="fa-mr far fa-clock" /><time-ago :date="equipment.lastCommunication" :drop-fixes="true" /></span>
+        <span v-if="equipment.lastCommunication" :title="equipment.lastCommunication | moment('LLLL')" :class="[equipment.hasNoCommunication ? 'has-text-danger' : 'has-text-grey']" class="ml-2"><i class="fa-mr far fa-clock" /><time-ago :date="equipment.lastCommunication" :drop-fixes="true" /></span>
       </aside>
     </header>
     <custom-component v-if="isEquipmentHandled(equipment.module)" :component="getEquipmentComponent(equipment.module)" :equipment="equipment" class="card-content" />

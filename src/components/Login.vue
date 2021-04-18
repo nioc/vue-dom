@@ -23,13 +23,13 @@
                   </span>
                 </div>
               </div>
-              <div class="field has-text-left has-padding-left-7">
+              <div class="field has-text-left pl-3">
                 <b-checkbox v-model="credentials.remember" :class="{'has-text-grey-light': !credentials.remember}">
                   Rester connecté
                 </b-checkbox>
               </div>
               <div class="field">
-                <button type="submit" class="button is-block is-primary is-medium is-fullwidth" :class="{'is-loading': isLoading}" :disabled="isDisabled"><span class="fa fa-sign-in-alt fa-fw has-margin-right-7" aria-hidden="true" />Login</button>
+                <button type="submit" class="button is-block is-primary is-medium is-fullwidth" :class="{'is-loading': isLoading}" :disabled="isDisabled"><span class="fa fa-sign-in-alt fa-fw mr-3" aria-hidden="true" />Login</button>
               </div>
               <div v-if="error" class="message is-danger">
                 <div class="message-body has-text-danger">{{ error }}</div>

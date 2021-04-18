@@ -6,9 +6,9 @@
     <div class="hero-body">
       <div class="container">
         <ul>
-          <li v-for="scenario in scenarios" :key="scenario.id" class="card has-margin-bottom-6">
+          <li v-for="scenario in scenarios" :key="scenario.id" class="card mb-4">
             <header class="card-header">
-              <p class="card-header-title"><span v-if="scenario.group" class="has-margin-right-8 has-text-grey-light">[{{ scenario.group }}]</span>{{ scenario.name }}</p>
+              <p class="card-header-title"><span v-if="scenario.group" class="mr-2 has-text-grey-light">[{{ scenario.group }}]</span>{{ scenario.name }}</p>
             </header>
             <div class="card-content">
               <p v-if="scenario.description" class="content">{{ scenario.description }}</p>

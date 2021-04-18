@@ -11,8 +11,8 @@
           </router-link>
         </li>
       </ul>
-      <aside v-if="summary && summary.keys" class="has-text-grey has-text-weight-light is-size-7 has-margin-left-7">
-        <span v-for="info in summary.keys" :key="info.key" class="has-padding-left-8"><i class="fa-fw" :class="getSummaryIconClass(info.key)" />{{ info.value }}{{ getSummaryUnit(info.key) }}</span>
+      <aside v-if="summary && summary.keys" class="has-text-grey has-text-weight-light is-size-7 ml-3">
+        <span v-for="info in summary.keys" :key="info.key" class="pl-2"><i class="fa-fw" :class="getSummaryIconClass(info.key)" />{{ info.value }}{{ getSummaryUnit(info.key) }}</span>
       </aside>
     </nav>
   </div>

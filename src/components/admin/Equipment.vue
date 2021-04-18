@@ -3,10 +3,10 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-equipments'}, icon: 'fa-microchip', text: 'Équipements'}, {link: {name: 'admin-equipment', params: {id}}, text: equipment.name, isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
         <b-loading v-model="isLoading" :is-full-page="false" />
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-microchip" /></span><span>Informations de l'equipment</span>
@@ -138,7 +138,7 @@
             </div>
           </section>
         </div>
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-eye" /></span><span>États</span>
@@ -180,7 +180,7 @@
             </div>
           </section>
         </div>
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-cogs" /></span><span>Actions</span>

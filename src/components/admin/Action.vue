@@ -3,10 +3,10 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-actions'}, icon: 'fa-cogs', text: 'Actions'}, {link: {name: 'admin-action', params: {id}}, text: action.name, isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
         <b-loading v-model="isLoading" :is-full-page="false" />
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-cogs" /></span><span>Informations de l'action</span>

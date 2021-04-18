@@ -3,11 +3,11 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-scenarios'}, icon: 'fa-brain', text: 'Scenarios'}, {link: {name: 'admin-scenario', params: {id}}, text: scenario.name, isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
         <b-loading v-model="isLoading" :is-full-page="false" />
 
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-brain" /></span><span>Informations</span>
@@ -132,7 +132,7 @@
           </section>
         </div>
 
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-tasks" /></span><span>Éléments</span>

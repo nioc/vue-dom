@@ -3,7 +3,7 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'rooms'}, icon: 'fa-home', text: 'Pièces', isActive: true}]" :summary="summary" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
         <div class="field">
           <p class="control has-icons-left">

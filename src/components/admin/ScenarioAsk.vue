@@ -1,5 +1,5 @@
 <template>
-  <div class="scenario-ask has-padding-left-6 has-margin-vertical-7">
+  <div class="scenario-ask pl-4 my-3">
     <div class="field is-horizontal">
       <div class="field-body">
 
@@ -47,22 +47,22 @@
     </div>
 
     <div class="field is-horizontal">
-      <span class="tag is-light is-info is-large has-margin-right-7"><span class="is-size-6">Lors de la réponse</span></span>
+      <span class="tag is-light is-info is-large mr-3"><span class="is-size-6">Lors de la réponse</span></span>
       <button class="button is-primary is-light" title="Ajouter une règle" @click="addOnElement(scenarioAsk.onValidElements, 'rule')">
         <span class="icon"><i class="fa fa-plus-circle" /></span>
         <span>Règle</span>
       </button>
     </div>
-    <scenario-element v-for="(element, elementIndex) in scenarioAsk.onValidElements" :key="'v'+elementIndex" :element="element" :index="elementIndex" :length="scenarioAsk.onValidElements.length" class="has-padding-left-6" @remove="(index) => removeOnElement(scenarioAsk.onValidElements, index)" />
+    <scenario-element v-for="(element, elementIndex) in scenarioAsk.onValidElements" :key="'v'+elementIndex" :element="element" :index="elementIndex" :length="scenarioAsk.onValidElements.length" class="pl-4" @remove="(index) => removeOnElement(scenarioAsk.onValidElements, index)" />
 
     <div class="field is-horizontal">
-      <span class="tag is-light is-info is-large has-margin-right-7"><span class="is-size-6">Sans réponse</span></span>
+      <span class="tag is-light is-info is-large mr-3"><span class="is-size-6">Sans réponse</span></span>
       <button class="button is-primary is-light" title="Ajouter une action" @click="addOnElement(scenarioAsk.onTimeoutElements, 'action')">
         <span class="icon"><i class="fa fa-plus-circle" /></span>
         <span>Action</span>
       </button>
     </div>
-    <scenario-element v-for="(element, elementIndex) in scenarioAsk.onTimeoutElements" :key="'i'+elementIndex" :element="element" :index="elementIndex" :length="scenarioAsk.onTimeoutElements.length" class="has-padding-left-6" @remove="(index) => removeOnElement(scenarioAsk.onTimeoutElements, index)" />
+    <scenario-element v-for="(element, elementIndex) in scenarioAsk.onTimeoutElements" :key="'i'+elementIndex" :element="element" :index="elementIndex" :length="scenarioAsk.onTimeoutElements.length" class="pl-4" @remove="(index) => removeOnElement(scenarioAsk.onTimeoutElements, index)" />
 
   </div>
 </template>

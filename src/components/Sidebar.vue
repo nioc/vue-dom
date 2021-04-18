@@ -1,9 +1,9 @@
 <template>
   <b-sidebar v-model="open" type="is-light" :fullheight="true" :overlay="true">
-    <aside class="has-padding-6">
-      <div class="has-margin-bottom-5 is-flex-center">
+    <aside class="p-4">
+      <div class="mb-5 is-flex-center">
         <img src="./../assets/home.png">
-        <h1 class="subtitle has-margin-left-7">{{ title }}</h1>
+        <h1 class="subtitle ml-3">{{ title }}</h1>
       </div>
       <b-menu>
         <b-menu-list label="Navigation">
@@ -44,7 +44,7 @@
 
           <b-menu-item icon="bell fa-fw fa-mr" tag="router-link" :to="{name: 'notifications'}">
             <template slot="label">
-              Notifications <notifications-counter class-name="is-inline has-margin-left-8" :is-link="false" />
+              Notifications <notifications-counter class-name="is-inline ml-2" :is-link="false" />
             </template>
           </b-menu-item>
 

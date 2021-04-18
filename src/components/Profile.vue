@@ -3,10 +3,10 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'profile'}, icon: 'fa-user', text: 'Profile', isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
 
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-user-edit" /></span><span>Mes informations</span>
@@ -39,7 +39,7 @@
           </section>
         </div>
 
-        <div class="card has-margin-bottom-6">
+        <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
               <span class="icon"><i class="fa fa-user-shield" /></span><span>Sécurité</span>

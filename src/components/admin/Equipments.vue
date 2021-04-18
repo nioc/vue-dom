@@ -3,7 +3,7 @@
     <div class="hero-head">
       <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-equipments'}, icon: 'fa-microchip', text: 'Equipements', isActive: true}]" />
     </div>
-    <div class="hero-body has-padding-horizontal-7">
+    <div class="hero-body px-3">
       <div class="container">
         <b-loading v-model="isLoading" :is-full-page="false" />
         <b-table :data="processed" :paginated="true" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="roomName" class="is-clickable" @click="consultEquipment">
@@ -23,7 +23,7 @@
             </b-table-column>
           </template>
         </b-table>
-        <span class="buttons has-padding-top-7">
+        <span class="buttons pt-3">
           <button class="button is-primary" @click="getEquipments()">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
           </button>

@@ -1,21 +1,21 @@
 <template>
   <div>
-    <div class="is-flex-space-between has-margin-bottom-8">
-      <span><i class="fa-fw has-margin-right-6" :class="iconClass" />{{ state.name }}<a v-if="state.isHistorized" class="has-margin-left-8 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
-      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" class="has-margin-bottom-8" @input="action" />
-      <div v-else-if="state.type === 'string' && action" lazy class="select has-margin-left-4" :title="state.name">
+    <div class="is-flex-space-between mb-2">
+      <span><i class="fa-fw mr-4" :class="iconClass" />{{ state.name }}<a v-if="state.isHistorized" class="ml-2 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
+      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" class="mb-2" @input="action" />
+      <div v-else-if="state.type === 'string' && action" lazy class="select ml-5" :title="state.name">
         <select v-model="value" @change="action">
           <option v-for="option in actionOptions" :key="option.value" :value="option.value">{{ option.label || option.value }}</option>
         </select>
       </div>
       <span v-else class="is-flex-space-between">
         <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light">
-          <li class="statistics-item"><span class="has-padding-horizontal-8" title="Min">{{ statistics.min }}</span></li>
-          <li class="statistics-item"><span class="has-padding-horizontal-8" title="Moyenne">{{ statistics.avg }}</span></li>
-          <li class="statistics-item"><span class="has-padding-horizontal-8" title="Max">{{ statistics.max }}</span></li>
+          <li class="statistics-item"><span class="px-2" title="Min">{{ statistics.min }}</span></li>
+          <li class="statistics-item"><span class="px-2" title="Moyenne">{{ statistics.avg }}</span></li>
+          <li class="statistics-item"><span class="px-2" title="Max">{{ statistics.max }}</span></li>
         </ul>
-        <i v-if="statistics && statistics.trend !== null" class="fas fa-long-arrow-alt-right has-text-grey-light has-margin-horizontal-8" :class="trendClass" />
-        <i v-if="state.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow has-margin-right-8" :style="`transform: rotate(${135+parseInt(state.currentValue)}deg);`" />
+        <i v-if="statistics && statistics.trend !== null" class="fas fa-long-arrow-alt-right has-text-grey-light mx-2" :class="trendClass" />
+        <i v-if="state.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow mr-2" :style="`transform: rotate(${135+parseInt(state.currentValue)}deg);`" />
         <span class="has-text-weight-semi-bold" :class="{'has-text-danger': state.isTooHigh || state.isTooLow}">{{ state.currentValue }}{{ unit }}</span>
       </span>
     </div>
@@ -24,7 +24,7 @@
         Historique
         <button class="delete" title="Fermer" @click="hasHistoryDisplayed = false" />
       </div>
-      <div class="message-body has-margin-bottom-7 has-padding-8">
+      <div class="message-body mb-3 p-2">
         <history :id="state.id" :name="state.name" :has-steps="state.type === 'boolean'" />
       </div>
     </div>
