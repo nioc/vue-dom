@@ -43,7 +43,7 @@ export default {
     },
   },
   render (h) {
-    return h(this.tag, this.fromNow)
+    return h(this.tag, { style: 'white-space: nowrap;' }, this.fromNow)
   },
 }
 </script>
