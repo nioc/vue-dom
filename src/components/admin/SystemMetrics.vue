@@ -23,7 +23,7 @@
         <div class="control">
           <label class="label">Mémoire</label>
           <system-metric label="RAM" :human-value="`${getHumanSize(metrics.memory.memFree)} disponible (extensible à ${getHumanSize(metrics.memory.memAvailable)}) sur ${getHumanSize(metrics.memory.memTotal)}`" :value="metrics.memory.memTotal-metrics.memory.memAvailable" :max="metrics.memory.memTotal" />
-          <system-metric label="Swap" :human-value="`${getHumanSize(metrics.memory.swapFree)} disponible sur ${getHumanSize(metrics.memory.swapTotal)}`" :value="metrics.memory.swapFree-metrics.memory.swapFree" :max="metrics.memory.swapTotal" />
+          <system-metric label="Swap" :human-value="`${getHumanSize(metrics.memory.swapFree)} disponible sur ${getHumanSize(metrics.memory.swapTotal)}`" :value="metrics.memory.swapTotal-metrics.memory.swapFree" :max="metrics.memory.swapTotal" />
         </div>
       </div>
 
