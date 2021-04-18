@@ -329,6 +329,10 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   margin-right: 0.75rem;
 }
 
+.is-fullheight {
+  height: 100%
+}
+
 .scenario-element:not(:last-child) {
   margin-bottom: 0.75rem;
 }
