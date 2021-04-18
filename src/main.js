@@ -25,6 +25,7 @@ Vue.use(Provider, {
 Vue.use(Buefy)
 
 Vue.config.productionTip = false
+Vue.config.performance = process.env.NODE_ENV !== 'production'
 
 // try to restore user
 Auth.restoreUser()
