@@ -1,7 +1,7 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-scenarios'}, icon: 'fa-brain', text: 'Scenarios', isActive: true}]" />
+      <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-scenarios'}, icon: 'fa-book', text: 'Scenarios', isActive: true}]" />
     </div>
     <div class="hero-body px-3">
       <div class="container">

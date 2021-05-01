@@ -1,7 +1,7 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-scenarios'}, icon: 'fa-brain', text: 'Scenarios'}, {link: {name: 'admin-scenario', params: {id}}, text: scenario.name, isActive: true}]" />
+      <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-scenarios'}, icon: 'fa-book', text: 'Scenarios'}, {link: {name: 'admin-scenario', params: {id}}, text: scenario.name, isActive: true}]" />
     </div>
     <div class="hero-body px-3">
       <div class="container">
@@ -10,7 +10,7 @@
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
-              <span class="icon"><i class="fa fa-brain" /></span><span>Informations</span>
+              <span class="icon"><i class="fa fa-book" /></span><span>Informations</span>
             </p>
           </header>
           <section class="card-content">
