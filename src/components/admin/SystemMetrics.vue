@@ -40,15 +40,15 @@
       <div v-if="metrics && metrics.memory" class="field mb-5">
         <div class="control">
           <label class="label">Mémoire</label>
-          <system-metric label="RAM" :human-value="`${getHumanSize(metrics.memory.memFree)} disponible (extensible à ${getHumanSize(metrics.memory.memAvailable)}) sur ${getHumanSize(metrics.memory.memTotal)}`" :value="metrics.memory.memTotal-metrics.memory.memAvailable" :max="metrics.memory.memTotal" />
-          <system-metric label="Swap" :human-value="`${getHumanSize(metrics.memory.swapFree)} disponible sur ${getHumanSize(metrics.memory.swapTotal)}`" :value="metrics.memory.swapTotal-metrics.memory.swapFree" :max="metrics.memory.swapTotal" />
+          <system-metric label="RAM" :human-value="`${getHumanSizeCei(metrics.memory.memFree*1024)} disponible (extensible à ${getHumanSizeCei(metrics.memory.memAvailable*1024)}) sur ${getHumanSizeCei(metrics.memory.memTotal*1024)}`" :value="metrics.memory.memTotal-metrics.memory.memAvailable" :max="metrics.memory.memTotal" />
+          <system-metric label="Swap" :human-value="`${getHumanSizeCei(metrics.memory.swapFree*1024)} disponible sur ${getHumanSizeCei(metrics.memory.swapTotal*1024)}`" :value="metrics.memory.swapTotal-metrics.memory.swapFree" :max="metrics.memory.swapTotal" />
         </div>
       </div>
 
       <div v-if="metrics && metrics.disk" class="field mb-5">
         <div class="control">
           <label class="label">Espace disque</label>
-          <system-metric v-for="fs in metrics.disk" :key="fs.fs" :label="fs.mount" :label-title="fs.fs" :human-value="`${getHumanSize(fs.available)} disponible sur ${getHumanSize(fs.size)}`" :value="fs.size-fs.available" :max="fs.size" />
+          <system-metric v-for="fs in metrics.disk" :key="fs.fs" :label="fs.mount" :label-title="fs.fs" :human-value="`${getHumanSizeCei(fs.available*1024)} disponible sur ${getHumanSizeCei(fs.size*1024)}`" :value="fs.size-fs.available" :max="fs.size" />
         </div>
       </div>
 
@@ -68,6 +68,7 @@
 <script>
 import SystemMetric from '@/components/admin/SystemMetric'
 import TimeAgo from '@/components/TimeAgo'
+import { ConversionMixin } from '@/mixins/Conversion'
 
 export default {
   name: 'SystemMetrics',
@@ -75,6 +76,9 @@ export default {
     SystemMetric,
     TimeAgo,
   },
+  mixins: [
+    ConversionMixin,
+  ],
   data () {
     return {
       isLoading: false,
@@ -96,19 +100,6 @@ export default {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
       this.isLoading = false
-    },
-    getHumanSize (size) {
-      const humanSize = size * 1024
-      if (humanSize > 1000000000) {
-        return Math.round(humanSize / Math.pow(2, 30)) + ' Gio'
-      }
-      if (humanSize > 1000000) {
-        return Math.round(humanSize / Math.pow(2, 20)) + ' Mio'
-      }
-      if (humanSize > 1000) {
-        return Math.round(humanSize / Math.pow(2, 10)) + ' Kio'
-      }
-      return humanSize + ' o'
     },
   },
 }

@@ -15,12 +15,26 @@
       <div class="field">
         <div class="control">
           <label class="label">Collections à inclure dans la sauvegarde (toutes par défaut)</label>
-          <div v-for="collection in collections" :key="collection" class="control">
-            <label class="checkbox">
-              <input v-model="selectedCollections" type="checkbox" :value="collection">
-              <span class="is-family-code pl-3">{{ collection }}</span>
-            </label>
-          </div>
+          <b-table :data="collections" striped hoverable checkable :header-checkable="false" :checked-rows.sync="selectedCollections" :mobile-cards="false" sort-icon="menu-up" default-sort="name">
+            <b-table-column v-slot="props" field="name" label="Nom" sortable>
+              <span class="is-family-code">{{ props.row.name }}</span>
+            </b-table-column>
+            <b-table-column v-slot="props" field="stats.count" label="Nombre" sortable numeric>
+              {{ props.row.stats.count }}
+            </b-table-column>
+            <b-table-column v-slot="props" field="stats.size" label="Taille" sortable numeric>
+              {{ getHumanSizeCei(props.row.stats.size) }}
+            </b-table-column>
+            <b-table-column v-slot="props" field="stats.avgObjSize" label="Taille unitaire" sortable numeric>
+              {{ getHumanSizeCei(props.row.stats.avgObjSize) }}
+            </b-table-column>
+            <b-table-column v-slot="props" field="stats.storageSize" label="Données" sortable numeric>
+              {{ getHumanSizeCei(props.row.stats.storageSize) }}
+            </b-table-column>
+            <b-table-column v-slot="props" field="stats.totalIndexSize" label="Index" sortable numeric>
+              {{ getHumanSizeCei(props.row.stats.totalIndexSize) }}
+            </b-table-column>
+          </b-table>
         </div>
       </div>
 
@@ -55,10 +69,13 @@
 </template>
 
 <script>
+import { ConversionMixin } from '@/mixins/Conversion'
+
 export default {
   name: 'SystemDatabase',
-  components: {
-  },
+  mixins: [
+    ConversionMixin,
+  ],
   data () {
     return {
       isLoading: false,
@@ -81,7 +98,7 @@ export default {
     async getDatabaseBackup () {
       this.isLoading = true
       try {
-        await this.$Provider.getDatabaseBackup({ isJson: this.isJson, collections: this.selectedCollections })
+        await this.$Provider.getDatabaseBackup({ isJson: this.isJson, collections: this.selectedCollections.map((collection) => collection.name) })
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
