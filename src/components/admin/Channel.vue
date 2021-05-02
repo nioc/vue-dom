@@ -25,6 +25,33 @@
             </div>
 
             <div class="field is-required">
+              <label class="label">Module</label>
+              <div class="control has-icons-left">
+                <input v-model="channel.module" class="input" type="text" placeholder="Module gérant le canal">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-cogs" />
+                </span>
+              </div>
+            </div>
+
+            <div class="field is-required">
+              <label class="label">Identifiant logique</label>
+              <div class="control has-icons-left">
+                <input v-model="channel.logicalId" class="input" type="text" placeholder="Identifiant logique (canal de discussion, adresse mail,...)">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-at" />
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="label">Statut</label>
+                <b-switch v-model="channel.isActive">{{ channel.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+              </div>
+            </div>
+
+            <div class="field is-required">
               <label class="label">Émission</label>
               <div class="control">
                 <div class="field has-addons">
@@ -36,7 +63,7 @@
               </div>
             </div>
 
-            <div class="field is-required">
+            <div class="field">
               <label class="label">Réception</label>
               <div class="control">
                 <div class="field has-addons">

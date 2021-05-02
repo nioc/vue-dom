@@ -11,6 +11,7 @@
             <b-table-column :key="column.id" v-bind="column">
               <template #default="props">
                 <router-link v-if="column.field==='name'" :to="{name: 'admin-channel', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
+                <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
                 <i v-else-if="column.field==='hasPendingRequest'" class="fas fa-fw" :class="{'fa-user-clock': props.row.hasPendingRequest}" :title="props.row.hasPendingRequest ? 'En attente d\'une réponse de l\'utilisateur' : null" />
                 <span v-else>{{ props.row[column.field] }}</span>
               </template>
@@ -49,6 +50,21 @@ export default {
         {
           field: 'name',
           label: 'Nom',
+          sortable: true,
+        },
+        {
+          field: 'module',
+          label: 'Module',
+          sortable: true,
+        },
+        {
+          field: 'logicalId',
+          label: 'Identifiant logique',
+          sortable: true,
+        },
+        {
+          field: 'isActive',
+          label: 'Statut',
           sortable: true,
         },
         {

@@ -18,7 +18,7 @@
   >
     <template slot-scope="props">
       <span v-if="type==='equipment'" :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.isActive || !props.option.roomIsVisible}">{{ props.option.name }}</span>
-      <span v-else-if="type==='channel'">{{ props.option.name }}</span>
+      <span v-else-if="type==='channel'" :class="{'has-text-grey is-italic': !props.option.isActive}">{{ props.option.name }}</span>
       <span v-else :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.equipmentIsVisible || !props.option.equipmentIsActive}">{{ props.option.name }}</span>
     </template>
     <template slot="empty">Aucune correspondance</template>
