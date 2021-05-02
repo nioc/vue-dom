@@ -18,7 +18,7 @@
             </div>
           </div>
           <div class="control is-expanded">
-            <input v-model.lazy="params" class="input is-family-code" :class="paramsClass" :placeholder="paramsPlaceholder" title="Paramètre de l'action">
+            <input v-model.lazy="params" class="input is-family-code" :class="paramsClass" :placeholder="paramsPlaceholder" title="Paramètre de l'action de communication">
           </div>
         </div>
 
@@ -153,9 +153,9 @@ export default {
           this.scenarioAsk.onValidElements.push(answerRule)
         }
         if (this.scenarioAsk.onValidElements.length === 1 && this.scenarioAsk.onValidElements[0].definition.criterias.length === 0) {
-          // create default criteria with "answer" state of the channel
+          // create default criteria with user "answer"
           const answerCriteria = this.createScenarioElement('criteria')
-          answerCriteria.fact = this.channels[option.id].input
+          answerCriteria.fact = 'answer'
           this.scenarioAsk.onValidElements[0].definition.criterias.push(answerCriteria)
         }
         this.scenarioAsk.id = option.id

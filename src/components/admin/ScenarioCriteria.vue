@@ -2,7 +2,7 @@
   <div class="field is-horizontal pl-4">
     <div class="field-body">
       <div class="field is-narrow">
-        <options-autocomplete type="state" placeholder="Température" :value="criteria.fact" @select="selectState" />
+        <options-autocomplete type="state" placeholder="Température" :value="criteria.fact" :additionnal-value="{id: 'answer', name: 'Réponse utilisateur', group: 'Demande du scénario', type: 'string'}" @select="selectState" />
       </div>
 
       <div class="field is-narrow">

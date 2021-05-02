@@ -50,6 +50,13 @@ export default {
       type: String,
       default: null,
     },
+    additionnalValue: {
+      type: Object,
+      default: null,
+      validator: function (value) {
+        return (value.id && value.name && value.group && value.type)
+      },
+    },
   },
   data () {
     return {
@@ -103,20 +110,47 @@ export default {
       }
     },
     options () {
+      let options = []
       switch (this.type) {
         case 'state':
-          return this.arrStatesWithEquipmentName
+          options = this.arrStatesWithEquipmentName
+            .slice()
+          break
         case 'action':
-          return this.arrActionsWithEquipmentName
+          options = this.arrActionsWithEquipmentName
+            .slice()
+          break
         case 'ask':
-          return this.arrActionsWithEquipmentName.filter((action) => action.isAsk)
+          options = this.arrActionsWithEquipmentName
+            .slice()
+            .filter((action) => action.isAsk)
+          break
         case 'channel':
-          return this.arrChannels
+          options = this.arrChannels
+            .slice()
+          break
         case 'equipment':
-          return this.arrEquipmentsWithRoomName
+          options = this.arrEquipmentsWithRoomName
+            .slice()
+          break
         default:
           return []
       }
+      if (this.additionnalValue) {
+        options.unshift({
+          id: this.additionnalValue.id,
+          name: this.additionnalValue.name,
+          type: this.additionnalValue.type,
+          roomName: this.additionnalValue.group,
+          equipmentName: this.additionnalValue.group,
+          isVisible: true,
+          equipmentIsVisible: true,
+          equipmentIsActive: true,
+          isActive: true,
+          roomIsVisible: true,
+        })
+      }
+      return options
     },
     filteredOptions () {
       return this.options.filter((option) => {
