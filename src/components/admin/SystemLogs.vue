@@ -87,7 +87,8 @@
           <ul class="is-selectable">
             <li v-for="(value, key) in stripLog(props.row)" :key="key">
               <label class="label">{{ key.charAt(0).toUpperCase() + key.slice(1) }}</label>
-              <pre class="is-size-7 message-cell">{{ value }}</pre>
+              <pre v-if="key==='requestId'" class="is-size-7 message-cell is-selectable-all">{{ value }}<a class="ml-3" title="Rechercher cette requête" @click="search.query=value"><i class="fa fa-search" /></a></pre>
+              <pre v-else class="is-size-7 message-cell">{{ value }}</pre>
             </li>
           </ul>
         </template>
@@ -120,7 +121,12 @@ export default {
     }
   },
   computed: {
-    logsFiltered () { return this.logs.filter((log) => log.message.toLowerCase().indexOf(this.search.query.toLowerCase()) > -1) },
+    logsFiltered () {
+      return this.logs.filter((log) => (
+        log.message.toLowerCase().indexOf(this.search.query.toLowerCase()) > -1 ||
+        log.requestId === this.search.query),
+      )
+    },
   },
   methods: {
     async getLogs (isRefresh, isManual) {
