@@ -54,9 +54,10 @@
           </div>
 
           <div class="field">
-            <div class="control has-icons-left">
+            <div class="control has-icons-left has-icons-right">
               <input v-model="search.query" class="input" type="text" placeholder="Rechercher un évènement">
               <span class="icon is-small is-left"><i class="fas fa-search" /></span>
+              <button v-if="search.query" class="button icon is-ghost is-ghost-danger is-right is-clickable" title="Supprimer la recherche" @click="search.query=''"><i class="fas fa-times-circle" /></button>
             </div>
           </div>
 

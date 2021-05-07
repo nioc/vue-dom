@@ -156,6 +156,17 @@ $slider-thumb-border: 1px solid $primary;
   }
 }
 
+.button.is-ghost:hover {
+  text-decoration: none !important;
+}
+@each $name, $pair in $colors {
+  $color: nth($pair, 1);
+  .button.is-ghost-#{$name}:focus,
+  .button.is-ghost-#{$name}:hover {
+    color: $color !important
+  }
+}
+
 a {
   text-decoration: none !important;
 }
