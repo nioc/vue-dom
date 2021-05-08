@@ -66,6 +66,9 @@
               <button class="button is-primary" title="Rafraichir" @click="getLogs(true, true)">
                 <span class="icon"><i class="fa fa-sync-alt" /></span>
               </button>
+              <button class="button is-secondary" title="Copier les logs dans le presse-papier" @click="copyToClipboard">
+                <span class="icon"><i class="fa fa-paste" /></span>
+              </button>
             </span>
           </div>
         </div>
@@ -186,6 +189,26 @@ export default {
           break
       }
       return classes.join(' ')
+    },
+    async copyToClipboard () {
+      try {
+        const logs = this.logsFiltered
+          .map((log) => {
+            let txt = ''
+            txt = `${log.timestamp} [${log.service}] ${log.level.toUpperCase()} ${log.message}`
+            for (const key in log) {
+              if (!['isNew', 'timestamp', 'service', 'level', 'message'].includes(key)) {
+                txt += `\n${key}: ${log[key]}`
+              }
+            }
+            return txt
+          })
+          .join('\n\n')
+        await navigator.clipboard.writeText(logs)
+        this.$store.commit('app/setInformation', { type: 'is-success', message: 'Logs copiés dans le presse-papier' })
+      } catch (error) {
+        this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la copie des logs : ${error.message}` })
+      }
     },
   },
 }
