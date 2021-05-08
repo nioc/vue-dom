@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <b-table ref="LogsTable" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="(row) => row.isNew ? 'has-text-weight-bold has-text-info is-clickable' : 'is-clickable'" @click="showLogDetails">
+      <b-table ref="LogsTable" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" @click="showLogDetails">
         <b-table-column v-slot="props" field="service" label="">
           <i class="fas fa-fw" :class="props.row.service === 'node-red' ? 'fa-project-diagram' : 'fa-server'" :title="props.row.service" />
         </b-table-column>
@@ -160,6 +160,32 @@ export default {
       delete logStriped.level
       delete logStriped.isNew
       return logStriped
+    },
+    getLogClass (log) {
+      const classes = [
+        'is-clickable',
+      ]
+      if (log.isNew) {
+        classes.push('has-text-weight-bold')
+      }
+      switch (log.level) {
+        case 'error':
+          classes.push('has-text-danger-mid-dark')
+          break
+        case 'warn':
+          classes.push('has-text-warning-mid-dark')
+          break
+        case 'info':
+          classes.push('has-text-success-mid-dark')
+          break
+        case 'debug':
+          classes.push('has-text-info-mid-dark')
+          break
+        case 'silly':
+          classes.push('has-text-grey-light')
+          break
+      }
+      return classes.join(' ')
     },
   },
 }

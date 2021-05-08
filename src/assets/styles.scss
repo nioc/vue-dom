@@ -165,6 +165,9 @@ $slider-thumb-border: 1px solid $primary;
   .button.is-ghost-#{$name}:hover {
     color: $color !important
   }
+  .has-text-#{$name}-mid-dark {
+    color: rgba(darken($color, 20%), 1) !important
+  }
 }
 
 a {
