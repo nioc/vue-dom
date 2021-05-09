@@ -198,7 +198,11 @@ export default {
             txt = `${log.timestamp} [${log.service}] ${log.level.toUpperCase()} ${log.message}`
             for (const key in log) {
               if (!['isNew', 'timestamp', 'service', 'level', 'message'].includes(key)) {
-                txt += `\n${key}: ${log[key]}`
+                let value = log[key]
+                if (typeof value !== 'string') {
+                  value = JSON.stringify(value)
+                }
+                txt += `\n${key}: ${value}`
               }
             }
             return txt
