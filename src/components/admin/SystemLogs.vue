@@ -1,5 +1,5 @@
 <template>
-  <b-collapse class="card mb-4" animation="slide" aria-id="logsContent" :open="false" @open="getLogs(false, true)">
+  <b-collapse class="card mb-4" animation="slide" aria-id="logsContent" :open="false" @open="load">
     <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="logsContent">
       <p class="card-header-title">
         <span class="icon"><i class="fa fa-clipboard-list" /></span><span>Logs</span>
@@ -97,6 +97,22 @@
           </ul>
         </template>
       </b-table>
+
+      <div v-for="loggerLevel in loggersLevel" :key="loggerLevel.logger" class="field">
+        <label class="label">Verbosité d'enregistrement des logs {{ loggerLevel.logger }}</label>
+        <div class="control">
+          <div class="select">
+            <select v-model="loggerLevel.level" title="Niveau de verbosité" @change="setLoggerLevel(loggerLevel)">
+              <option value="error">Erreur</option>
+              <option value="warn">Warning</option>
+              <option value="info">Info</option>
+              <option value="debug">Debug</option>
+              <option value="silly">Trace</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
     </section>
 
   </b-collapse>
@@ -122,6 +138,7 @@ export default {
       isLoading: false,
       lastLogsFetch: 0,
       lastLogsRead: 0,
+      loggersLevel: [],
     }
   },
   computed: {
@@ -133,6 +150,10 @@ export default {
     },
   },
   methods: {
+    load () {
+      this.getLogs(false, true)
+      this.getLoggersLevel()
+    },
     async getLogs (isRefresh, isManual) {
       if (this.logs.length > 0 && !isRefresh) {
         return
@@ -149,6 +170,25 @@ export default {
         })
         this.logs.forEach((log) => { log.isNew = this.$moment(log.timestamp).isAfter(this.lastLogsRead) })
         this.lastLogsFetch = new Date()
+      } catch (error) {
+        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+      }
+      this.isLoading = false
+    },
+    async getLoggersLevel () {
+      try {
+        this.loggersLevel = await this.$Provider.getLoggersLevel()
+      } catch (error) {
+        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+      }
+    },
+    async setLoggerLevel (loggerLevel) {
+      this.isLoading = true
+      try {
+        const updatedLoggerLevel = await this.$Provider.setLoggerLevel(loggerLevel)
+        this.loggersLevel
+          .find((_loggerLevel) => _loggerLevel.logger === loggerLevel.logger)
+          .level = updatedLoggerLevel.level
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
