@@ -28,7 +28,7 @@
       <div class="field">
         <label class="label">Réponse</label>
         <div class="control has-icons-left">
-          <input v-model="test.result.answer" class="input" type="text" readonly disabled>
+          <textarea v-model="formattedAnswer" class="textarea" readonly disabled />
           <span class="icon is-small is-left">
             <i class="fas fa fa-reply" />
           </span>
@@ -162,6 +162,7 @@ export default {
   },
   computed: {
     duration () { return `${this.test.result.duration} ms` },
+    formattedAnswer () { return this.test.result.answer.replace(/(\\+n)+/g, '\r\n') },
   },
   mounted () {
     this.getIntentActions()

@@ -182,6 +182,10 @@ a {
   content: "\00a0";
 }
 
+.control.has-icons-left .textarea {
+  padding-left: 2.5em;
+}
+
 @each $name, $pair in $colors {
   $color: nth($pair, 1);
   .buttons.has-addons .button.is-#{$name} {

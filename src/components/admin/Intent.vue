@@ -217,6 +217,7 @@
                   <th class="is-required">Fonction</th>
                   <th>Paramètres(s)</th>
                   <th class="is-button" />
+                  <th class="is-button" />
                 </tr>
               </thead>
               <tbody>
@@ -234,7 +235,16 @@
                       <span class="icon"><i class="fa fa-plus-circle" /></span>
                     </button>
                   </td>
-
+                  <td>
+                    <div class="buttons">
+                      <button v-if="index>0" class="button is-light" title="Monter le traitement" @click="up(index)">
+                        <span class="icon"><i class="fa fa-angle-double-up" /></span>
+                      </button>
+                      <button v-if="index<intent.actions.length-1" class="button is-light" title="Descendre le traitement" @click="down(index)">
+                        <span class="icon"><i class="fa fa-angle-double-down" /></span>
+                      </button>
+                    </div>
+                  </td>
                   <td>
                     <button class="button is-danger is-light" title="Supprimer le traitement" @click="removeAction(index)">
                       <span class="icon"><i class="fa fa-trash" /></span>
@@ -264,6 +274,7 @@
                       </div>
                     </div>
                   </td>
+                  <td />
                   <td>
                     <button type="submit" :disabled="newAction.key === ''" class="button is-primary is-light" title="Ajouter un traitement" @click="addAction">
                       <span class="icon"><i class="fa fa-plus-circle" /></span>
@@ -510,6 +521,12 @@ export default {
           this.newAction.parameters.splice(index, 1)
         }
       }
+    },
+    up (index) {
+      this.intent.actions.splice(index - 1, 0, this.intent.actions.splice(index, 1)[0])
+    },
+    down (index) {
+      this.intent.actions.splice(index + 1, 0, this.intent.actions.splice(index, 1)[0])
     },
     getIntentActionParameters (action, index) {
       const actionOption = this.actionOptions.find((actionOption) => actionOption.value === action)
