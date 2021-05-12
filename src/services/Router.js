@@ -218,6 +218,33 @@ const routes = [
     },
   },
   {
+    path: '/admin/nlp',
+    name: 'admin-nlp',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Nlp'),
+    meta: {
+      title: 'Admin traitement automatique du langage naturel',
+    },
+  },
+  {
+    path: '/admin/intents/:id',
+    name: 'admin-intent',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Intent'),
+    meta: {
+      title: 'Admin intention',
+    },
+  },
+  {
+    path: '/admin/entities/:id',
+    name: 'admin-entity',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Entity'),
+    meta: {
+      title: 'Admin entité',
+    },
+  },
+  {
     path: '/admin/channels',
     name: 'admin-channels',
     props: true,

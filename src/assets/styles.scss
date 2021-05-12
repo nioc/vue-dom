@@ -288,6 +288,13 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   vertical-align: middle;
 }
 
+table.has-buttons {
+  table-layout: fixed;
+  th.is-button {
+    width: 4em;
+  }
+}
+
 @keyframes placeHolderShimmer {
   0% {
     background-position: 200%;
@@ -316,6 +323,7 @@ table.is-vertical-centered td, table.is-vertical-centered th {
   z-index: 29;
 }
 
+th.is-required::after,
 .is-required .label::after {
   content: " *";
   color: $danger;

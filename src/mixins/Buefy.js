@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { ConfigProgrammatic, Switch, Slider, Checkbox, Toast, Dialog, Table, Datetimepicker, Input, Sidebar, Menu, Autocomplete, Taginput, Collapse, Loading } from 'buefy'
+import { ConfigProgrammatic, Switch, Slider, Checkbox, Toast, Dialog, Table, Datetimepicker, Input, Sidebar, Menu, Autocomplete, Taginput, Collapse, Loading, Tooltip } from 'buefy'
 
 const Buefy = {
   install (Vue, options = {}) {
@@ -24,6 +24,7 @@ const Buefy = {
     Vue.use(Taginput)
     Vue.use(Collapse)
     Vue.use(Loading)
+    Vue.use(Tooltip)
   },
 }
 

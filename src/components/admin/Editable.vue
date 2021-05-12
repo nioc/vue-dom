@@ -1,7 +1,7 @@
 <template>
   <div v-if="isEdited" class="field is-required">
     <div v-if="type==='input'" class="control" :class="{'has-icons-left': iconClass, 'has-icons-right': isRemovable}">
-      <input ref="field" v-model.lazy="editedValue" class="input" type="text" :placeholder="placeholder" @blur="leaveEdit" @keyup.enter="leaveEdit">
+      <input ref="field" v-model.lazy="editedValue" class="input" :class="{'is-danger': isInvalid}" type="text" :placeholder="placeholder" @blur="leaveEdit" @keyup.enter="leaveEdit" @focus="isInvalid = false">
       <span v-if="iconClass" class="icon is-small is-left">
         <i :class="iconClass" />
       </span>
@@ -60,10 +60,15 @@ export default {
       type: String,
       default: null,
     },
+    isEmptiable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data () {
     return {
       isEdited: false,
+      isInvalid: false,
     }
   },
   computed: {
@@ -93,6 +98,10 @@ export default {
       })
     },
     leaveEdit () {
+      if (!this.isEmptiable && this.editedValue === '') {
+        this.isInvalid = true
+        return
+      }
       this.isEdited = false
     },
   },
