@@ -18,8 +18,9 @@
               <div class="select">
                 <select v-model="search.service" title="Service(s)" @change="getLogs(true, false)">
                   <option value="core">Core</option>
+                  <option value="nlp">NLP</option>
                   <option value="node-red">Node-red</option>
-                  <option value="core,node-red">Tous</option>
+                  <option value="core,nlp,node-red">Tous</option>
                 </select>
               </div>
             </div>
@@ -76,7 +77,7 @@
 
       <b-table ref="LogsTable" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" @click="showLogDetails">
         <b-table-column v-slot="props" field="service" label="">
-          <i class="fas fa-fw" :class="props.row.service === 'node-red' ? 'fa-project-diagram' : 'fa-server'" :title="props.row.service" />
+          <i class="fas fa-fw" :class="props.row.service === 'node-red' ? 'fa-project-diagram' : props.row.service === 'core' ? 'fa-server' : 'fa-brain'" :title="props.row.service" />
         </b-table-column>
         <b-table-column v-slot="props" field="timestamp" label="Date">
           <time-ago v-if="props.row.timestamp" :date="props.row.timestamp" :drop-fixes="true" :title="props.row.timestamp | moment('L LTS')" />
@@ -129,9 +130,9 @@ export default {
   data () {
     return {
       search: {
-        service: 'core,node-red',
+        service: 'core,nlp,node-red',
         level: 2,
-        limit: 50,
+        limit: 10,
         query: '',
       },
       logs: [],
