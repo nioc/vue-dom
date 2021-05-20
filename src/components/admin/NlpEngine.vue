@@ -83,7 +83,7 @@
               <tbody>
                 <tr v-for="answer in test.result.answers" :key="answer.answer">
                   <td class="is-family-code">{{ answer.answer }}</td>
-                  <td v-if="answer.opts" class="is-family-code">{{ answer.opts }}</td>
+                  <td><span v-if="answer.opts" class="is-family-code">{{ answer.opts }}</span></td>
                 </tr>
               </tbody>
             </table>
@@ -94,7 +94,7 @@
       <div v-if="test.result.entities" class="field">
         <label class="label">Entités identifiées</label>
         <div class="control has-icons-left">
-          <div class="table-wrapper">
+          <div v-if="test.result.entities.length" class="table-wrapper">
             <table class="table is-fullwidth is-striped is-vertical-centered is-bordered">
               <thead>
                 <tr>
@@ -116,13 +116,14 @@
               </tbody>
             </table>
           </div>
+          <span v-else>Aucune entité identifiée</span>
         </div>
       </div>
 
       <div v-if="test.result.actions" class="field">
         <label class="label">Traitements réalisés</label>
         <div class="control has-icons-left">
-          <div class="table-wrapper">
+          <div v-if="test.result.actions.length" class="table-wrapper">
             <table class="table is-fullwidth is-striped is-vertical-centered is-bordered">
               <thead>
                 <tr>
@@ -140,6 +141,7 @@
               </tbody>
             </table>
           </div>
+          <span v-else>Aucun traitement réalisé</span>
         </div>
       </div>
 
