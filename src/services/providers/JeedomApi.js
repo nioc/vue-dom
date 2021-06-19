@@ -11,7 +11,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
   let lastEventsTimestamp = Date.now() / 1000
 
   function convertIconClass (jIcon) {
-    let iconClass = jIcon.match(/class="(.*?)"/)[1]
+    let iconClass = jIcon.match(/class=["'](.*?)["']/)[1]
     // transform font awesome 4 to 5
     switch (iconClass) {
       case 'fas fa-refresh':
