@@ -7,6 +7,18 @@ $breadcrumb-item-color: $primary;
 $link: $primary;
 $navbar-breakpoint: 300px;
 
+@mixin small-screen {
+  @media screen and (max-width: 480px) {
+    @content
+  }
+}
+
+@mixin very-small-screen {
+  @media screen and (max-width: 384px) {
+    @content
+  }
+}
+
 @import "~bulma/bulma.sass";
 
 $slider-thumb-background: findLightColor($primary);
@@ -252,6 +264,26 @@ a {
   @include from($navbar-breakpoint) {
     display: none !important;
   }
+}
+
+.info-label {
+  display: block;
+  white-space: nowrap;
+  @include small-screen {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.info-value {
+  display: block;
+  white-space: nowrap;
+}
+
+.b-slider-thumb {
+  padding: 16px 8px !important;
+  font-size: 0.9rem;
 }
 
 .navbar .is-auto-expand {

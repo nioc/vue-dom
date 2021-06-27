@@ -51,10 +51,12 @@ export default {
           }
           statesList.push(state.id)
         } else if (state.type === 'numeric') {
-          if (!actions.find((action) => action.stateFeedbackId === state.id && action.type === 'slider')) {
-            // do not display slider state
-            statesList.push(state.id)
+          const actionSlider = actions.find((action) => action.stateFeedbackId === state.id && action.type === 'slider')
+          if (actionSlider) {
+            // do not display slider action
+            actionsHiddenList.push(actionSlider.id)
           }
+          statesList.push(state.id)
         } else if (state.type === 'string') {
           // search for select action
           const actionSelect = actions.find((action) => action.stateFeedbackId === state.id && action.type === 'select')

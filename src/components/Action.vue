@@ -2,7 +2,7 @@
   <button v-if="action.type === 'button'" class="button is-rounded is-primary is-light" :title="action.name" @click="execute">
     <span class="icon is-icon-mobile"><i :class="iconClass" /></span><span class="is-hidden-mobile">{{ action.name }}</span>
   </button>
-  <b-slider v-else-if="action.type === 'slider'" v-model="value" lazy class="ml-5 mt-2" :title="action.name" @change="actionSlider" />
+  <b-slider v-else-if="action.type === 'slider'" v-model="value" lazy class="ml-5 mt-2" :title="action.name" :min="action.minValue" :max="action.maxValue" :tooltip="false" indicator rounded @change="actionSlider" />
   <div v-else-if="action.type === 'select'" lazy class="select ml-5 mt-2" :title="action.name">
     <select v-model="value" @change="actionSelect">
       <option v-for="option in action.options" :key="option.value" :value="option.value">{{ option.label || option.value }}</option>
@@ -24,7 +24,13 @@ export default {
   },
   computed: {
     value: {
-      get: function () { return this.action.currentValue },
+      get: function () {
+        if (Object.prototype.hasOwnProperty.call(this.action, 'currentValue')) {
+          return this.action.currentValue
+        }
+        const stateFeedback = this.getStateById(this.action.stateFeedbackId)
+        return stateFeedback.currentValue
+      },
       set: () => {},
     },
     action () { return this.getActionById(this.id) },

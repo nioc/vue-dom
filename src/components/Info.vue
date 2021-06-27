@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="is-flex-space-between mb-2">
-      <span><i class="fa-fw mr-4" :class="iconClass" />{{ state.name }}<a v-if="state.isHistorized" class="ml-2 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
-      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" class="mb-2" @input="action" />
+      <span class="is-flex is-align-items-center"><i class="fa-fw mr-4" :class="iconClass" /><span class="info-label">{{ state.name }}</span><a v-if="state.isHistorized" class="ml-2 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
+      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" @input="action" />
+      <b-slider v-else-if="state.type === 'numeric' && action" v-model="value" lazy class="ml-5 my-2" :title="state.name" :min="action.minValue" :max="action.maxValue" :tooltip="false" indicator rounded @change="action.f" />
       <div v-else-if="state.type === 'string' && action" lazy class="select ml-5" :title="state.name">
         <select v-model="value" @change="action">
           <option v-for="option in actionOptions" :key="option.value" :value="option.value">{{ option.label || option.value }}</option>
@@ -16,7 +17,7 @@
         </ul>
         <i v-if="statistics && statistics.trend !== null" class="fas fa-long-arrow-alt-right has-text-grey-light mx-2" :class="trendClass" />
         <i v-if="state.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow mr-2" :style="`transform: rotate(${135+parseInt(state.currentValue)}deg);`" />
-        <span class="has-text-weight-semi-bold" :class="{'has-text-danger': state.isTooHigh || state.isTooLow}">{{ state.currentValue }}{{ unit }}</span>
+        <span class="has-text-weight-semi-bold info-value" :class="{'has-text-danger': state.isTooHigh || state.isTooLow}">{{ state.currentValue }}{{ unit }}</span>
       </span>
     </div>
     <div v-if="hasHistoryDisplayed" class="message is-light">
@@ -69,7 +70,8 @@ export default {
       const actionOff = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch_off')
       const actionSwitch = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch')
       const actionSelect = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'select')
-      if ((!actionOn || !actionOff) && !actionSwitch && !actionSelect) {
+      const actionSlider = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'slider')
+      if ((!actionOn || !actionOff) && !actionSwitch && !actionSelect && !actionSlider) {
         return
       }
       const vm = this
@@ -83,6 +85,17 @@ export default {
         return async (newValue) => {
           // execute action with select value
           vm.vxExecuteAction({ id: actionSelect.id, options: { select: newValue.target.value } })
+        }
+      }
+      if (actionSlider) {
+        const action = this.getActionById(actionSlider.id)
+        return {
+          minValue: action.minValue,
+          maxValue: action.maxValue,
+          f: async (newValue) => {
+            // execute action with slider value
+            vm.vxExecuteAction({ id: actionSlider.id, options: { slider: newValue } })
+          },
         }
       }
       return async (newValue) => {
