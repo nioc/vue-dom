@@ -281,6 +281,26 @@ a {
   white-space: nowrap;
 }
 
+.statistics-item {
+  display: inline;
+  @include very-small-screen {
+    display: none;
+  }
+}
+.statistics-item:not(:last-child)::after {
+  content: "|";
+}
+.statistics-item-min,
+.statistics-item-mean,
+.statistics-item-max {
+  padding: 0 0.5rem !important;
+  @include mobile {
+    padding: 0 0.1rem !important;
+    font-size: 0.8em;
+    vertical-align: middle;
+  }
+}
+
 .b-slider-thumb {
   padding: 16px 8px !important;
   font-size: 0.9rem;
@@ -385,6 +405,12 @@ th.is-required::after,
 
 .card-header-title .icon {
   margin-right: 0.75rem;
+}
+
+.card-content {
+  @include mobile {
+    padding: 1rem;
+  }
 }
 
 .is-fullheight {

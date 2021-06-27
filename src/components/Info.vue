@@ -11,9 +11,9 @@
       </div>
       <span v-else class="is-flex-space-between">
         <ul v-if="statistics" class="has-text-grey-light is-size-7 has-text-weight-light">
-          <li class="statistics-item"><span class="px-2" title="Min">{{ statistics.min }}</span></li>
-          <li class="statistics-item"><span class="px-2" title="Moyenne">{{ statistics.avg }}</span></li>
-          <li class="statistics-item"><span class="px-2" title="Max">{{ statistics.max }}</span></li>
+          <li class="statistics-item"><span class="statistics-item-min" title="Min">{{ statistics.min }}</span></li>
+          <li class="statistics-item"><span class="statistics-item-mean" title="Moyenne">{{ statistics.avg }}</span></li>
+          <li class="statistics-item"><span class="statistics-item-max" title="Max">{{ statistics.max }}</span></li>
         </ul>
         <i v-if="statistics && statistics.trend !== null" class="fas fa-long-arrow-alt-right has-text-grey-light mx-2" :class="trendClass" />
         <i v-if="state.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow mr-2" :style="`transform: rotate(${135+parseInt(state.currentValue)}deg);`" />
@@ -141,12 +141,6 @@ export default {
 }
 </script>
 <style>
-.statistics-item {
-  display: inline;
-}
-.statistics-item:not(:last-child)::after {
-  content: "|";
-}
 .trend-up {
   transform: rotate(-20deg);
 }
