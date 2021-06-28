@@ -67,7 +67,7 @@
               <button class="button is-primary" title="Rafraichir" @click="getLogs(true, true)">
                 <span class="icon"><i class="fa fa-sync-alt" /></span>
               </button>
-              <button class="button is-secondary" title="Copier les logs dans le presse-papier" @click="copyToClipboard">
+              <button class="button" title="Copier les logs dans le presse-papier" @click="copyToClipboard">
                 <span class="icon"><i class="fa fa-paste" /></span>
               </button>
             </span>

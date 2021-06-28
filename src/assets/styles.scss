@@ -38,29 +38,37 @@ $slider-thumb-border: 1px solid $primary;
 @import "~buefy/src/scss/buefy";
 
 [data-theme="dark"] {
-  $primary: #cce49b;
+  $primary: #96c927bd;
   $dt-black: #191919;
   $dt-black-bis: #232323;
   $dt-black-ter: #292929;
+  $alpha-color-button: 0.74;
   background-color: $dt-black;
   .has-background-white-bis {
     background-color: $dt-black-ter !important;
   }
-  .is-light {
-    background-color: $dt-black !important;
+  .sidebar-content.is-light {
+    background-color: $dt-black;
   }
   .message.is-light {
     background-color: darken($dt-black-bis, 1%) !important;
+    .message-header {
+      background-color: darken($dt-black-bis, 2%) !important;
+      color: $grey-light !important;
+    }
   }
-  .message.is-light .message-header {
-    background-color: darken($dt-black-bis, 2%) !important;
-    color: $grey-light !important;
-  }
-  .menu-list li ul {
-    border-left-color: $grey-darker;
-  }
-  .menu-list a:hover:not(.is-active) {
-    background-color: $dt-black !important;
+  .menu-list {
+    li ul {
+      border-left-color: $grey-darker;
+    }
+    a:hover {
+      &:not(.is-active) {
+        background-color: $dt-black !important;
+      }
+      &.is-active {
+        color: #fff;
+      }
+    }
   }
   .has-text-grey {
     color: $grey-light !important;
@@ -74,6 +82,7 @@ $slider-thumb-border: 1px solid $primary;
     color: $grey-light;
     background-color: $dt-black-bis;
   }
+  .label,
   .title {
     color: $grey-lighter;
   }
@@ -82,16 +91,59 @@ $slider-thumb-border: 1px solid $primary;
   .menu-list a:not(.is-active) {
     color: $grey-light;
   }
-  .notification.is-primary {
-    background-color: #96c927bd;
+  .button {
+    background-color: $dt-black-bis;
+    border-color: $dt-black-ter;
+    color: $grey-lightest;
+    &:hover,
+    &.is-hovered {
+      background-color: bulmaLighten($dt-black-bis, 2.5%);
+    }
+    &:active,
+    &.is-active {
+      background-color: bulmaLighten($dt-black-bis, 6%);
+    }
+    @each $name, $pair in $button-colors {
+      $color: nth($pair, 1);
+      $color-invert: nth($pair, 2);
+      &.is-#{$name} {
+        background-color: rgba($color, $alpha-color-button);
+        color: $grey-lightest;
+        &.is-light {
+          color: $color;
+        }
+        &:hover,
+        &.is-hovered {
+          background-color: rgba(bulmaLighten($color, 2.5%), $alpha-color-button);
+        }
+        &:active,
+        &.is-active {
+          background-color: rgba(bulmaLighten($color, 6%), $alpha-color-button);
+        }
+      }
+    }
+    &.is-light {
+      background-color: rgba($dt-black, $alpha-color-button);
+      &:hover,
+      &.is-hovered {
+        background-color: rgba(bulmaLighten($dt-black, 2.5%), $alpha-color-button);
+      }
+      &:active,
+      &.is-active {
+        background-color: rgba(bulmaLighten($dt-black, 6%), $alpha-color-button);
+      }
+    }
+  }
+  a:hover {
+    color: $grey-lighter;
   }
   .input {
     background-color: $dt-black-ter;
     border-color: $dt-black-bis;
     color: $grey-lightest;
-  }
-  input::placeholder {
-    color: $grey;
+    &::placeholder {
+      color: $grey;
+    }
   }
   .control.has-icons-left .icon,
   .control.has-icons-right .icon {
@@ -115,15 +167,32 @@ $slider-thumb-border: 1px solid $primary;
   .table {
     background-color: $dt-black;
     color: $grey-lighter;
-    thead td, .thead th {
+    thead td,
+    thead th {
       color: $grey-lighter;
     }
     td, th {
       border-color: $dt-black-ter;
     }
   }
-  .table.is-striped tbody tr:not(.is-selected):nth-child(2n) {
-    background-color: $dt-black-bis;
+  .table {
+    &.is-striped {
+      tbody {
+        tr:not(.is-selected):nth-child(2n) {
+          background-color: $dt-black-bis;
+        }
+      }
+      &.is-hoverable {
+        tbody {
+          tr:not(.is-selected):hover {
+            background-color: $dt-black-bis;
+          }
+          tr:not(.is-selected):hover:nth-child(2n) {
+            background-color: $dt-black-ter;
+          }
+        }
+      }
+    }
   }
   .datepicker {
     .dropdown-content {
@@ -145,9 +214,18 @@ $slider-thumb-border: 1px solid $primary;
     }
   }
   select {
-    background-color: $dt-black-ter;
-    border-color: $dt-black-bis;
+    background-color: $grey-darker;
+    border-color: $dt-black-ter;
     color: $grey-lighter;
+  }
+  .select {
+    &:not(.is-multiple):not(.is-loading):hover::after {
+      border-color: $grey-lighter
+    }
+  }
+  .pagination-link.is-current,
+  .switch input[type="checkbox"]:checked + .check {
+    background-color: $primary;
   }
   .pagination-previous, .pagination-next, .pagination-link {
     border-color: $dt-black-bis;
@@ -162,9 +240,66 @@ $slider-thumb-border: 1px solid $primary;
       color: $grey-lighter;
     }
   }
+  .taginput .taginput-container.is-focusable {
+    background-color: $dt-black-ter;
+    border-color: $dt-black-bis;
+    .tag:not(body) {
+      background-color: $grey-darker;
+      color: $grey-lighter;
+    }
+  }
+  .b-slider .b-slider-track {
+    background: $grey-darker;
+  }
+  .progress {
+    background: $grey-darker;
+  }
   .notification {
     background-color: $dt-black-ter;
     color: $grey-lighter;
+    &.is-primary {
+      background-color: $primary;
+    }
+  }
+  .modal-card-head,
+  .modal-card-foot {
+    background-color: $grey-darker;
+  }
+  .modal-card-head {
+    border-bottom-color: $grey-dark;
+  }
+  .modal-card-foot {
+    border-top-color: $grey-dark;
+  }
+  .modal-card-title {
+    color: $grey-light;
+  }
+  .modal-card-body {
+    background-color: $grey-dark;
+    color: $grey-lighter;
+  }
+  .modal-close,
+  .delete {
+    background-color: $grey-darker;
+    &:hover {
+      background-color: $grey;
+    }
+    &::before,
+    &::after {
+      background-color: $grey-lighter;
+    }
+  }
+  .loading-overlay .loading-background {
+    background-color: rgba($dt-black-bis, 0.5);
+  }
+  .b-slider {
+    &.is-primary .b-slider-fill {
+      background-color: $primary !important;
+    }
+    .b-slider-thumb-wrapper .b-slider-thumb {
+      background-color: findDarkColor(rgba($primary, 1));
+      color: $grey-lightest
+    }
   }
 }
 
@@ -472,5 +607,16 @@ body > .autocomplete .dropdown-menu {
         height: 1.2em;
       }
     }
+  }
+}
+
+input {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  &[type=number] {
+    -moz-appearance: textfield;
   }
 }
