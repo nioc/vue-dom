@@ -20,7 +20,8 @@
                   <option value="core">Core</option>
                   <option value="nlp">NLP</option>
                   <option value="node-red">Node-red</option>
-                  <option value="core,nlp,node-red">Tous</option>
+                  <option value="log">Logs</option>
+                  <option value="core,nlp,node-red,log">Tous</option>
                 </select>
               </div>
             </div>
@@ -40,6 +41,28 @@
             </div>
           </div>
 
+          <div class="field is-narrow" title="Date de début">
+            <b-datetimepicker v-model="search.startDate" placeholder="Début" :datetime-formatter="datetimeFormatter" :datetime-parser="datetimeParser" editable>
+              <template #left>
+                <button class="button is-primary" title="Utiliser l'heure courante" @click="search.startDate = new Date()"><i class="fas fa-clock" /></button>
+              </template>
+              <template #right>
+                <button class="button" title="Supprimer le filtre" @click="search.startDate = null"><i class="fas fa-times-circle" /></button>
+              </template>
+            </b-datetimepicker>
+          </div>
+
+          <div class="field is-narrow" title="Date de fin">
+            <b-datetimepicker v-model="search.endDate" placeholder="Fin" :datetime-formatter="datetimeFormatter" :datetime-parser="datetimeParser" editable>
+              <template #left>
+                <button class="button is-primary" title="Utiliser l'heure courante" @click="search.endDate = new Date()"><i class="fas fa-clock" /></button>
+              </template>
+              <template #right>
+                <button class="button" title="Supprimer le filtre" @click="search.endDate = null"><i class="fas fa-times-circle" /></button>
+              </template>
+            </b-datetimepicker>
+          </div>
+
           <div class="field is-narrow">
             <div class="control">
               <div class="select">
@@ -54,7 +77,7 @@
             </div>
           </div>
 
-          <div class="field">
+          <div id="search-logs" class="field">
             <div class="control has-icons-left has-icons-right">
               <input v-model="search.query" class="input" type="text" placeholder="Rechercher un évènement">
               <span class="icon is-small is-left"><i class="fas fa-search" /></span>
@@ -63,7 +86,7 @@
           </div>
 
           <div class="field is-narrow">
-            <span class="buttons">
+            <span class="buttons is-flex-wrap-nowrap">
               <button class="button is-primary" title="Rafraichir" @click="getLogs(true, true)">
                 <span class="icon"><i class="fa fa-sync-alt" /></span>
               </button>
@@ -77,7 +100,7 @@
 
       <b-table ref="LogsTable" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" @click="showLogDetails">
         <b-table-column v-slot="props" field="service" label="">
-          <i class="fas fa-fw" :class="props.row.service === 'node-red' ? 'fa-project-diagram' : props.row.service === 'core' ? 'fa-server' : 'fa-brain'" :title="props.row.service" />
+          <i class="fas fa-fw" :class="props.row.serviceIcon" :title="props.row.service" />
         </b-table-column>
         <b-table-column v-slot="props" field="timestamp" label="Date">
           <time-ago v-if="props.row.timestamp" :date="props.row.timestamp" :drop-fixes="true" :title="props.row.timestamp | moment('L LTS')" />
@@ -130,9 +153,11 @@ export default {
   data () {
     return {
       search: {
-        service: 'core,nlp,node-red',
+        service: 'core,nlp,node-red,log',
         level: 2,
         limit: 10,
+        startDate: null,
+        endDate: null,
         query: '',
       },
       logs: [],
@@ -164,12 +189,37 @@ export default {
         this.lastLogsRead = this.lastLogsFetch
       }
       try {
-        this.logs = await this.$Provider.getLogs({
+        const query = {
           level: this.search.level,
           service: this.search.service,
           limit: this.search.limit,
+        }
+        if (this.search.startDate !== null) {
+          query.from = this.$moment(this.search.startDate).format()
+        }
+        if (this.search.endDate !== null) {
+          query.until = this.$moment(this.search.endDate).format()
+        }
+        this.logs = await this.$Provider.getLogs(query)
+        this.logs.forEach((log) => {
+          log.isNew = this.$moment(log.timestamp).isAfter(this.lastLogsRead)
+          switch (log.service) {
+            case 'core':
+              log.serviceIcon = 'fa-server'
+              break
+            case 'node-red':
+              log.serviceIcon = 'fa-project-diagram'
+              break
+            case 'nlp':
+              log.serviceIcon = 'fa-brain'
+              break
+            case 'log':
+              log.serviceIcon = 'fa-clipboard-list'
+              break
+            default:
+              log.serviceIcon = 'fa-question'
+          }
         })
-        this.logs.forEach((log) => { log.isNew = this.$moment(log.timestamp).isAfter(this.lastLogsRead) })
         this.lastLogsFetch = new Date()
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
@@ -203,6 +253,7 @@ export default {
       delete logStriped.service
       delete logStriped.level
       delete logStriped.isNew
+      delete logStriped.serviceIcon
       return logStriped
     },
     getLogClass (log) {
@@ -255,6 +306,12 @@ export default {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la copie des logs : ${error.message}` })
       }
     },
+    datetimeFormatter (date) {
+      return this.$moment(date).format('DD/MM/YY LT')
+    },
+    datetimeParser (dateText) {
+      return this.$moment(dateText, 'DD/MM/YY LT').toDate()
+    },
   },
 }
 </script>
@@ -269,5 +326,8 @@ export default {
 }
 .b-table >>> td:last-child{
   width: 100%;
+}
+.datepicker {
+  max-width: 10em;
 }
 </style>

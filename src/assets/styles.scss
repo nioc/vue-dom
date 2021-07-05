@@ -620,3 +620,12 @@ input {
     -moz-appearance: textfield;
   }
 }
+
+#search-logs {
+  @include widescreen {
+    min-width: 18em;
+  }
+  @include fullhd {
+    min-width: 28em;
+  }
+}
