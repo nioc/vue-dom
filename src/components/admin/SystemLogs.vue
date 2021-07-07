@@ -169,8 +169,11 @@ export default {
   },
   computed: {
     logsFiltered () {
+      if (this.search.query === '') {
+        return this.logs
+      }
       return this.logs.filter((log) => (
-        log.message.toLowerCase().indexOf(this.search.query.toLowerCase()) > -1 ||
+        (typeof log.message === 'string' && log.message.toLowerCase().indexOf(this.search.query.toLowerCase()) > -1) ||
         log.requestId === this.search.query),
       )
     },
