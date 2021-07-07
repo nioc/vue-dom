@@ -91,6 +91,7 @@ $slider-thumb-border: 1px solid $primary;
   .menu-list a:not(.is-active) {
     color: $grey-light;
   }
+  .tag:not(body),
   .button {
     background-color: $dt-black-bis;
     border-color: $dt-black-ter;
@@ -137,6 +138,7 @@ $slider-thumb-border: 1px solid $primary;
   a:hover {
     color: $grey-lighter;
   }
+  .textarea,
   .input {
     background-color: $dt-black-ter;
     border-color: $dt-black-bis;
@@ -144,6 +146,10 @@ $slider-thumb-border: 1px solid $primary;
     &::placeholder {
       color: $grey;
     }
+  }
+  code {
+    background-color: $dt-black-ter;
+    color: #ff4a6f;
   }
   .control.has-icons-left .icon,
   .control.has-icons-right .icon {
@@ -191,6 +197,15 @@ $slider-thumb-border: 1px solid $primary;
             background-color: $dt-black-ter;
           }
         }
+      }
+    }
+    tr.detail {
+      background-color: $dt-black-bis;
+      -webkit-box-shadow: inset 0 1px 3px $dt-black;
+      box-shadow: inset 0 1px 3px $dt-black;
+      pre {
+        background-color: $dt-black-ter;
+        color: $grey-lightest;
       }
     }
   }
