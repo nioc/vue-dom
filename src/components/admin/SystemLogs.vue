@@ -116,6 +116,7 @@
             <li v-for="(value, key) in stripLog(props.row)" :key="key">
               <label class="label">{{ key.charAt(0).toUpperCase() + key.slice(1) }}</label>
               <pre v-if="key==='requestId'" class="is-size-7 message-cell is-selectable-all">{{ value }}<a class="ml-3" title="Rechercher cette requête" @click="search.query=value"><i class="fa fa-search" /></a></pre>
+              <pre v-else-if="key==='timestamp'" class="is-size-7 message-cell">{{ value }}<a class="ml-3" title="Rechercher jusqu'à cette date" @click="search.endDate=$moment(value).add(1, 's').toDate()"><i class="fa fa-backward" /></a><a class="ml-3" title="Rechercher à partir de cette date" @click="search.startDate=$moment(value).toDate()"><i class="fa fa-forward" /></a></pre>
               <pre v-else class="is-size-7 message-cell">{{ value }}</pre>
             </li>
           </ul>
