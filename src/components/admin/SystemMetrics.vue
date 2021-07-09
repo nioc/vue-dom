@@ -59,14 +59,14 @@
             <b-table-column v-slot="props" field="name" label="Nom" sortable>
               <span class="is-family-code">{{ props.row.name }}</span>
             </b-table-column>
-            <b-table-column v-slot="props" field="cpu" label="CPU" sortable>
-              {{ props.row.cpu }}
+            <b-table-column v-slot="props" field="cpu" label="CPU" sortable numeric>
+              {{ props.row.cpu }}%
             </b-table-column>
-            <b-table-column v-slot="props" field="memory.percent" label="Mémoire" sortable>
-              {{ props.row.memory.percent }}
+            <b-table-column v-slot="props" field="memory.percent" label="Mémoire" sortable numeric>
+              {{ props.row.memory.percent }}%
             </b-table-column>
-            <b-table-column v-slot="props" field="memory.raw" label="Mémoire (détail)">
-              {{ props.row.memory.raw }}
+            <b-table-column v-slot="props" field="memory.usage" label="Mémoire (détail)" sortable numeric>
+              {{ getHumanSizeCei(props.row.memory.usage, 'o', 1) }} / {{ getHumanSizeCei(props.row.memory.size, 'o', 1) }}
             </b-table-column>
           </b-table>
         </div>
