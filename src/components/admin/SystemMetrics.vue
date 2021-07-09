@@ -52,6 +52,26 @@
         </div>
       </div>
 
+      <div v-if="metrics && metrics.containers" class="field mb-5">
+        <div class="control">
+          <label class="label">Conteneurs Docker</label>
+          <b-table :data="metrics.containers" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="name">
+            <b-table-column v-slot="props" field="name" label="Nom" sortable>
+              <span class="is-family-code">{{ props.row.name }}</span>
+            </b-table-column>
+            <b-table-column v-slot="props" field="cpu" label="CPU" sortable>
+              {{ props.row.cpu }}
+            </b-table-column>
+            <b-table-column v-slot="props" field="memory.percent" label="Mémoire" sortable>
+              {{ props.row.memory.percent }}
+            </b-table-column>
+            <b-table-column v-slot="props" field="memory.raw" label="Mémoire (détail)">
+              {{ props.row.memory.raw }}
+            </b-table-column>
+          </b-table>
+        </div>
+      </div>
+
       <div v-if="metrics && metrics.date" class="has-text-weight-light is-italic mb-3">Informations collectées <time-ago v-if="metrics.date" :drop-fixes="false" :date="metrics.date" :title="metrics.date | moment('LLL')" /></div>
 
       <span class="buttons">
