@@ -21,6 +21,8 @@ export default new Vuex.Store({
     clear ({ commit }) {
       commit('app/clear')
       commit('data/clear')
+      localStorage.clear()
+      sessionStorage.clear()
     },
   },
   modules: {

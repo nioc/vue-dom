@@ -37,8 +37,6 @@ export default {
     } catch (error) {
     }
     store.dispatch('clear')
-    localStorage.clear()
-    sessionStorage.clear()
   },
 
   // return stored user (login and api key)
