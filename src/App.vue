@@ -32,6 +32,12 @@ export default {
     isAuthenticated: function () {
       if (this.isAuthenticated) {
         this.vxLoadRooms()
+      } else {
+        this.$router.push({
+          name: 'login',
+          query: { redirect: this.$route.fullPath },
+          replace: true,
+        })
       }
       this.openEventsListener()
     },
