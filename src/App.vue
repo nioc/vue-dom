@@ -52,6 +52,11 @@ export default {
     },
   },
   created () {
+    // set user homepage
+    const homepage = localStorage.getItem('homepage')
+    if (homepage) {
+      this.$router.replace(homepage)
+    }
     // set user theme
     if (localStorage.getItem('darkMode')) {
       document.documentElement.setAttribute('data-theme', 'dark')

@@ -88,6 +88,11 @@
               Mode sombre
             </template>
           </b-menu-item>
+          <b-menu-item :icon-pack="isHomepage ? 'fas' : 'far'" :icon="isHomepage ? 'ban fa-fw fa-mr':'bookmark fa-fw fa-mr'" tag="a" @click="setHomepage">
+            <template slot="label">
+              Page par défaut
+            </template>
+          </b-menu-item>
         </b-menu-list>
 
       </b-menu>
@@ -115,6 +120,7 @@ export default {
       title: custom.title,
       bugUrl: bugs.url,
       isDarkMode: false,
+      isHomepage: false,
     }
   },
   computed: {
@@ -130,6 +136,9 @@ export default {
   created () {
     if (localStorage.getItem('darkMode')) {
       this.isDarkMode = true
+    }
+    if (localStorage.getItem('homepage') === this.$route.fullPath) {
+      this.isHomepage = true
     }
   },
   methods: {
@@ -148,6 +157,16 @@ export default {
       } else {
         document.documentElement.removeAttribute('data-theme')
         localStorage.removeItem('darkMode')
+      }
+      this.open = false
+    },
+    setHomepage () {
+      if (this.isHomepage) {
+        localStorage.removeItem('homepage')
+        this.isHomepage = false
+      } else {
+        localStorage.setItem('homepage', this.$route.fullPath)
+        this.isHomepage = true
       }
       this.open = false
     },
