@@ -313,21 +313,25 @@ const mutations = {
       // handle equipment tags
       if (
         Object.prototype.hasOwnProperty.call(equipment, 'tags') && (
+          !Object.prototype.hasOwnProperty.call(state.equipments, id) ||
+          !Object.prototype.hasOwnProperty.call(state.equipments[id], 'tags') ||
           state.equipments[id].tags.length !== equipment.tags.length ||
           state.equipments[id].tags.some((value, index) => value !== equipment.tags[index])
         )) {
         // get new tags to add to tags list
         const addedTags = equipment.tags
-          .filter((currentTag) => !state.equipments[id].tags.includes(currentTag))
+          .filter((currentTag) => !Object.prototype.hasOwnProperty.call(state.equipments, id) || !state.equipments[id].tags.includes(currentTag))
           .filter((tag) => !state.tagsList.includes(tag))
         // get existing tags to remove from tags list (not used by any other equipment)
-        state.equipments[id].tags
-          .filter((previousTag) => !equipment.tags.includes(previousTag))
-          .filter((tag) => !Object.values(state.equipments).some((equipment) => equipment.id !== id && equipment.tags.includes(tag)))
-          .forEach((removedTag) => {
-            const index = state.tagsList.indexOf(removedTag)
-            state.tagsList.splice(index, 1)
-          })
+        if (Object.prototype.hasOwnProperty.call(state.equipments[id], 'tags')) {
+          state.equipments[id].tags
+            .filter((previousTag) => !equipment.tags.includes(previousTag))
+            .filter((tag) => !Object.values(state.equipments).some((equipment) => equipment.id !== id && equipment.tags.includes(tag)))
+            .forEach((removedTag) => {
+              const index = state.tagsList.indexOf(removedTag)
+              state.tagsList.splice(index, 1)
+            })
+        }
         state.tagsList = state.tagsList.concat(addedTags)
       }
     })

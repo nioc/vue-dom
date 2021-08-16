@@ -114,7 +114,9 @@ export default {
       return this.arrEquipments.map((equipment) => {
         const _equipment = Object.assign({}, equipment)
         _equipment.roomName = this.getRoomById(_equipment.roomId).name || _equipment.roomId
-        _equipment.tagsText = _equipment.tags.join(' • ')
+        if (_equipment.tags) {
+          _equipment.tagsText = _equipment.tags.join(' • ')
+        }
         return _equipment
       })
     },
