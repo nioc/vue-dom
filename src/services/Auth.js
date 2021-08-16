@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import store from '@/store'
+const custom = window.custom
 
 // set authentication (API key, token, ...) and notify application user is authenticated
 function setAuthentication (login, authentication) {
@@ -23,7 +24,8 @@ export default {
     }
     setAuthentication(login, authentication)
     if (remember) {
-      localStorage.setItem('user', JSON.stringify({ login, authentication }))
+      const storageKey = `${custom.provider.system}-user`
+      localStorage.setItem(storageKey, JSON.stringify({ login, authentication }))
     }
     return true
   },
@@ -42,7 +44,8 @@ export default {
   // return stored user (login and api key)
   restoreUser () {
     try {
-      const user = JSON.parse(localStorage.getItem('user'))
+      const storageKey = `${custom.provider.system}-user`
+      const user = JSON.parse(localStorage.getItem(storageKey))
       if (user) {
         setAuthentication(user.login, user.authentication)
       }
