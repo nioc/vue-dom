@@ -166,11 +166,16 @@
 
             <div class="field">
               <label class="label">Dernière valeur</label>
-              <div class="control has-icons-left">
-                <input v-model="currentValue" class="input" type="text" placeholder="Dernière valeur" readonly>
-                <span class="icon is-small is-left">
-                  <i class="fas fa-code" />
-                </span>
+              <div class="field has-addons">
+                <div class="control has-icons-left is-expanded">
+                  <input v-model="currentValue" class="input" type="text" placeholder="Dernière valeur" readonly>
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-code" />
+                  </span>
+                </div>
+                <div v-if="!isNew" class="control">
+                  <button class="button" style="height: 40px;width: 40px;" title="Editer la valeur" @click="showValueEditModal"><i class="fas fa-pen" /></button>
+                </div>
               </div>
             </div>
 
@@ -199,6 +204,37 @@
               </button>
             </div>
           </section>
+        </div>
+        <div v-if="isValueEditModalActive" class="modal is-active">
+          <div class="modal-background" />
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Modification de la valeur de l'état</p>
+              <button class="delete" aria-label="close" @click="isValueEditModalActive = false" />
+            </header>
+            <section class="modal-card-body">
+              <div class="field">
+                <label class="label">Valeur</label>
+                <div v-if="state.type==='boolean'" class="control">
+                  <b-switch v-model="editedValue">{{ editedValue }}</b-switch>
+                </div>
+                <div v-else class="control has-icons-left">
+                  <input v-model="editedValue" class="input" :type="state.type==='numeric' ? 'number' : 'text'" placeholder="Valeur">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-code" />
+                  </span>
+                </div>
+              </div>
+            </section>
+            <footer class="modal-card-foot">
+              <button class="button is-primary" @click="saveStateValue">
+                <span class="icon"><i class="fas fa-save" /></span><span>Sauvegarder</span>
+              </button>
+              <button class="button" @click="isValueEditModalActive = false">
+                <span class="icon"><i class="fas fa-undo-alt" /></span><span>Annuler</span>
+              </button>
+            </footer>
+          </div>
         </div>
       </div>
     </div>
@@ -242,6 +278,8 @@ export default {
       },
       isLoading: false,
       isIconPickerVisible: false,
+      isValueEditModalActive: false,
+      editedValue: null,
     }
   },
   computed: {
@@ -281,6 +319,28 @@ export default {
         this.addUnsavedChangesGuard('state')
       }
       this.isLoading = false
+    },
+    async saveStateValue () {
+      const state = {
+        id: this.state.id,
+        currentValue: this.editedValue,
+        date: this.$moment().format(),
+      }
+      if (this.state.type === 'object') {
+        try {
+          state.currentValue = JSON.parse(this.editedValue)
+        } catch (error) {
+          return
+        }
+      }
+      this.isLoading = true
+      const result = await this.vxSaveState({ state, isNew: false })
+      if (result) {
+        this.state.currentValue = result.currentValue
+        this.state.date = result.date
+      }
+      this.isLoading = false
+      this.isValueEditModalActive = false
     },
     copyState () {
       const proposal = Object.assign({}, this.state)
@@ -323,6 +383,10 @@ export default {
         return
       }
       this.state.eqId = equipment.id
+    },
+    showValueEditModal () {
+      this.editedValue = this.state.type === 'object' ? JSON.stringify(this.state.currentValue) : this.state.currentValue
+      this.isValueEditModalActive = true
     },
   },
 }
