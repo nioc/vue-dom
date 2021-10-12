@@ -22,7 +22,7 @@ export default {
     }
   },
   computed: {
-    query () { return this.name.replace(/fa[sr]? fa-/, '') },
+    query () { return this.name.replace(/fa[srb]? fa-/, '') },
   },
   watch: {
     query: {
@@ -48,6 +48,9 @@ export default {
                 break
               case 'regular':
                 this.icons.push(`far fa-${icon.name}`)
+                break
+              case 'brands':
+                this.icons.push(`fab fa-${icon.name}`)
                 break
             }
           })
