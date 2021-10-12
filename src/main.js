@@ -29,10 +29,10 @@ Vue.config.productionTip = false
 Vue.config.performance = process.env.NODE_ENV !== 'production'
 
 // try to restore user
-Auth.restoreUser()
-
-new Vue({
-  store,
-  router,
-  render: (h) => h(App),
-}).$mount('#vue-dom')
+Auth.restoreUser().then(() => {
+  new Vue({
+    store,
+    router,
+    render: (h) => h(App),
+  }).$mount('#vue-dom')
+})

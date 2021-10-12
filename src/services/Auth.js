@@ -3,12 +3,13 @@ import store from '@/store'
 const custom = window.custom
 
 // set authentication (API key, token, ...) and notify application user is authenticated
-function setAuthentication (login, authentication) {
+async function setAuthentication (login, authentication) {
   const vue = new Vue()
   const roles = vue.$Provider.getRoles(authentication)
   const id = vue.$Provider.getUserId(authentication)
-  vue.$Provider.setAuthentication(authentication)
+  authentication = await vue.$Provider.setAuthentication(authentication)
   store.commit('app/setUser', { isAuthenticated: true, login, roles, id })
+  return authentication
 }
 
 export default {
@@ -18,11 +19,11 @@ export default {
     if (!login || !password) {
       return false
     }
-    const authentication = await new Vue().$Provider.authenticate(login, password)
+    let authentication = await new Vue().$Provider.authenticate(login, password)
     if (!authentication) {
       return false
     }
-    setAuthentication(login, authentication)
+    authentication = await setAuthentication(login, authentication)
     if (remember) {
       const storageKey = `${custom.provider.system}-user`
       localStorage.setItem(storageKey, JSON.stringify({ login, authentication }))
@@ -40,12 +41,15 @@ export default {
   },
 
   // return stored user (login and api key)
-  restoreUser () {
+  async restoreUser () {
     try {
       const storageKey = `${custom.provider.system}-user`
       const user = JSON.parse(localStorage.getItem(storageKey))
       if (user) {
-        setAuthentication(user.login, user.authentication)
+        const authentication = await setAuthentication(user.login, user.authentication)
+        // update stored user
+        const storageKey = `${custom.provider.system}-user`
+        localStorage.setItem(storageKey, JSON.stringify({ login: user.login, authentication }))
       }
     } catch (e) {
       console.error('Error during restore user', e)

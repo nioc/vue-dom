@@ -147,8 +147,9 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     },
 
     // initialize authentication (API key)
-    setAuthentication (_apiKey) {
+    async setAuthentication (_apiKey) {
       apiKey = _apiKey
+      return _apiKey
     },
 
     // logout (not implemented with Api key)
