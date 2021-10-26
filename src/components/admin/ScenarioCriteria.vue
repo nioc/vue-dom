@@ -16,6 +16,10 @@
               <option value="lt">&lt;</option>
               <option value="lte">&le;</option>
             </select>
+            <select v-else-if="factType === 'boolean'" v-model="booleanValue">
+              <option :value="true">est actif (vrai)</option>
+              <option :value="false">est inactif (faux)</option>
+            </select>
             <select v-else v-model="criteria.operator">
               <option value="e">&equals;</option>
               <option value="ne">&ne;</option>
@@ -26,7 +30,7 @@
       </div>
 
       <div class="field">
-        <p class="control is-expanded">
+        <p v-if="factType !== 'boolean'" class="control is-expanded">
           <input v-if="factType === 'numeric'" v-model.number="criteria.value" class="input" type="number" required>
           <input v-else v-model="criteria.value" class="input" type="text" required>
         </p>
@@ -77,6 +81,20 @@ export default {
     return {
       factType: null,
     }
+  },
+  computed: {
+    booleanValue: {
+      get: function () {
+        if (this.factType !== 'boolean') {
+          return undefined
+        }
+        return this.criteria.operator === 'e' && this.criteria.value === true
+      },
+      set: function (value) {
+        this.criteria.operator = 'e'
+        this.criteria.value = value
+      },
+    },
   },
   methods: {
     selectState (option) {
