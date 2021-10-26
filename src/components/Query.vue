@@ -7,6 +7,9 @@
       placeholder="Quelle est la température ?"
       icon="comments"
       title="Poser une question"
+      :readonly="isLoading"
+      :disabled="isLoading"
+      :loading="isLoading"
       @focus="isExpanded = true"
       @select="(option) => ask(option)"
       @keyup.enter.native="ask()"
@@ -14,7 +17,7 @@
     >
       <template slot="empty">Aucune correspondance</template>
     </b-autocomplete>
-    <button v-if="isExpanded" class="delete is-medium" title="Fermer" @click="clear()" />
+    <button v-if="isExpanded && !isLoading" class="delete is-medium" title="Fermer" @click="clear()" />
   </div>
 </template>
 
@@ -27,6 +30,7 @@ export default {
       question: '',
       sentences: [],
       isExpanded: false,
+      isLoading: false,
     }
   },
   computed: {
@@ -46,6 +50,9 @@ export default {
       this.isExpanded = false
     },
     async ask (question) {
+      if (this.isLoading) {
+        return
+      }
       if (question) {
         this.question = question
       }
@@ -54,6 +61,7 @@ export default {
         this.clear()
         return
       }
+      this.isLoading = true
       try {
         const message = await this.$Provider.askQuestion(this.question)
         this.clear()
@@ -61,6 +69,7 @@ export default {
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
+      this.isLoading = false
     },
     async getSentences () {
       try {
