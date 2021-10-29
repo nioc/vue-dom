@@ -147,6 +147,15 @@ $slider-thumb-border: 1px solid $primary;
       color: $grey;
     }
   }
+  fieldset[disabled] .select select,
+  fieldset[disabled] .input {
+    background-color: $grey-darker;
+    border-color: $grey-darker;
+    color: $grey-light;
+  }
+  fieldset[disabled] .button {
+    background-color: bulmaLighten($dt-black-bis, 2.5%);
+  }
   code {
     background-color: $dt-black-ter;
     color: #ff4a6f;
