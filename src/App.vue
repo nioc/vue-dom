@@ -60,7 +60,7 @@ export default {
   created () {
     // set user homepage
     const homepage = localStorage.getItem('homepage')
-    if (homepage) {
+    if (this.$route.name === 'home' && homepage && homepage !== this.$route.fullPath) {
       this.$router.replace(homepage)
     }
     // set user theme
