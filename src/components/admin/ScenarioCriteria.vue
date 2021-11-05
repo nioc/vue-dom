@@ -99,6 +99,9 @@ export default {
   methods: {
     selectState (option) {
       if (option) {
+        if (option.type === 'boolean' && this.criteria.fact !== option.id) {
+          this.criteria.value = true
+        }
         this.criteria.fact = option.id
         this.factType = option.type
       }
