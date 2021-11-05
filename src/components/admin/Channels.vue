@@ -95,6 +95,9 @@ export default {
       })
     },
   },
+  mounted () {
+    this.getChannels()
+  },
   methods: {
     async getChannels () {
       this.isLoading = true
