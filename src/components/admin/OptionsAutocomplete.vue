@@ -115,15 +115,27 @@ export default {
         case 'state':
           options = this.arrStatesWithEquipmentName
             .slice()
+            .map((option) => {
+              option.name = `${option.equipmentName} > ${option.name}`
+              return option
+            })
           break
         case 'action':
           options = this.arrActionsWithEquipmentName
             .slice()
+            .map((option) => {
+              option.name = `${option.equipmentName} > ${option.name}`
+              return option
+            })
           break
         case 'ask':
           options = this.arrActionsWithEquipmentName
             .slice()
             .filter((action) => action.isAsk)
+            .map((option) => {
+              option.name = `${option.equipmentName} > ${option.name}`
+              return option
+            })
           break
         case 'channel':
           options = this.arrChannels
