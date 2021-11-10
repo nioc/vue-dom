@@ -31,6 +31,8 @@ const getDefaultState = () => {
     scenarios: {},
     channels: {},
     notifications: [],
+    userViews: {},
+    userViewsList: [],
   }
 }
 
@@ -159,6 +161,11 @@ const getters = {
   getRoomVisiblesEquipment: (state) => (roomId) => {
     return state.rooms[roomId].equipments
       .filter((equipmentId) => state.equipments[equipmentId].isVisible)
+  },
+
+  // return user view by code or null
+  getUserViewByCode: (state) => (code) => {
+    return (state.userViews[code]) || null
   },
 }
 
@@ -539,6 +546,31 @@ const mutations = {
     delete state.channels[channelId]
   },
 
+  updateUserViews (state, payload) {
+    const viewsUpdated = {}
+    payload.forEach((_view) => {
+      const code = _view.code
+      if (!state.userViews[code]) {
+        // view was not in store
+        viewsUpdated[code] = _view
+        return
+      }
+      viewsUpdated[code] = Object.assign({}, state.userViews[code])
+      for (const key in _view) {
+        viewsUpdated[code][key] = _view[key]
+      }
+    })
+    if (Object.keys(viewsUpdated).length > 0) {
+      state.userViews = Object.assign({}, state.userViews, viewsUpdated)
+    }
+    state.userViewsList = Object.values(state.userViews)
+  },
+
+  deleteUserView (state, code) {
+    delete state.userViews[code]
+    state.userViewsList = Object.values(state.userViews)
+  },
+
   // store tags
   saveTags (state, payload) {
     state.tagsList = payload
@@ -889,6 +921,46 @@ const actions = {
       return true
     } catch (error) {
       commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression du canal<br>${error.message}` }, { root: true })
+      return false
+    }
+  },
+
+  async vxRefreshUserViews ({ commit }) {
+    try {
+      // get all user's views
+      const userViews = await vue.$Provider.getUserViews()
+      if (userViews === undefined) {
+        // no views to save
+        return
+      }
+      commit('updateUserViews', userViews)
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors du rafraichissement des vues<br>${error.message}` }, { root: true })
+    }
+  },
+
+  async vxSaveUserView ({ commit }, { userView, isNew }) {
+    try {
+      if (isNew) {
+        userView = await vue.$Provider.createUserView(userView)
+      } else {
+        userView = await vue.$Provider.updateUserView(userView)
+      }
+      commit('updateUserViews', [userView])
+      return userView
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la sauvegarde de la vue utilisateur<br>${error.message}` }, { root: true })
+      return false
+    }
+  },
+
+  async vxDeleteUserView ({ commit }, { viewId, viewCode }) {
+    try {
+      await vue.$Provider.deleteUserView(viewId)
+      commit('deleteUserView', viewCode)
+      return true
+    } catch (error) {
+      commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la suppression de la vue utilisateur<br>${error.message}` }, { root: true })
       return false
     }
   },

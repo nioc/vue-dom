@@ -155,6 +155,9 @@ export const AdminMixin = {
       'vxRefreshChannels',
       'vxSaveChannel',
       'vxDeleteChannel',
+      'vxRefreshUserViews',
+      'vxSaveUserView',
+      'vxDeleteUserView',
     ]),
   },
 }

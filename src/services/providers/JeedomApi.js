@@ -570,6 +570,31 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       }
     },
 
+    // request all user views
+    async getUserViews () {
+      return []
+    },
+
+    // request channel
+    async getUserView (viewId) {
+      return null
+    },
+
+    // create channel
+    async createUserView (userView) {
+      return null
+    },
+
+    // update channel
+    async updateUserView (userView) {
+      return null
+    },
+
+    // delete channel
+    async deleteUserView (viewId) {
+      return null
+    },
+
     // try to ask a question
     async askQuestion (query, replyCmd = null) {
       const params = {

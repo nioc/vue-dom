@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="is-flex-space-between mb-2">
-      <span class="is-flex is-align-items-center"><i class="fa-fw mr-4" :class="iconClass" /><span class="info-label">{{ state.name }}</span><a v-if="state.isHistorized" class="ml-2 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
+      <span class="is-flex is-align-items-center"><i class="fa-fw mr-4" :class="iconClass" /><span class="info-label">{{ label || state.name }}</span><a v-if="state.isHistorized" class="ml-2 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
       <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" :left-label="true" class="mr-0" @input="action" />
       <b-slider v-else-if="state.type === 'numeric' && action" v-model="value" lazy class="ml-5 my-2" :title="state.name" :min="action.minValue" :max="action.maxValue" :tooltip="false" indicator rounded @change="action.f" />
       <div v-else-if="state.type === 'string' && action" lazy class="select ml-5" :title="state.name">
@@ -48,6 +48,10 @@ export default {
     equipmentId: {
       type: String,
       required: true,
+    },
+    label: {
+      type: String,
+      default: null,
     },
   },
   data () {

@@ -7,6 +7,7 @@ import Login from '@/components/Login'
 import Rooms from '@/components/Rooms'
 import RoomDetail from '@/components/RoomDetail'
 import Tag from '@/components/Tag'
+import UserView from '@/components/UserView'
 
 Vue.use(Router)
 
@@ -55,6 +56,23 @@ const routes = [
     props: true,
     meta: {
       title: 'Tag',
+    },
+  },
+  {
+    path: '/views',
+    name: 'views',
+    component: UserView,
+    meta: {
+      title: 'Views',
+    },
+  },
+  {
+    path: '/views/:code',
+    name: 'view',
+    props: true,
+    component: UserView,
+    meta: {
+      title: 'View',
     },
   },
   {
@@ -260,6 +278,23 @@ const routes = [
     component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Channel'),
     meta: {
       title: 'Admin canal de communication',
+    },
+  },
+  {
+    path: '/admin/views',
+    name: 'admin-views',
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/UserViews'),
+    meta: {
+      title: 'Admin vues utilisateur',
+    },
+  },
+  {
+    path: '/admin/views/:id',
+    name: 'admin-view',
+    props: true,
+    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/UserView'),
+    meta: {
+      title: 'Admin vue utilisateur',
     },
   },
 ]

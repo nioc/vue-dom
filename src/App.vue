@@ -32,6 +32,7 @@ export default {
     isAuthenticated: function () {
       if (this.isAuthenticated) {
         this.vxLoadRooms()
+        this.vxRefreshUserViews()
       } else {
         this.$router.push({
           name: 'login',
@@ -88,6 +89,7 @@ export default {
     // load rooms
     if (this.isAuthenticated) {
       this.vxLoadRooms()
+      this.vxRefreshUserViews()
     }
     // handle connectivity
     this.setNetworkStatus(window.navigator.onLine)
@@ -131,7 +133,7 @@ export default {
         this.$Provider.openEventsListener(true, false)
       }
     },
-    ...mapActions(['vxLoadRooms']),
+    ...mapActions(['vxLoadRooms', 'vxRefreshUserViews']),
     ...mapMutations(['setNetworkStatus']),
   },
 }

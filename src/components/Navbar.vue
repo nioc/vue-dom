@@ -7,6 +7,12 @@
     <div id="navbar-menu" class="navbar-menu">
       <div class="navbar-start">
         <router-link class="navbar-item" :to="{name: 'rooms'}" title="Pièces"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Pièces</span></router-link>
+        <div v-if="userViewsList.length" class="navbar-item has-dropdown" :class="{'is-active': hasDropdownViewsDisplayed}" @click="hasDropdownViewsDisplayed = !hasDropdownViewsDisplayed">
+          <router-link v-slot="{href, isActive}" class="navbar-link is-arrowless" :to="{name: 'views'}" custom><a :href="href" :class="{'router-link-active': isActive}" @click.prevent=""><i class="fa fa-binoculars fa-fw fa-mr" /><span class="is-navbar-label">Vues</span></a></router-link>
+          <div class="navbar-dropdown">
+            <router-link v-for="userView in userViewsList" :key="userView.code" :to="{name: 'view', params: {code: userView.code}}" class="navbar-item"><span>{{ userView.title }}</span></router-link>
+          </div>
+        </div>
         <router-link class="navbar-item" :to="{name: 'scenarios'}" title="Scénarios"><i class="fa fa-book fa-fw fa-mr" /><span class="is-navbar-label">Scénarios</span></router-link>
         <div v-if="tagsList.length" class="navbar-item has-dropdown" :class="{'is-active': hasDropdownTagsDisplayed}" @click="hasDropdownTagsDisplayed = !hasDropdownTagsDisplayed">
           <router-link v-slot="{href, isActive}" class="navbar-link is-arrowless" :to="{name: 'tags'}" custom><a :href="href" :class="{'router-link-active': isActive}" @click.prevent=""><i class="fa fa-tags fa-fw fa-mr" /><span class="is-navbar-label">Catégories</span></a></router-link>
@@ -30,6 +36,7 @@ import Sync from '@/components/Sync'
 import Query from '@/components/Query'
 import NotificationsCounter from '@/components/NotificationsCounter'
 import { RoomsMixin } from '@/mixins/Rooms'
+import { UserViewsMixin } from '@/mixins/UserViews'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState, mapMutations } = createNamespacedHelpers('app')
 const custom = window.custom
@@ -41,11 +48,12 @@ export default {
     Query,
     NotificationsCounter,
   },
-  mixins: [RoomsMixin],
+  mixins: [RoomsMixin, UserViewsMixin],
   data () {
     return {
       title: custom.title,
       hasDropdownTagsDisplayed: false,
+      hasDropdownViewsDisplayed: false,
     }
   },
   computed: {
@@ -55,6 +63,9 @@ export default {
     $route (to, from) {
       if (to.name !== 'tag') {
         this.hasDropdownTagsDisplayed = false
+      }
+      if (to.name !== 'view') {
+        this.hasDropdownViewsDisplayed = false
       }
     },
   },

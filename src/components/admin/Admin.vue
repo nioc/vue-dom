@@ -13,6 +13,7 @@
           <li><router-link :to="{name: 'admin-equipments'}"><i class="fa fa-microchip fa-fw fa-mr" />Équipements</router-link></li>
           <li><router-link :to="{name: 'admin-states'}"><i class="fa fa-eye fa-fw fa-mr" />États</router-link></li>
           <li><router-link :to="{name: 'admin-actions'}"><i class="fa fa-cogs fa-fw fa-mr" />Actions</router-link></li>
+          <li><router-link :to="{name: 'admin-views'}"><i class="fa fa-binoculars fa-fw fa-mr" />Vues utilisateur</router-link></li>
           <li><router-link :to="{name: 'admin-scenarios'}"><i class="fa fa-book fa-fw fa-mr" />Scénarios</router-link></li>
           <li><router-link :to="{name: 'admin-nlp'}"><i class="fa fa-brain fa-fw fa-mr" />Traitement automatique du langage naturel</router-link></li>
           <li><router-link :to="{name: 'admin-channels'}"><i class="fa fa-comments fa-fw fa-mr" />Canaux de communication</router-link></li>
