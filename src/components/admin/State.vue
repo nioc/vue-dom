@@ -79,6 +79,10 @@
                     <option value="string">String</option>
                     <option value="numeric">Numérique</option>
                     <option value="boolean">Booléen</option>
+                    <option value="datetime">Datetime</option>
+                    <option value="date">Date</option>
+                    <option value="time">Time</option>
+                    <option value="duration">Durée</option>
                     <option value="object">Objet</option>
                   </select>
                 </div>

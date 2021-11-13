@@ -4,6 +4,9 @@
       <span class="is-flex is-align-items-center"><i class="fa-fw mr-4" :class="iconClass" /><span class="info-label">{{ label || state.name }}</span><a v-if="state.isHistorized" class="ml-2 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
       <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" :left-label="true" class="mr-0" @input="action" />
       <b-slider v-else-if="state.type === 'numeric' && action" v-model="value" lazy class="ml-5 my-2" :title="state.name" :min="action.minValue" :max="action.maxValue" :tooltip="false" indicator rounded @change="action.f" />
+      <span v-else-if="datetimeFormattedValue" class="is-flex-space-between">
+        <span class="has-text-weight-semi-bold info-value" :class="{'has-text-danger': state.isTooHigh || state.isTooLow}">{{ datetimeFormattedValue }}</span>
+      </span>
       <div v-else-if="state.type === 'string' && action" lazy class="select ml-5" :title="state.name">
         <select v-model="value" @change="action">
           <option v-for="option in actionOptions" :key="option.value" :value="option.value">{{ option.label || option.value }}</option>
@@ -68,6 +71,48 @@ export default {
     },
     iconClass () { return this.getIconClass(this.state) },
     unit () { return this.state.unit ? ' ' + this.state.unit : '' },
+    datetimeFormattedValue () {
+      switch (this.state.type) {
+        case 'datetime':
+          return this.$moment(this.state.currentValue).format('LLL')
+        case 'date':
+          return this.$moment(this.state.currentValue).format('LL')
+        case 'time':
+          return this.$moment(this.state.currentValue).format('LT')
+        case 'duration': {
+          try {
+            if (this.state.currentValue === 'P0D') {
+              return 'nulle'
+            }
+            const duration = this.$moment.duration(this.state.currentValue)
+            let result = ''
+            const units = ['y', 'M', 'd', 'h', 'm', 's']
+            const thresholds = { M: 30, d: 7, h: 24, m: 60, s: 60 }
+            for (let index = 0; index < units.length; index++) {
+              const mainUnit = units[index]
+              const durationMainUnit = duration.get(mainUnit)
+              if (durationMainUnit !== 0) {
+                result = this.$moment.duration(durationMainUnit, mainUnit).humanize(thresholds)
+                if (index < units.length) {
+                  const detailUnit = units[index + 1]
+                  const durationDetailUnit = duration.get(detailUnit)
+                  if (durationDetailUnit !== 0) {
+                    result += ` ${this.$moment.duration(durationDetailUnit, detailUnit).humanize(thresholds)}`
+                  }
+                }
+                break
+              }
+            }
+            return result
+          } catch (error) {
+            console.log(error)
+            return this.state.currentValue
+          }
+        }
+        default:
+          return null
+      }
+    },
     action () {
       const actions = this.getActionsByEquipmentId(this.equipmentId)
       const actionOn = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch_on')

@@ -8,7 +8,7 @@
       <div class="field is-narrow">
         <div class="control">
           <div class="select">
-            <select v-if="factType === 'numeric'" v-model="criteria.operator">
+            <select v-if="factType === 'numeric' || factType === 'duration'" v-model="criteria.operator">
               <option value="e">&equals;</option>
               <option value="ne">&ne;</option>
               <option value="gt">&gt;</option>
