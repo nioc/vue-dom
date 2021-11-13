@@ -30,10 +30,15 @@
       </div>
 
       <div class="field">
-        <p v-if="factType !== 'boolean'" class="control is-expanded">
-          <input v-if="factType === 'numeric'" v-model.number="criteria.value" class="input" type="number" required>
-          <input v-else v-model="criteria.value" class="input" type="text" required>
-        </p>
+        <div v-if="factType !== 'boolean'" class="field has-addons">
+          <div class="control is-expanded">
+            <input v-if="factType === 'numeric'" v-model.number="criteria.value" class="input" type="number" :placeholder="criteria.value === null ? 'null' : ''" required>
+            <input v-else v-model="criteria.value" class="input" type="text" :placeholder="criteria.value === null ? 'null' : ''" required>
+          </div>
+          <div v-if="criteria.value !== null" class="control">
+            <button class="button" style="height: 40px;width: 40px;" title="Valoriser la valeur à null" @click="criteria.value = null"><i class="fas fa-eraser" /></button>
+          </div>
+        </div>
       </div>
 
       <div class="buttons">
