@@ -17,6 +17,7 @@
                 <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
                 <i v-else-if="column.field==='isHistorized'" :class="{'fas fa-fw fa-history has-text-success': props.row.isHistorized}" :title="props.row.isVisible ? 'Historisé' : null" />
                 <time-ago v-else-if="column.field==='date' && props.row.date" :date="props.row.date" :drop-fixes="true" :title="props.row.date | moment('LLL')" />
+                <i v-else-if="column.field==='type'" :title="props.row.type" class="fa-fw" :class="getStateTypeClass(props.row.type)" />
                 <i v-else-if="column.field==='genericType'" :title="props.row.genericType" class="fa-fw" :class="getIconClass(props.row)" />
                 <span v-else>{{ props.row[column.field] }}</span>
               </template>
@@ -91,8 +92,13 @@ export default {
           sortable: true,
         },
         {
-          field: 'genericType',
+          field: 'type',
           label: 'Type',
+          sortable: true,
+        },
+        {
+          field: 'genericType',
+          label: 'Icône',
           sortable: true,
         },
         {

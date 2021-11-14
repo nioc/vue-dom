@@ -139,6 +139,27 @@ export const AdminMixin = {
           return type
       }
     },
+    getStateTypeClass (type) {
+      switch (type) {
+        case 'boolean':
+          return 'fa fa-toggle-off'
+        case 'numeric':
+          return 'fas fa-subscript'
+        case 'string':
+          return 'fas fa-quote-right'
+        case 'datetime':
+        case 'date':
+          return 'far fa-calendar-alt'
+        case 'time':
+          return 'far fa-clock'
+        case 'duration':
+          return 'fas fa-hourglass-half'
+        case 'object':
+          return 'fas fa-code'
+        default:
+          return 'fas fa-question'
+      }
+    },
     ...mapActions([
       'vxRefreshRooms',
       'vxSaveRoom',

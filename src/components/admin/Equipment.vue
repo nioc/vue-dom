@@ -154,6 +154,7 @@
                     <th>Id. logique</th>
                     <th>Visibilité</th>
                     <th>Type</th>
+                    <th>Icône</th>
                     <th>Dernière valeur</th>
                     <th>Dernière collecte</th>
                   </tr>
@@ -164,6 +165,7 @@
                     <td>{{ state.module }}</td>
                     <td>{{ state.logicalId }}</td>
                     <td><i class="fas fa-fw" :class="state.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="state.isVisible ? 'Visible' : 'Masqué'" /></td>
+                    <td :title="state.type"><i class="fa-fw" :class="getStateTypeClass(state.type)" /></td>
                     <td :title="state.genericType"><i class="fa-fw" :class="getIconClass(state)" /></td>
                     <td>{{ getFormattedStateCurrentValue(state) }} {{ state.unit }}</td>
                     <td>
@@ -196,6 +198,7 @@
                     <th>Id. logique</th>
                     <th>Visibilité</th>
                     <th>Type</th>
+                    <th>Icône</th>
                     <th>Retour d'état</th>
                   </tr>
                 </thead>
@@ -206,6 +209,7 @@
                     <td>{{ action.logicalId }}</td>
                     <td><i class="fas fa-fw" :class="action.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="action.isVisible ? 'Visible' : 'Masqué'" /></td>
                     <td :title="action.type"><i class="fa-fw" :class="getActionTypeClass(action.type)" /></td>
+                    <td :title="action.icon"><i class="fa-fw" :class="getIconClass(action)" /></td>
                     <td :title="action.stateFeedbackId">{{ getStateById(action.stateFeedbackId).name || action.stateFeedbackId }}</td>
                   </tr>
                 </tbody>

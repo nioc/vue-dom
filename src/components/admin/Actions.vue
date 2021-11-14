@@ -15,6 +15,7 @@
               <template #default="props">
                 <router-link v-if="column.field==='name'" :to="{name: 'admin-action', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
                 <span v-else-if="column.field==='typeClass'" :title="props.row.type"><i class="fa-fw" :class="props.row.typeClass" /></span>
+                <span v-else-if="column.field==='icon'" :title="props.row.icon"><i class="fa-fw" :class="props.row.icon" /></span>
                 <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
                 <i v-else-if="column.field==='isAsk'" class="fas fa-fw" :class="{'fa-comments has-text-success': props.row.isAsk}" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
                 <span v-else>{{ props.row[column.field] }}</span>
@@ -47,6 +48,7 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import { CmdMixin } from '@/mixins/Cmd'
 import { AdminMixin } from '@/mixins/Admin'
 
 export default {
@@ -56,6 +58,7 @@ export default {
   },
   mixins: [
     AdminMixin,
+    CmdMixin,
   ],
   data () {
     return {
@@ -91,6 +94,11 @@ export default {
           sortable: true,
         },
         {
+          field: 'icon',
+          label: 'Icône',
+          sortable: true,
+        },
+        {
           field: 'isVisible',
           label: 'Visibilité',
           sortable: true,
@@ -116,6 +124,7 @@ export default {
         const _action = Object.assign({}, action)
         _action.equipmentName = this.getEquipmentById(action.eqId).name || action.eqId
         _action.typeClass = this.getActionTypeClass(action.type)
+        _action.icon = this.getIconClass(action)
         _action.stateFeedback = Object.prototype.hasOwnProperty.call(this.states, action.stateFeedbackId) ? this.states[action.stateFeedbackId].name || action.stateFeedbackId : action.stateFeedbackId
         return _action
       })
