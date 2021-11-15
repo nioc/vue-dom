@@ -7,6 +7,7 @@ export const UserViewsMixin = {
     ...mapGetters([
       'getUserViewByCode',
     ]),
+    activeUserViews () { return this.userViewsList.filter((userView) => userView.isActive) },
   },
   methods: {
     ...mapActions(['vxRefreshUserViews']),

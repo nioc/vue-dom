@@ -16,12 +16,12 @@
             <b-menu-item v-for="room in ordered" :key="room.id" :to="{name: 'room', params: {id: room.id}}" :label="room.name" tag="router-link" />
           </b-menu-item>
 
-          <b-menu-item v-if="userViewsList.length" icon="binoculars fa-fw fa-mr">
+          <b-menu-item v-if="activeUserViews.length" icon="binoculars fa-fw fa-mr">
             <template slot="label" slot-scope="props">
               Vues
               <i class="is-pulled-right fa" :class="props.expanded ? 'fa-caret-down' : 'fa-caret-up'" />
             </template>
-            <b-menu-item v-for="userView in userViewsList" :key="userView.code" :to="{name: 'view', params: {code: userView.code}}" :label="userView.title" tag="router-link" />
+            <b-menu-item v-for="userView in activeUserViews" :key="userView.code" :to="{name: 'view', params: {code: userView.code}}" :label="userView.title" tag="router-link" />
           </b-menu-item>
 
           <b-menu-item v-if="tagsList.length" icon="tags fa-fw fa-mr">
