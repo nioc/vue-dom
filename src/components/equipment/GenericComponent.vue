@@ -65,6 +65,8 @@ export default {
             actionsHiddenList.push(actionSelect.id)
           }
           statesList.push(state.id)
+        } else if (state.type === 'datetime' || state.type === 'date' || state.type === 'time' || state.type === 'duration') {
+          statesList.push(state.id)
         }
       })
       // set visible actions
