@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <chart v-if="loaded" :chart-data="history" />
+    <chart v-if="loaded" :chart-data="history" :tooltip-callbacks="tooltipCallbacks" />
   </div>
 </template>
 
@@ -53,6 +53,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    dataType: {
+      type: String,
+      default: null,
+    },
   },
   data () {
     return {
@@ -61,6 +65,7 @@ export default {
       duration: 'PT24H',
       history: null,
       loaded: false,
+      tooltipCallbacks: undefined,
     }
   },
   computed: {
@@ -74,11 +79,27 @@ export default {
   methods: {
     async getHistory () {
       const history = await this.$Provider.getHistory(this.id, this.startDate, this.endDate)
+      let format = (point) => point.value
+      switch (this.dataType) {
+        case 'boolean': {
+          this.tooltipCallbacks = {
+            label: (context) => `${this.name}: ${context.raw ? 'Actif' : 'Inactif'}`,
+          }
+          break
+        }
+        case 'duration': {
+          format = (point) => this.$moment.duration(point.value).as('minutes')
+          this.tooltipCallbacks = {
+            label: (context) => `${this.name}: ${this.$moment.duration(context.raw, 'minutes').humanize()}`,
+          }
+          break
+        }
+      }
       this.history = {
         datasets: [
           {
             label: this.name,
-            data: history.map((point) => point.value),
+            data: history.map(format),
             steppedLine: this.hasSteps,
           },
         ],

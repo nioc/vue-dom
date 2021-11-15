@@ -17,6 +17,12 @@ export default {
       type: Object,
       required: true,
     },
+    tooltipCallbacks: {
+      type: Object,
+      default () {
+        return undefined
+      },
+    },
     options: {
       type: Object,
       required: false,
@@ -25,6 +31,9 @@ export default {
           plugins: {
             legend: {
               display: false,
+            },
+            tooltip: {
+              callbacks: this.tooltipCallbacks,
             },
           },
           maintainAspectRatio: false,
