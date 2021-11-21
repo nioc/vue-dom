@@ -78,6 +78,10 @@ export default {
   },
   methods: {
     async getHistory () {
+      if (this.duration !== null) {
+        this.startDate = this.$moment().subtract(this.$moment.duration(this.duration)).toDate()
+        this.endDate = this.$moment().toDate()
+      }
       const history = await this.$Provider.getHistory(this.id, this.startDate, this.endDate)
       let format = (point) => point.value
       switch (this.dataType) {
@@ -109,7 +113,6 @@ export default {
     },
     updateDates () {
       if (this.duration !== null) {
-        this.startDate = this.$moment().subtract(this.$moment.duration(this.duration)).toDate()
         this.getHistory()
       }
     },
