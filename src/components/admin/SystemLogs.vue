@@ -104,7 +104,7 @@
         </div>
       </div>
 
-      <b-table ref="LogsTable" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" @click="showLogDetails">
+      <b-table ref="LogsTable" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" :current-page.sync="currentPage" @click="showLogDetails">
         <b-table-column v-slot="props" field="service" label="">
           <i class="fas fa-fw" :class="props.row.serviceIcon" :title="props.row.service" />
         </b-table-column>
@@ -173,6 +173,7 @@ export default {
       lastLogsFetch: 0,
       lastLogsRead: 0,
       loggersLevel: [],
+      currentPage: 1,
     }
   },
   computed: {
@@ -235,6 +236,7 @@ export default {
           }
         })
         this.lastLogsFetch = new Date()
+        this.currentPage = 1
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
