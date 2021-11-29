@@ -85,6 +85,12 @@
             </div>
           </div>
 
+          <div class="field is-narrow is-flex">
+            <div class="control is-flex">
+              <b-switch v-model="search.isRemoteQuery" size="is-small" class="m-0" :title="`Recherche ${search.isRemoteQuery ? 'sur le serveur' : 'locale'}`"><span class="is-size-6 is-hidden-tablet">Recherche {{ search.isRemoteQuery ? 'sur le serveur' : 'locale' }}</span></b-switch>
+            </div>
+          </div>
+
           <div class="field is-narrow">
             <span class="buttons is-flex-wrap-nowrap">
               <button class="button is-primary" title="Rafraichir" @click="getLogs(true, true)">
@@ -160,6 +166,7 @@ export default {
         startDate: null,
         endDate: null,
         query: '',
+        isRemoteQuery: false,
       },
       logs: [],
       isLoading: false,
@@ -203,6 +210,9 @@ export default {
         }
         if (this.search.endDate !== null) {
           query.until = this.$moment(this.search.endDate).format()
+        }
+        if (this.search.isRemoteQuery) {
+          query.text = this.search.query
         }
         this.logs = await this.$Provider.getLogs(query)
         this.logs.forEach((log) => {
