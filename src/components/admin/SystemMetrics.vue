@@ -68,6 +68,9 @@
             <b-table-column v-slot="props" field="memory.usage" label="Mémoire (détail)" sortable numeric>
               {{ getHumanSizeCei(props.row.memory.usage, 'o', 1) }} / {{ getHumanSizeCei(props.row.memory.size, 'o', 1) }}
             </b-table-column>
+            <b-table-column v-slot="props" field="status" label="Statut" sortable>
+              {{ props.row.status }}
+            </b-table-column>
           </b-table>
         </div>
       </div>
