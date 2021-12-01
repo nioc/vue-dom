@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler } from 'chart.js'
+import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend } from 'chart.js'
 import 'chartjs-adapter-moment'
 
-Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler)
+Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend)
 
 export default {
   name: 'Chart',
@@ -31,6 +31,7 @@ export default {
           plugins: {
             legend: {
               display: false,
+              position: 'bottom',
             },
             tooltip: {
               callbacks: this.tooltipCallbacks,
@@ -99,6 +100,20 @@ export default {
       const ctx = this.$refs.canvas.getContext('2d')
       if (this.chart) {
         this.chart.destroy()
+      }
+      if (this.chartData.datasets.length > 1) {
+        this.options.plugins.legend.display = true
+        this.options.elements.line.fill = false
+        delete this.options.scales.yLeft
+        delete this.options.scales.yRight
+        if (this.chartData.datasets.some((dataset) => dataset.yAxisID === 'yRight')) {
+          this.options.scales.yLeft = {}
+          this.options.scales.yRight = {
+            type: 'linear',
+            position: 'right',
+            display: true,
+          }
+        }
       }
       this.chart = new Chart(ctx, {
         type: 'line',

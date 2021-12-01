@@ -9,6 +9,8 @@
           <li v-for="card in userView.cards" :key="card.title">
             <equipment v-if="card.type==='equipment'" :id="card.id" />
 
+            <user-view-history v-else-if="card.type==='history'" :card="card" />
+
             <article v-else class="card mb-4">
               <header class="card-header">
                 <p class="card-header-title">{{ card.title }}</p>
@@ -36,6 +38,7 @@
 import Breadcrumb from '@/components/Breadcrumb'
 import Equipment from '@/components/Equipment'
 import Info from '@/components/Info'
+import UserViewHistory from '@/components/UserViewHistory'
 import { UserViewsMixin } from '@/mixins/UserViews'
 import { createNamespacedHelpers } from 'vuex'
 const { mapGetters } = createNamespacedHelpers('data')
@@ -46,6 +49,7 @@ export default {
     Breadcrumb,
     Equipment,
     Info,
+    UserViewHistory,
   },
   mixins: [UserViewsMixin],
   props: {

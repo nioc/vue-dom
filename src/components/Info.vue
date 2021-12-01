@@ -29,7 +29,7 @@
         <button class="delete" title="Fermer" @click="hasHistoryDisplayed = false" />
       </div>
       <div class="message-body mb-3 p-2">
-        <history :id="state.id" :name="state.name" :has-steps="state.type === 'boolean'" :data-type="state.type" />
+        <history :series="series" />
       </div>
     </div>
   </div>
@@ -180,6 +180,13 @@ export default {
           break
       }
       return trendClass
+    },
+    series () {
+      return [{
+        id: this.state.id,
+        name: this.state.name,
+        dataType: this.state.type,
+      }]
     },
   },
   created () {

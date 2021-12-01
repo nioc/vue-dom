@@ -41,21 +41,9 @@ export default {
     Chart,
   },
   props: {
-    id: {
-      type: String,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    hasSteps: {
-      type: Boolean,
-      default: false,
-    },
-    dataType: {
-      type: String,
-      default: null,
+    series: {
+      type: Array,
+      default: undefined,
     },
   },
   data () {
@@ -63,7 +51,9 @@ export default {
       startDate: null,
       endDate: null,
       duration: 'PT24H',
-      history: null,
+      history: {
+        datasets: [],
+      },
       loaded: false,
       tooltipCallbacks: undefined,
     }
@@ -82,32 +72,45 @@ export default {
         this.startDate = this.$moment().subtract(this.$moment.duration(this.duration)).toDate()
         this.endDate = this.$moment().toDate()
       }
-      const history = await this.$Provider.getHistory(this.id, this.startDate, this.endDate)
-      let format = (point) => point.value
-      switch (this.dataType) {
-        case 'boolean': {
-          this.tooltipCallbacks = {
-            label: (context) => `${this.name}: ${context.raw ? 'Actif' : 'Inactif'}`,
-          }
-          break
-        }
-        case 'duration': {
-          format = (point) => this.$moment.duration(point.value).as('minutes')
-          this.tooltipCallbacks = {
-            label: (context) => `${this.name}: ${this.$moment.duration(context.raw, 'minutes').humanize()}`,
-          }
-          break
-        }
+      if (this.series === undefined || this.series.length === 0 || this.series[0].id === undefined) {
+        console.error('History called without series')
+        return
       }
+      const datasets = []
+      await Promise.all(this.series.map(async (serie) => {
+        const history = await this.$Provider.getHistory(serie.id, this.startDate, this.endDate)
+        let format = (point) => {
+          return {
+            x: point.date,
+            y: point.value,
+          }
+        }
+        switch (serie.dataType) {
+          case 'boolean': {
+            this.tooltipCallbacks = {
+              label: (context) => `${serie.name}: ${context.raw ? 'Actif' : 'Inactif'}`,
+            }
+            break
+          }
+          case 'duration': {
+            format = (point) => this.$moment.duration(point.value).as('minutes')
+            this.tooltipCallbacks = {
+              label: (context) => `${serie.name}: ${this.$moment.duration(context.raw, 'minutes').humanize()}`,
+            }
+            break
+          }
+        }
+        datasets.push({
+          label: serie.name,
+          data: history.map(format),
+          stepped: serie.dataType === 'boolean',
+          backgroundColor: serie.backgroundColor,
+          borderColor: serie.borderColor,
+          yAxisID: serie.yAxisID || 'yLeft',
+        })
+      }))
       this.history = {
-        datasets: [
-          {
-            label: this.name,
-            data: history.map(format),
-            steppedLine: this.hasSteps,
-          },
-        ],
-        labels: history.map((point) => point.date),
+        datasets,
       }
       this.loaded = true
     },

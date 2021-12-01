@@ -134,6 +134,7 @@
                   <select v-model="cardType">
                     <option value="equipment">Équipement</option>
                     <option value="custom">Carte sur mesure</option>
+                    <option value="history">Historique</option>
                   </select>
                 </div>
               </div>
@@ -275,7 +276,7 @@ export default {
       const card = {
         type: this.cardType,
       }
-      if (this.cardType === 'custom') {
+      if (['custom', 'history'].includes(this.cardType)) {
         card.elements = []
       }
       this.userView.cards.push(card)

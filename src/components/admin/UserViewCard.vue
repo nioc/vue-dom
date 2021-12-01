@@ -27,6 +27,27 @@
       </div>
     </div>
 
+    <div v-if="card.type === 'history'" class="field-body">
+
+      <div class="field is-narrow is-required">
+        <div class="control has-icons-left">
+          <input v-model="card.title" class="input" type="text" placeholder="Titre de la carte">
+          <span class="icon is-small is-left">
+            <i class="fas fa-tag" />
+          </span>
+        </div>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary is-light" title="Ajouter un historique d'état" @click="addStateHistory">
+            <span class="icon"><i class="fa fa-plus-circle" /></span>
+            <span>Historique</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div v-if="card.type === 'equipment'" class="field-body">
       <div class="field">
         <div class="control">
@@ -78,6 +99,16 @@ export default {
         id: null,
         parentId: null,
         label: null,
+      })
+    },
+    addStateHistory () {
+      this.card.elements.push({
+        type: 'stateHistory',
+        id: null,
+        dataType: 'numeric',
+        label: null,
+        color: null,
+        isMainYAxis: true,
       })
     },
   },
