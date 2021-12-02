@@ -43,6 +43,7 @@
     "normalizr": "^3.6.1",
     "register-service-worker": "^1.7.2",
     "spdx-license-list": "^6.4.0",
+    "verte": "^0.0.12",
     "video.js": "^7.15.4",
     "vue": "^2.6.14",
     "vue-moment": "^4.1.0",
