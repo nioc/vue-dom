@@ -560,8 +560,8 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
         const history = await jsonRpcCall('cmd::getHistory', params)
         return history.map((point) => {
           return {
-            value: point.value,
-            date: Vue.moment(point.datetime),
+            value: parseFloat(point.value),
+            date: Vue.moment(point.datetime).valueOf(),
           }
         })
       } catch (error) {

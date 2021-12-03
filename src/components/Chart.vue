@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend } from 'chart.js'
+import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation } from 'chart.js'
 import 'chartjs-adapter-moment'
 
-Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend)
+Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation)
 
 export default {
   name: 'Chart',
@@ -28,6 +28,7 @@ export default {
       required: false,
       default () {
         return {
+          parsing: false,
           plugins: {
             legend: {
               display: false,
@@ -35,6 +36,12 @@ export default {
             },
             tooltip: {
               callbacks: this.tooltipCallbacks,
+            },
+            decimation: {
+              enabled: true,
+              algorithm: 'lttb',
+              samples: 300,
+              threshold: 300,
             },
           },
           maintainAspectRatio: false,

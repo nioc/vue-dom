@@ -88,14 +88,19 @@ export default {
         switch (serie.dataType) {
           case 'boolean': {
             this.tooltipCallbacks = {
-              label: (context) => `${serie.name}: ${context.raw ? 'Actif' : 'Inactif'}`,
+              label: (context) => `${serie.name}: ${context.raw.y ? 'Actif' : 'Inactif'}`,
             }
             break
           }
           case 'duration': {
-            format = (point) => this.$moment.duration(point.value).as('minutes')
+            format = (point) => {
+              return {
+                x: point.date,
+                y: this.$moment.duration(point.value).as('minutes'),
+              }
+            }
             this.tooltipCallbacks = {
-              label: (context) => `${serie.name}: ${this.$moment.duration(context.raw, 'minutes').humanize()}`,
+              label: (context) => `${serie.name}: ${this.$moment.duration(context.raw.y, 'minutes').humanize()}`,
             }
             break
           }
