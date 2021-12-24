@@ -616,6 +616,12 @@ body > .autocomplete .dropdown-menu {
         background-color: $grey-light;
       }
 
+      &.has-medium-tag:before {
+        top: 1.8em;
+        left: 0.5em;
+        width: 1.0em;
+      }
+
       &:after {
         position: absolute;
         top: 0;
@@ -627,8 +633,16 @@ body > .autocomplete .dropdown-menu {
         background-color: $grey-light;
       }
 
+      &.has-medium-tag:after {
+        left: 0.5em;
+      }
+
       &:last-child:after {
         height: 1.2em;
+      }
+
+      &.has-medium-tag:last-child:after {
+        height: 1.8em;
       }
     }
   }

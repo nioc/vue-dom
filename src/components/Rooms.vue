@@ -11,9 +11,7 @@
             <span class="icon is-small is-left"><i class="fas fa-search" /></span>
           </p>
         </div>
-        <div class="columns is-multiline">
-          <room-tile v-for="room in ordered" :id="room.id" :key="room.id" />
-        </div>
+        <rooms-tree :rooms="roomsTree" class="mb-5 tree" />
       </div>
     </div>
   </section>
@@ -22,24 +20,29 @@
 <script>
 import { RoomsMixin } from '@/mixins/Rooms'
 import { SummaryMixin } from '@/mixins/Summary'
+import { RoomsTreeMixin } from '@/mixins/RoomsTree'
 import Breadcrumb from '@/components/Breadcrumb'
-import RoomTile from '@/components/RoomTile'
+import RoomsTree from '@/components/RoomsTree'
 
 export default {
   name: 'Rooms',
   components: {
     Breadcrumb,
-    RoomTile,
+    RoomsTree,
   },
-  mixins: [RoomsMixin, SummaryMixin],
+  mixins: [
+    RoomsMixin,
+    SummaryMixin,
+    RoomsTreeMixin,
+  ],
   data () {
     return {
       search: '',
     }
   },
   computed: {
-    ordered () { return this.roomsOrdered.filter((room) => this.getRoomVisiblesEquipment(room.id).length > 0 && room.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
     summary () { return this.getRoomSummaryById(0) },
+    roomsTree () { return this.getRoomsTree(this.roomsRaw.filter((room) => room.isVisible), this.search) },
   },
 }
 </script>

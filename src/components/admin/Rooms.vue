@@ -29,24 +29,7 @@
 import Breadcrumb from '@/components/Breadcrumb'
 import RoomsTree from '@/components/admin/RoomsTree'
 import { AdminMixin } from '@/mixins/Admin'
-const cloneDeep = require('lodash.clonedeep')
-
-function setLevel (rooms, parentId, search) {
-  const childs = []
-  rooms
-    .filter((room) => room.parentId === parentId)
-    .forEach((childRoom) => {
-      childRoom.childs = setLevel(rooms, childRoom.id, search)
-      if (childRoom.childs.length === 0) {
-        if (Object.prototype.hasOwnProperty.call(childRoom, 'name') && childRoom.name && childRoom.name.toLowerCase().indexOf(search) > -1) {
-          childs.push(childRoom)
-        }
-      } else {
-        childs.push(childRoom)
-      }
-    })
-  return childs
-}
+import { RoomsTreeMixin } from '@/mixins/RoomsTree'
 
 export default {
   name: 'Rooms',
@@ -56,6 +39,7 @@ export default {
   },
   mixins: [
     AdminMixin,
+    RoomsTreeMixin,
   ],
   data () {
     return {
@@ -63,7 +47,7 @@ export default {
     }
   },
   computed: {
-    roomsTree () { return setLevel(Object.values(cloneDeep(this.rooms)), null, this.search.toLowerCase()) },
+    roomsTree () { return this.getRoomsTree(this.rooms, this.search.toLowerCase()) },
   },
   methods: {
     async getRooms () {
