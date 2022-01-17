@@ -11,15 +11,13 @@
               <th>Date</th>
               <th>Source</th>
               <th>Message</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="notification in notifications" :key="notification.id">
+            <tr v-for="notification in notifications" :key="notification.id" :class="{'has-text-danger': notification.level === 'error', 'has-text-warning-mid-dark': notification.level === 'warn'}">
               <td>{{ notification.date | moment('LL LTS') }}</td>
-              <td>{{ notification.plugin }}</td>
+              <td>{{ notification.source }}</td>
               <td>{{ notification.message }}</td>
-              <td>{{ notification.action }}</td>
             </tr>
           </tbody>
         </table>

@@ -28,6 +28,13 @@ $slider-thumb-border: 1px solid $primary;
   color: $primary !important
 }
 
+.navbar-item .b-tooltip.is-bottom .tooltip-content {
+  right: 0;
+  left: auto;
+  -webkit-transform: unset;
+  transform: unset;
+}
+
 .sidebar-content .router-link-exact-active :not(.notification-counter) {
   color: $primary !important
 }

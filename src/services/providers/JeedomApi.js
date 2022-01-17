@@ -638,6 +638,8 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
           const txt = document.createElement('textarea')
           txt.innerHTML = log.message
           log.message = txt.value
+          log.source = log.plugin
+          log.level = null
           return log
         })
       } catch (error) {
