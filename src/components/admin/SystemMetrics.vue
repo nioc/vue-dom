@@ -52,6 +52,45 @@
         </div>
       </div>
 
+      <div v-if="health" class="field mb-5">
+        <div class="control">
+          <label class="label">Connexions à la base de données</label>
+          <system-metric :label="`Nombre de connexions actives (${health.dbConnections.active}) / ouvertes (${health.dbConnections.current}) / totales (${health.dbConnections.totalCreated})`" :value="health.dbConnections.active" :max="health.dbConnections.current" />
+          <b-table :data="health.dbConnections.clients" striped hoverable :mobile-cards="false" sort-icon="menu-up" :default-sort="['active', 'desc']">
+            <b-table-column v-slot="props" field="ip" label="Adresse IP" sortable>
+              <span class="is-family-code">{{ props.row.ip }}</span>
+            </b-table-column>
+            <b-table-column v-slot="props" field="active" label="Connexions actives" sortable numeric>
+              {{ props.row.active }}
+            </b-table-column>
+            <b-table-column v-slot="props" field="current" label="Connexions ouvertes" sortable numeric>
+              {{ props.row.current }}
+            </b-table-column>
+          </b-table>
+        </div>
+      </div>
+
+      <div v-if="health" class="field mb-5">
+        <div class="control">
+          <label class="label">Connexions au cache de Pub/Sub</label>
+          <div class="columns is-vcentered is-centered">
+            <div class="column has-text-centered is-narrow" title="Publishers">
+              <div v-for="(publisher, index) in health.eventsConnections.publishers" :key="'pub-'+index" class="mb-3">
+                <span>{{ publisher.name }} ({{ publisher.ip }})</span>
+              </div>
+            </div>
+            <div class="column has-text-centered is-narrow mx-5">
+              <i class="fas fa-long-arrow-alt-right fa-2x" />
+            </div>
+            <div class="column has-text-centered is-narrow" title="Subscribers">
+              <div v-for="(subscriber, index) in health.eventsConnections.subscribers" :key="'sub-'+index" class="mb-3">
+                <span>{{ subscriber.name }} ({{ subscriber.ip }}) : {{ subscriber.sub }} sub &amp; {{ subscriber.psub }} psub</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div v-if="metrics && metrics.containers" class="field mb-5">
         <div class="control">
           <label class="label">Conteneurs Docker</label>
