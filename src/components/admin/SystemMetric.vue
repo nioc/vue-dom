@@ -2,7 +2,7 @@
   <div class="mb-3">
     <span class="is-flex is-justify-content-space-between">
       <span :title="labelTitle">{{ label }}</span>
-      <span class="has-text-weight-semi-bold">{{ humanValue }}</span>
+      <span class="has-text-weight-semi-bold">{{ humanValueCalc }}</span>
     </span>
     <progress class="progress" :class="colorClass" :value="value" :max="max" :title="percent + ' %'">{{ percent }} %</progress>
   </div>
@@ -27,9 +27,7 @@ export default {
     },
     humanValue: {
       type: String,
-      default: function () {
-        return this.value.toString()
-      },
+      default: undefined,
     },
     max: {
       type: Number,
@@ -50,6 +48,7 @@ export default {
   },
   computed: {
     percent () { return Math.round(100 * this.value / this.max) },
+    humanValueCalc () { return this.humanValue || this.value.toString() },
     colorClass () {
       if (this.type) {
         return this.type
