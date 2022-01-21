@@ -7,6 +7,7 @@ var custom = {
     jsonRpcApiUrl: 'https://10.0.0.0/core/api/jeeApi.php',
     websocketUrl: null,
     // websocketUrl: 'wss://10.0.0.0/socket/',
+    readDelay: 5000,
     statisticsPeriod: 86400000,
     trendPeriod: 7200000,
     trendThreshold: 0.1,

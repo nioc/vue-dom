@@ -12,6 +12,7 @@ export default {
           provider.jsonRpcApiUrl,
           provider.websocketUrl,
           options.store,
+          provider.readDelay,
           provider.statisticsPeriod,
           provider.trendPeriod,
           provider.trendThreshold,

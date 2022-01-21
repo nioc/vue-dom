@@ -1,8 +1,7 @@
 import axios from 'axios'
 
-const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, store = null, statisticsPeriod = 86400000, trendPeriod = 3600000, trendThreshold = 0.1) {
+const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, store = null, readDelay = 5000, statisticsPeriod = 86400000, trendPeriod = 3600000, trendThreshold = 0.1) {
   const socketMaxTry = 3
-  const readDelay = 5000
   let apiKey = null
   let websocket = null
   let timerId = null

@@ -33,6 +33,7 @@ COPY ./docker/998-update-local.js.sh /docker-entrypoint.d/998-update-local.js.sh
 ENV TITLE=
 ENV PROVIDER=
 ENV COMPONENTS=
+ENV EVENTS_READ_DELAY=
 
 # tag image with commit SHA and date
 ARG GIT_COMMIT=unspecified

@@ -33,6 +33,11 @@ update_localjs() {
     }; /$TAIL/d; d }" $LOCALJS
   fi
 
+  # set events listener fallback read delay
+  if [ "$EVENTS_READ_DELAY" != "" ]; then
+    sed -i "s|readDelay: 5000|readDelay: $EVENTS_READ_DELAY|g" $LOCALJS
+  fi
+
   # clean file (remove identation, comment lines and blank lines)
   sed -i 's|^[[:blank:]]*||g' $LOCALJS
   sed -i 's|^[[:blank:]]*//.*||g' $LOCALJS
