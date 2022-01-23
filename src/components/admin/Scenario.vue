@@ -49,6 +49,13 @@
             </div>
 
             <div class="field">
+              <label class="label">Exécution synchrone</label>
+              <div class="control">
+                <b-switch v-model="scenario.isSync">{{ scenario.isSync ? 'Synchrone (traitements des éléments l\'un après l\'autre)' : 'Asynchrone (traitements des éléments en parallèle)' }}</b-switch>
+              </div>
+            </div>
+
+            <div class="field">
               <label class="label">Déclencheur</label>
               <div class="control">
                 <table class="table is-striped is-vertical-centered">
