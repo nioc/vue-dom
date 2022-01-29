@@ -58,57 +58,59 @@
             <div class="field">
               <label class="label">Déclencheur</label>
               <div class="control">
-                <table class="table is-striped is-vertical-centered">
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Valeur</th>
-                      <th />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(trigger, index) in scenario.triggers" :key="trigger.id">
-                      <td>{{ (trigger.type === 'state') ? 'Etat' : 'Date' }}</td>
-                      <td v-if="trigger.type === 'state'">{{ getStateFullName(trigger.value) }}</td>
-                      <td v-else>{{ trigger.value }}</td>
-                      <td>
-                        <button class="button is-danger is-light" title="Supprimer le déclencheur" @click="removeTrigger(index)">
-                          <span class="icon"><i class="fa fa-trash" /></span>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="field is-narrow">
-                          <div class="control">
-                            <div class="select">
-                              <select v-model="newTrigger.type">
-                                <option value="state">Etat</option>
-                                <option value="datetime">Date</option>
-                              </select>
+                <div class="table-container">
+                  <table class="table is-striped is-vertical-centered">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Valeur</th>
+                        <th />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(trigger, index) in scenario.triggers" :key="trigger.id">
+                        <td>{{ (trigger.type === 'state') ? 'Etat' : 'Date' }}</td>
+                        <td v-if="trigger.type === 'state'">{{ getStateFullName(trigger.value) }}</td>
+                        <td v-else>{{ trigger.value }}</td>
+                        <td>
+                          <button class="button is-danger is-light" title="Supprimer le déclencheur" @click="removeTrigger(index)">
+                            <span class="icon"><i class="fa fa-trash" /></span>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="field is-narrow">
+                            <div class="control">
+                              <div class="select">
+                                <select v-model="newTrigger.type">
+                                  <option value="state">Etat</option>
+                                  <option value="datetime">Date</option>
+                                </select>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="field is-required">
-                          <options-autocomplete v-if="newTrigger.type === 'state'" placeholder="Etat de déclenchement" :value="newTrigger.value" @select="selectState" />
-                          <div v-else class="control has-icons-left">
-                            <input v-model="newTrigger.dateValue" class="input" type="text" placeholder="ss mm hh jj MMM JJJ">
-                            <span class="icon is-small is-left">
-                              <i class="fa fa-bell" />
-                            </span>
+                        </td>
+                        <td>
+                          <div class="field is-required">
+                            <options-autocomplete v-if="newTrigger.type === 'state'" placeholder="Etat de déclenchement" :value="newTrigger.value" @select="selectState" />
+                            <div v-else class="control has-icons-left">
+                              <input v-model="newTrigger.dateValue" class="input" type="text" placeholder="ss mm hh jj MMM JJJ">
+                              <span class="icon is-small is-left">
+                                <i class="fa fa-bell" />
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <button class="button is-primary is-light" title="Ajouter un déclencheur" @click="addTrigger">
-                          <span class="icon"><i class="fa fa-plus-circle" /></span>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                        </td>
+                        <td>
+                          <button class="button is-primary is-light" title="Ajouter un déclencheur" @click="addTrigger">
+                            <span class="icon"><i class="fa fa-plus-circle" /></span>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 

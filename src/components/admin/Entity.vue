@@ -61,62 +61,64 @@
             </p>
           </header>
           <section class="card-content">
-            <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
-              <thead>
-                <tr>
-                  <th class="is-required">Option</th>
-                  <th>Alias</th>
-                  <th class="is-button" />
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(option, index) in entity.options" :key="index">
-                  <td>
-                    <editable :value="option.key" icon-class="fa fa-cube" placeholder="Salon" :is-emptiable="false" @update="(value) => option.key = value" />
-                  </td>
-                  <td>
-                    <div v-for="(alias, indexAlias) in option.aliases" :key="indexAlias" class="field is-required">
-                      <editable read-only-class="py-2" :value="alias.value" icon-class="fa fa-cube" placeholder="Salon" is-removable @remove="() => updateAlias(option, indexAlias, '')" @update="(value) => updateAlias(option, indexAlias, value)" />
-                    </div>
-                    <button class="button is-primary is-light" title="Ajouter un alias" @click="addAlias(option)">
-                      <span class="icon"><i class="fa fa-plus-circle" /></span>
-                    </button>
-                  </td>
-                  <td>
-                    <button class="button is-danger is-light" title="Supprimer l'option" @click="removeOption(index)">
-                      <span class="icon"><i class="fa fa-trash" /></span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="field is-required">
-                      <div class="control has-icons-left">
-                        <input v-model="newOption.key" class="input" type="text" placeholder="Salon" @keyup.enter="addOption">
-                        <span class="icon is-small is-left">
-                          <i class="fa fa-cube" />
-                        </span>
+            <div class="table-container">
+              <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
+                <thead>
+                  <tr>
+                    <th class="is-required">Option</th>
+                    <th>Alias</th>
+                    <th class="is-button" />
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(option, index) in entity.options" :key="index">
+                    <td>
+                      <editable :value="option.key" icon-class="fa fa-cube" placeholder="Salon" :is-emptiable="false" @update="(value) => option.key = value" />
+                    </td>
+                    <td>
+                      <div v-for="(alias, indexAlias) in option.aliases" :key="indexAlias" class="field is-required">
+                        <editable read-only-class="py-2" :value="alias.value" icon-class="fa fa-cube" placeholder="Salon" is-removable @remove="() => updateAlias(option, indexAlias, '')" @update="(value) => updateAlias(option, indexAlias, value)" />
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div v-for="(alias, index) in newOption.aliases" :key="index" class="field">
-                      <div class="control has-icons-left">
-                        <input v-model="alias.value" class="input" type="text" placeholder="Salon" @keyup.enter="addOption" @input="handleAlias(alias.value, index)">
-                        <span class="icon is-small is-left">
-                          <i class="fa fa-cube" />
-                        </span>
+                      <button class="button is-primary is-light" title="Ajouter un alias" @click="addAlias(option)">
+                        <span class="icon"><i class="fa fa-plus-circle" /></span>
+                      </button>
+                    </td>
+                    <td>
+                      <button class="button is-danger is-light" title="Supprimer l'option" @click="removeOption(index)">
+                        <span class="icon"><i class="fa fa-trash" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="field is-required">
+                        <div class="control has-icons-left">
+                          <input v-model="newOption.key" class="input" type="text" placeholder="Salon" @keyup.enter="addOption">
+                          <span class="icon is-small is-left">
+                            <i class="fa fa-cube" />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <button :disabled="newOption.key === ''" class="button is-primary is-light" title="Ajouter une option" @click="addOption">
-                      <span class="icon"><i class="fa fa-plus-circle" /></span>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    </td>
+                    <td>
+                      <div v-for="(alias, index) in newOption.aliases" :key="index" class="field">
+                        <div class="control has-icons-left">
+                          <input v-model="alias.value" class="input" type="text" placeholder="Salon" @keyup.enter="addOption" @input="handleAlias(alias.value, index)">
+                          <span class="icon is-small is-left">
+                            <i class="fa fa-cube" />
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <button :disabled="newOption.key === ''" class="button is-primary is-light" title="Ajouter une option" @click="addOption">
+                        <span class="icon"><i class="fa fa-plus-circle" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </section>
         </div>
 
@@ -130,28 +132,30 @@
             </a>
           </header>
           <section class="card-content">
-            <table v-if="relatedIntents.length" class="table is-striped is-fullwidth is-vertical-centered">
-              <thead>
-                <tr>
-                  <th>Clé</th>
-                  <th>Description</th>
-                  <th class="has-text-centered">Statut</th>
-                  <th class="has-text-centered">Énoncés</th>
-                  <th class="has-text-centered">Réponses</th>
-                  <th class="has-text-centered">Traitements</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="intent in relatedIntents" :key="intent.id">
-                  <td><router-link :to="{name: 'admin-intent', params: {id: intent.id}}">{{ intent.key }}</router-link></td>
-                  <td>{{ intent.description }}</td>
-                  <td class="has-text-centered"><i class="fas fa-fw" :class="intent.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="intent.isActive ? 'Actif' : 'Inactif'" /></td>
-                  <td class="has-text-centered">{{ intent.utterances.length }}</td>
-                  <td class="has-text-centered">{{ intent.answers.length }}</td>
-                  <td class="has-text-centered">{{ intent.actions.length }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div v-if="relatedIntents.length" class="table-container">
+              <table class="table is-striped is-fullwidth is-vertical-centered">
+                <thead>
+                  <tr>
+                    <th>Clé</th>
+                    <th>Description</th>
+                    <th class="has-text-centered">Statut</th>
+                    <th class="has-text-centered">Énoncés</th>
+                    <th class="has-text-centered">Réponses</th>
+                    <th class="has-text-centered">Traitements</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="intent in relatedIntents" :key="intent.id">
+                    <td><router-link :to="{name: 'admin-intent', params: {id: intent.id}}">{{ intent.key }}</router-link></td>
+                    <td>{{ intent.description }}</td>
+                    <td class="has-text-centered"><i class="fas fa-fw" :class="intent.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="intent.isActive ? 'Actif' : 'Inactif'" /></td>
+                    <td class="has-text-centered">{{ intent.utterances.length }}</td>
+                    <td class="has-text-centered">{{ intent.answers.length }}</td>
+                    <td class="has-text-centered">{{ intent.actions.length }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <span v-else>Cette entité n'est utilisée dans aucune intention</span>
           </section>
         </b-collapse>

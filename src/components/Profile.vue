@@ -59,24 +59,26 @@
                 </button>
               </div>
             </div>
-            <table class="table is-fullwidth">
-              <thead>
-                <tr>
-                  <th>Date d'autorisation</th>
-                  <th>User agent</th>
-                  <th>Adresse IP</th>
-                  <th class="has-text-centered">Révoquer</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="token in tokens" :key="token.id">
-                  <td>{{ token.issuedDate | moment('LLLL') }}</td>
-                  <td>{{ token.userAgent }}</td>
-                  <td>{{ token.ip }}</td>
-                  <td class="has-text-centered"><button class="button is-danger is-light is-small" @click="deleteToken(token.id)"><i class="fa fa-trash" /></button></td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-container">
+              <table class="table is-fullwidth">
+                <thead>
+                  <tr>
+                    <th>Date d'autorisation</th>
+                    <th>User agent</th>
+                    <th>Adresse IP</th>
+                    <th class="has-text-centered">Révoquer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="token in tokens" :key="token.id">
+                    <td>{{ token.issuedDate | moment('LLLL') }}</td>
+                    <td>{{ token.userAgent }}</td>
+                    <td>{{ token.ip }}</td>
+                    <td class="has-text-centered"><button class="button is-danger is-light is-small" @click="deleteToken(token.id)"><i class="fa fa-trash" /></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </section>
 
         </div>

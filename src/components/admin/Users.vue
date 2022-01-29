@@ -12,7 +12,7 @@
             <span class="icon is-small is-left"><i class="fas fa-search" /></span>
           </p>
         </div>
-        <div class="table-wrapper">
+        <div class="table-container">
           <table class="table is-striped is-fullwidth is-vertical-centered">
             <thead>
               <tr>

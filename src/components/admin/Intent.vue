@@ -68,43 +68,45 @@
             </p>
           </header>
           <section class="card-content">
-            <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
-              <thead>
-                <tr>
-                  <th class="is-required">Énoncé</th>
-                  <th class="is-button" />
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(utterance, index) in intent.utterances" :key="index">
-                  <td>
-                    <editable :value="utterance.value" icon-class="far fa-comment-dots" :placeholder="placeholderUtterance" :title="titleUtterance" :is-emptiable="false" @update="(value) => utterance.value = value" />
-                  </td>
-                  <td>
-                    <button class="button is-danger is-light" title="Supprimer l'énoncé" @click="removeUtterance(index)">
-                      <span class="icon"><i class="fa fa-trash" /></span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="field is-required">
-                      <div class="control has-icons-left">
-                        <input v-model="newUtterance.value" class="input" type="text" :placeholder="placeholderUtterance" :title="titleUtterance" @keyup.enter="addUtterance">
-                        <span class="icon is-small is-left">
-                          <i class="far fa-comment-dots" />
-                        </span>
+            <div class="table-container">
+              <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
+                <thead>
+                  <tr>
+                    <th class="is-required">Énoncé</th>
+                    <th class="is-button" />
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(utterance, index) in intent.utterances" :key="index">
+                    <td>
+                      <editable :value="utterance.value" icon-class="far fa-comment-dots" :placeholder="placeholderUtterance" :title="titleUtterance" :is-emptiable="false" @update="(value) => utterance.value = value" />
+                    </td>
+                    <td>
+                      <button class="button is-danger is-light" title="Supprimer l'énoncé" @click="removeUtterance(index)">
+                        <span class="icon"><i class="fa fa-trash" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="field is-required">
+                        <div class="control has-icons-left">
+                          <input v-model="newUtterance.value" class="input" type="text" :placeholder="placeholderUtterance" :title="titleUtterance" @keyup.enter="addUtterance">
+                          <span class="icon is-small is-left">
+                            <i class="far fa-comment-dots" />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <button :disabled="newUtterance.value === ''" class="button is-primary is-light" title="Ajouter un énoncé" @click="addUtterance">
-                      <span class="icon"><i class="fa fa-plus-circle" /></span>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    </td>
+                    <td>
+                      <button :disabled="newUtterance.value === ''" class="button is-primary is-light" title="Ajouter un énoncé" @click="addUtterance">
+                        <span class="icon"><i class="fa fa-plus-circle" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </section>
         </div>
 
@@ -118,27 +120,29 @@
             </a>
           </header>
           <section class="card-content">
-            <table v-if="relatedEntities.length" class="table is-striped is-fullwidth is-vertical-centered">
-              <thead>
-                <tr>
-                  <th>Clé</th>
-                  <th>Description</th>
-                  <th class="has-text-centered">Statut</th>
-                  <th class="has-text-centered">Options</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(entity, index) in relatedEntities" :key="index">
-                  <td>
-                    <router-link v-if="entity.id" :to="{name: 'admin-entity', params: {id: entity.id}}">{{ entity.key }}</router-link>
-                    <span v-else class="has-text-danger">{{ entity.key }}</span>
-                  </td>
-                  <td>{{ entity.description }}</td>
-                  <td class="has-text-centered"><i class="fas fa-fw" :class="entity.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="entity.isActive ? 'Actif' : 'Inactif'" /></td>
-                  <td class="has-text-centered">{{ entity.options ? entity.options.length : '' }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div v-if="relatedEntities.length" class="table-container">
+              <table class="table is-striped is-fullwidth is-vertical-centered">
+                <thead>
+                  <tr>
+                    <th>Clé</th>
+                    <th>Description</th>
+                    <th class="has-text-centered">Statut</th>
+                    <th class="has-text-centered">Options</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(entity, index) in relatedEntities" :key="index">
+                    <td>
+                      <router-link v-if="entity.id" :to="{name: 'admin-entity', params: {id: entity.id}}">{{ entity.key }}</router-link>
+                      <span v-else class="has-text-danger">{{ entity.key }}</span>
+                    </td>
+                    <td>{{ entity.description }}</td>
+                    <td class="has-text-centered"><i class="fas fa-fw" :class="entity.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="entity.isActive ? 'Actif' : 'Inactif'" /></td>
+                    <td class="has-text-centered">{{ entity.options ? entity.options.length : '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <span v-else>Aucune entité dans les énoncés de l'intention</span>
           </section>
         </b-collapse>
@@ -150,57 +154,59 @@
             </p>
           </header>
           <section class="card-content">
-            <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
-              <thead>
-                <tr>
-                  <th class="is-required">Template</th>
-                  <th>Condition(s)</th>
-                  <th class="is-button" />
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(answer, index) in intent.answers" :key="index">
-                  <td>
-                    <editable :value="answer.template" icon-class="fa fa-reply" :placeholder="placeholderAnswerTemplate" :title="titleAnswerTemplate" :is-emptiable="false" @update="(value) => answer.template = value" />
-                  </td>
-                  <td>
-                    <editable :value="answer.opts" tag="code" icon-class="fa fa-check" :placeholder="placeholderAnswerOpts" :title="titleAnswerOpts" @update="(value) => answer.opts = value" />
-                  </td>
-                  <td>
-                    <button class="button is-danger is-light" title="Supprimer la réponse" @click="removeAnswer(index)">
-                      <span class="icon"><i class="fa fa-trash" /></span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="field is-required">
-                      <div class="control has-icons-left">
-                        <input v-model="newAnswer.template" class="input" type="text" :placeholder="'Il fait {{value}}°C dans {{room}}'" title="Les templates de réponse peuvent inclure des entités ou les mots clés &quot;value&quot; et &quot;unit&quot; encadrés par des doubles accolades qui seront fusionnés lors de la réponse" @keyup.enter="addAnswer">
-                        <span class="icon is-small is-left">
-                          <i class="fa fa-reply" />
-                        </span>
+            <div class="table-container">
+              <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
+                <thead>
+                  <tr>
+                    <th class="is-required">Template</th>
+                    <th>Condition(s)</th>
+                    <th class="is-button" />
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(answer, index) in intent.answers" :key="index">
+                    <td>
+                      <editable :value="answer.template" icon-class="fa fa-reply" :placeholder="placeholderAnswerTemplate" :title="titleAnswerTemplate" :is-emptiable="false" @update="(value) => answer.template = value" />
+                    </td>
+                    <td>
+                      <editable :value="answer.opts" tag="code" icon-class="fa fa-check" :placeholder="placeholderAnswerOpts" :title="titleAnswerOpts" @update="(value) => answer.opts = value" />
+                    </td>
+                    <td>
+                      <button class="button is-danger is-light" title="Supprimer la réponse" @click="removeAnswer(index)">
+                        <span class="icon"><i class="fa fa-trash" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="field is-required">
+                        <div class="control has-icons-left">
+                          <input v-model="newAnswer.template" class="input" type="text" :placeholder="'Il fait {{value}}°C dans {{room}}'" title="Les templates de réponse peuvent inclure des entités ou les mots clés &quot;value&quot; et &quot;unit&quot; encadrés par des doubles accolades qui seront fusionnés lors de la réponse" @keyup.enter="addAnswer">
+                          <span class="icon is-small is-left">
+                            <i class="fa fa-reply" />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="field is-required">
-                      <div class="control has-icons-left">
-                        <input v-model="newAnswer.opts" class="input" type="text" placeholder="room !== undefined &amp;&amp; room !== 'Salon'" title="Les conditions permettent de filtrer les réponses proposées" @keyup.enter="addAnswer">
-                        <span class="icon is-small is-left">
-                          <i class="fa fa-check" />
-                        </span>
+                    </td>
+                    <td>
+                      <div class="field is-required">
+                        <div class="control has-icons-left">
+                          <input v-model="newAnswer.opts" class="input" type="text" placeholder="room !== undefined &amp;&amp; room !== 'Salon'" title="Les conditions permettent de filtrer les réponses proposées" @keyup.enter="addAnswer">
+                          <span class="icon is-small is-left">
+                            <i class="fa fa-check" />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <button :disabled="newAnswer.template === ''" class="button is-primary is-light" title="Ajouter une réponse" @click="addAnswer">
-                      <span class="icon"><i class="fa fa-plus-circle" /></span>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    </td>
+                    <td>
+                      <button :disabled="newAnswer.template === ''" class="button is-primary is-light" title="Ajouter une réponse" @click="addAnswer">
+                        <span class="icon"><i class="fa fa-plus-circle" /></span>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </section>
         </div>
 
@@ -211,79 +217,81 @@
             </p>
           </header>
           <section class="card-content">
-            <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
-              <thead>
-                <tr>
-                  <th class="is-required">Fonction</th>
-                  <th>Paramètres(s)</th>
-                  <th class="is-button" />
-                  <th class="is-button" />
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(action, index) in intent.actions" :key="index">
-                  <td>
-                    <editable :value="action.key" type="select" :options="actionOptions" icon-class="fa fa-check" @update="(value) => action.key = value" />
-                  </td>
-                  <td>
-                    <div v-for="(parameter, indexParameter) in action.parameters" :key="indexParameter">
-                      <div>
-                        <editable :value="parameter.value" tag="code" icon-class="fa fa-code" read-only-class="py-2" :placeholder="getIntentActionParameters(action.key, indexParameter)" :title="titleActionParameter" is-removable @remove="() => updateParameter(action, indexParameter, '')" @update="(value) => updateParameter(action, indexParameter, value)" />
-                      </div>
-                    </div>
-                    <button class="button is-primary is-light" title="Ajouter un paramètre" @click="addParameter(action)">
-                      <span class="icon"><i class="fa fa-plus-circle" /></span>
-                    </button>
-                  </td>
-                  <td>
-                    <div class="buttons">
-                      <button v-if="index>0" class="button is-light" title="Monter le traitement" @click="up(index)">
-                        <span class="icon"><i class="fa fa-angle-double-up" /></span>
-                      </button>
-                      <button v-if="index<intent.actions.length-1" class="button is-light" title="Descendre le traitement" @click="down(index)">
-                        <span class="icon"><i class="fa fa-angle-double-down" /></span>
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <button class="button is-danger is-light" title="Supprimer le traitement" @click="removeAction(index)">
-                      <span class="icon"><i class="fa fa-trash" /></span>
-                    </button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <div class="field is-narrow">
-                      <div class="control">
-                        <div class="select">
-                          <select v-model="newAction.key">
-                            <option v-for="option in actionOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-                          </select>
+            <div class="table-container">
+              <table class="table is-striped is-fullwidth is-vertical-centered has-buttons">
+                <thead>
+                  <tr>
+                    <th class="is-required">Fonction</th>
+                    <th>Paramètres(s)</th>
+                    <th class="is-button" />
+                    <th class="is-button" />
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(action, index) in intent.actions" :key="index">
+                    <td>
+                      <editable :value="action.key" type="select" :options="actionOptions" icon-class="fa fa-check" @update="(value) => action.key = value" />
+                    </td>
+                    <td>
+                      <div v-for="(parameter, indexParameter) in action.parameters" :key="indexParameter">
+                        <div>
+                          <editable :value="parameter.value" tag="code" icon-class="fa fa-code" read-only-class="py-2" :placeholder="getIntentActionParameters(action.key, indexParameter)" :title="titleActionParameter" is-removable @remove="() => updateParameter(action, indexParameter, '')" @update="(value) => updateParameter(action, indexParameter, value)" />
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td title="Les paramètres passés à la fonction dépendent ce celle-ci, ils peuvent indiquer le nom de l'entité à exploiter, la clé de résumé à lire, ...">
-                    <div v-for="(parameter, index) in newAction.parameters" :key="index" class="field is-required">
-                      <div class="control has-icons-left">
-                        <input v-model="parameter.value" class="input" type="text" :placeholder="getIntentActionParameters(newAction.key, index)" @keyup.enter="addAction" @input="handleActionParameters(parameter.value, index)">
-                        <span class="icon is-small is-left">
-                          <i class="fa fa-code" />
-                        </span>
+                      <button class="button is-primary is-light" title="Ajouter un paramètre" @click="addParameter(action)">
+                        <span class="icon"><i class="fa fa-plus-circle" /></span>
+                      </button>
+                    </td>
+                    <td>
+                      <div class="buttons">
+                        <button v-if="index>0" class="button is-light" title="Monter le traitement" @click="up(index)">
+                          <span class="icon"><i class="fa fa-angle-double-up" /></span>
+                        </button>
+                        <button v-if="index<intent.actions.length-1" class="button is-light" title="Descendre le traitement" @click="down(index)">
+                          <span class="icon"><i class="fa fa-angle-double-down" /></span>
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td />
-                  <td>
-                    <button type="submit" :disabled="newAction.key === ''" class="button is-primary is-light" title="Ajouter un traitement" @click="addAction">
-                      <span class="icon"><i class="fa fa-plus-circle" /></span>
-                    </button>
-                  </td>
-                </tr>
+                    </td>
+                    <td>
+                      <button class="button is-danger is-light" title="Supprimer le traitement" @click="removeAction(index)">
+                        <span class="icon"><i class="fa fa-trash" /></span>
+                      </button>
+                    </td>
+                  </tr>
 
-              </tbody>
-            </table>
+                  <tr>
+                    <td>
+                      <div class="field is-narrow">
+                        <div class="control">
+                          <div class="select">
+                            <select v-model="newAction.key">
+                              <option v-for="option in actionOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td title="Les paramètres passés à la fonction dépendent ce celle-ci, ils peuvent indiquer le nom de l'entité à exploiter, la clé de résumé à lire, ...">
+                      <div v-for="(parameter, index) in newAction.parameters" :key="index" class="field is-required">
+                        <div class="control has-icons-left">
+                          <input v-model="parameter.value" class="input" type="text" :placeholder="getIntentActionParameters(newAction.key, index)" @keyup.enter="addAction" @input="handleActionParameters(parameter.value, index)">
+                          <span class="icon is-small is-left">
+                            <i class="fa fa-code" />
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td />
+                    <td>
+                      <button type="submit" :disabled="newAction.key === ''" class="button is-primary is-light" title="Ajouter un traitement" @click="addAction">
+                        <span class="icon"><i class="fa fa-plus-circle" /></span>
+                      </button>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
           </section>
         </div>
 

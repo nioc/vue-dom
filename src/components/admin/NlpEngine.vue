@@ -48,7 +48,7 @@
       <div v-if="test.result.classifications" class="field">
         <label class="label">Intentions</label>
         <div class="control has-icons-left">
-          <div class="table-wrapper">
+          <div class="table-container">
             <table class="table is-fullwidth is-striped is-vertical-centered is-bordered">
               <thead>
                 <tr>
@@ -72,7 +72,7 @@
       <div v-if="test.result.answers" class="field">
         <label class="label">Templates de réponse possibles</label>
         <div class="control has-icons-left">
-          <div class="table-wrapper">
+          <div class="table-container">
             <table class="table is-fullwidth is-striped is-vertical-centered is-bordered">
               <thead>
                 <tr>
@@ -94,7 +94,7 @@
       <div v-if="test.result.entities" class="field">
         <label class="label">Entités identifiées</label>
         <div class="control has-icons-left">
-          <div v-if="test.result.entities.length" class="table-wrapper">
+          <div v-if="test.result.entities.length" class="table-container">
             <table class="table is-fullwidth is-striped is-vertical-centered is-bordered">
               <thead>
                 <tr>
@@ -123,7 +123,7 @@
       <div v-if="test.result.actions" class="field">
         <label class="label">Traitements réalisés</label>
         <div class="control has-icons-left">
-          <div v-if="test.result.actions.length" class="table-wrapper">
+          <div v-if="test.result.actions.length" class="table-container">
             <table class="table is-fullwidth is-striped is-vertical-centered is-bordered">
               <thead>
                 <tr>

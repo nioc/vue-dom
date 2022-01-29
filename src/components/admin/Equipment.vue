@@ -145,7 +145,7 @@
             </p>
           </header>
           <section class="card-content">
-            <div class="table-wrapper">
+            <div class="table-container">
               <table class="table is-fullwidth is-striped">
                 <thead>
                   <tr>
@@ -189,7 +189,7 @@
             </p>
           </header>
           <section class="card-content">
-            <div class="table-wrapper">
+            <div class="table-container">
               <table class="table is-fullwidth is-striped">
                 <thead>
                   <tr>

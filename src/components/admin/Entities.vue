@@ -1,7 +1,7 @@
 <template>
   <section>
     <b-loading v-model="isLoading" :is-full-page="false" />
-    <div v-if="entities.length" class="table-wrapper">
+    <div v-if="entities.length" class="table-container">
       <table class="table is-striped is-fullwidth is-vertical-centered">
         <thead>
           <tr>

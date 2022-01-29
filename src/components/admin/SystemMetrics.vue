@@ -80,7 +80,8 @@
               </div>
             </div>
             <div class="column has-text-centered is-narrow mx-5">
-              <i class="fas fa-long-arrow-alt-right fa-2x" />
+              <i class="fas fa-long-arrow-alt-right fa-2x is-hidden-mobile" />
+              <i class="fas fa-long-arrow-alt-down fa-2x is-hidden-tablet" />
             </div>
             <div class="column has-text-centered is-narrow" title="Subscribers">
               <div v-for="(subscriber, index) in health.eventsConnections.subscribers" :key="'sub-'+index" class="mb-3">

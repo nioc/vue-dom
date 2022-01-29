@@ -5,22 +5,24 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <table v-if="notifications.length" class="table is-striped is-fullwidth">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Source</th>
-              <th>Message</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="notification in notifications" :key="notification.id" :class="{'has-text-danger': notification.level === 'error', 'has-text-warning-mid-dark': notification.level === 'warn'}">
-              <td>{{ notification.date | moment('LL LTS') }}</td>
-              <td>{{ notification.source }}</td>
-              <td>{{ notification.message }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-if="notifications.length" class="table-container">
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Source</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="notification in notifications" :key="notification.id" :class="{'has-text-danger': notification.level === 'error', 'has-text-warning-mid-dark': notification.level === 'warn'}">
+                <td>{{ notification.date | moment('LL LTS') }}</td>
+                <td>{{ notification.source }}</td>
+                <td>{{ notification.message }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div v-else class="notification">
           Pas de notifications
         </div>
