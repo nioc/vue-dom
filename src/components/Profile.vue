@@ -72,7 +72,20 @@
                 <tbody>
                   <tr v-for="token in tokens" :key="token.id">
                     <td>{{ token.issuedDate | moment('LLLL') }}</td>
-                    <td>{{ token.userAgent }}</td>
+                    <td :title="token.userAgent.ua">
+                      <span class="mr-3 is-block-mobile is-inline-block-tablet" style="white-space: nowrap;">
+                        <i :class="token.userAgent.browser.iconClass" />
+                        {{ token.userAgent.browser.name }}{{ token.userAgent.browser.version ? ' '+token.userAgent.browser.version : '' }}
+                      </span>
+                      <span class="mr-3 is-block-mobile is-inline-block-tablet" style="white-space: nowrap;">
+                        <i :class="token.userAgent.os.iconClass" />
+                        {{ token.userAgent.os.name }}{{ token.userAgent.os.version ? ' '+token.userAgent.os.version : '' }}
+                      </span>
+                      <span v-if="token.userAgent.device && token.userAgent.device.type && token.userAgent.device.type === 'mobile'" class="is-block-mobile is-inline-block-tablet" style="white-space: nowrap;">
+                        <i class="fas fa-fw fa-mobile-alt" />
+                        {{ token.userAgent.device.vendor }}{{ token.userAgent.device.model ? ' '+token.userAgent.device.model : '' }}
+                      </span>
+                    </td>
                     <td>{{ token.ip }}</td>
                     <td class="has-text-centered"><button class="button is-danger is-light is-small" @click="deleteToken(token.id)"><i class="fa fa-trash" /></button></td>
                   </tr>
@@ -125,7 +138,72 @@ export default {
     },
     async getTokens () {
       try {
-        this.tokens = await this.$Provider.getMyTokens()
+        this.tokens = (await this.$Provider.getMyTokens())
+          .map((token) => {
+            switch (token.userAgent.browser.name.toLowerCase()) {
+              case 'firefox':
+                token.userAgent.browser.iconClass = 'fa-fw fab fa-firefox-browser'
+                break
+              case window.custom.provider.system:
+                token.userAgent.browser.iconClass = 'fa-fw fa fa-vue-dom'
+                break
+              case 'chrome':
+              case 'chrome webview':
+              case 'chromium':
+                token.userAgent.browser.iconClass = 'fa-fw fab fa-chrome'
+                break
+              case 'mobile safari':
+              case 'safari':
+                token.userAgent.browser.iconClass = 'fa-fw fab fa-safari'
+                break
+              case 'edge':
+                token.userAgent.browser.iconClass = 'fa-fw fab fa-edge'
+                break
+              case 'ie':
+                token.userAgent.browser.iconClass = 'fa-fw fab fa-internet-explorer'
+                break
+              default:
+                token.userAgent.browser.iconClass = 'fa-fw far fa-question-circle'
+            }
+            switch (token.userAgent.os.name) {
+              case 'Ubuntu':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-ubuntu'
+                break
+              case 'Linux':
+              case 'Debian':
+              case 'Unix':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-linux'
+                break
+              case 'Android':
+              case 'Android-x86':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-android'
+                break
+              case 'iOS':
+              case 'Mac OS':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-apple'
+                break
+              case 'Windows':
+              case 'Windows Phone':
+              case 'Windows Mobile':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-windows'
+                break
+              case 'CentOS':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-centos'
+                break
+              case 'SUSE':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-suse'
+                break
+              case 'RedHat':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-redhat'
+                break
+              case 'Fedora':
+                token.userAgent.os.iconClass = 'fa-fw fab fa-fedora'
+                break
+              default:
+                token.userAgent.os.iconClass = 'fa-fw far fa-question-circle'
+            }
+            return token
+          })
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des tokens<br/>${error.message}` })
       }
