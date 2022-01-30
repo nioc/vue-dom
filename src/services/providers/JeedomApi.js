@@ -261,6 +261,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       if (timerId) {
         clearTimeout(timerId)
         store.commit('app/setEventsListenerStatus', false)
+        store.commit('app/setEventsListenerIsPolling', true)
       }
     },
 
@@ -273,6 +274,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
         handleEventsResponse(events)
         if (isPolling) {
           timerId = setTimeout(function () { this.openEventsListenerFallback(true) }.bind(this), readDelay)
+          store.commit('app/setEventsListenerIsPolling', true)
         }
         return
       } catch (error) {

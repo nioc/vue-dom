@@ -10,6 +10,7 @@ const getDefaultState = () => {
 const state = {
   hasNetwork: false,
   hasEventsListenerOpen: false,
+  hasPollingEventsListener: false,
   hasSidebarOpened: false,
   ...getDefaultState(),
 }
@@ -27,9 +28,14 @@ const mutations = {
     state.roles = payload.roles
   },
 
-  // store websocket status
+  // store events listener status
   setEventsListenerStatus (state, payload) {
     state.hasEventsListenerOpen = payload
+  },
+
+  // store events listener mode (true: polling, false: websocket)
+  setEventsListenerIsPolling (state, payload) {
+    state.hasPollingEventsListener = payload
   },
 
   // store connectivity status
