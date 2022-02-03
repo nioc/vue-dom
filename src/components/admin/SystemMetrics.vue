@@ -100,16 +100,20 @@
               <span class="is-family-code">{{ props.row.name }}</span>
             </b-table-column>
             <b-table-column v-slot="props" field="cpu" label="CPU" sortable numeric>
-              {{ props.row.cpu }}%
+              <span :class="{'has-text-danger': props.row.cpu > cpuThreshold}">{{ props.row.cpu }}%</span>
             </b-table-column>
             <b-table-column v-slot="props" field="memory.percent" label="Mémoire" sortable numeric>
-              {{ props.row.memory.percent }}%
+              <span :class="{'has-text-danger': props.row.memory.percent > memThreshold}">{{ props.row.memory.percent }}%</span>
             </b-table-column>
             <b-table-column v-slot="props" field="memory.usage" label="Mémoire (détail)" sortable numeric>
-              {{ getHumanSizeCei(props.row.memory.usage, 'o', 1) }} / {{ getHumanSizeCei(props.row.memory.size, 'o', 1) }}
+              <span :class="{'has-text-danger': props.row.memory.percent > memThreshold}">{{ getHumanSizeCei(props.row.memory.usage, 'o', 1) }}<span class="has-text-weight-light"> / {{ getHumanSizeCei(props.row.memory.size, 'o', 1) }}</span></span>
             </b-table-column>
-            <b-table-column v-slot="props" field="status" label="Statut" sortable>
-              {{ props.row.status }}
+            <b-table-column v-slot="props" field="status" label="Statut" sortable :custom-sort="sortContainersByStatus">
+              <span :title="props.row.rawStatus" style="white-space: nowrap;">
+                <i class="mr-1 fas fa-fw fa-power-off" :class="props.row.isActive ? 'has-text-success' :'has-text-danger'" />
+                <span class="has-text-weight-light">{{ props.row.durationHumanized }}</span>
+                <i v-if="props.row.healthClass" class="ml-3 fas fa-fw" :class="props.row.healthClass" />
+              </span>
             </b-table-column>
           </b-table>
         </div>
@@ -147,13 +151,54 @@ export default {
       isLoading: false,
       metrics: null,
       health: null,
+      memThreshold: 60,
+      cpuThreshold: 20,
     }
   },
   methods: {
     async getSystemMetrics () {
       this.isLoading = true
       try {
-        this.metrics = await this.$Provider.getSystemMetrics()
+        const metrics = await this.$Provider.getSystemMetrics()
+        metrics.containers.forEach(container => {
+          container.healthClass = null
+          container.duration = null
+          container.rawStatus = container.status
+          if (container.status) {
+            // handle status
+            if (container.status.indexOf('Up ') === 0) {
+              container.isActive = true
+              container.status = container.status.replace(/^Up /, '')
+            } else if (container.status.indexOf('Exited ') > -1) {
+              container.isActive = false
+              container.status = container.status.replace(/Exited \(\d+\) (.*)/, '$1')
+            }
+            // handle healthcheck status
+            if (container.status.indexOf('(healthy)') > -1) {
+              container.healthClass = 'fa-heartbeat has-text-success'
+              container.status = container.status.replace(' (healthy)', '')
+            } else if (container.status.indexOf('(unhealthy)') > -1) {
+              container.healthClass = 'fa-heartbeat has-text-danger'
+              container.status = container.status.replace(' (unhealthy)', '')
+            } else if (container.status.indexOf('(health: starting)') > -1) {
+              container.healthClass = 'fa-heartbeat has-text-warning-mid-dark'
+              container.status = container.status.replace(' (health: starting)', '')
+            } else if (container.status.indexOf('(Paused)') > -1) {
+              container.healthClass = 'fa-pause has-text-warning-mid-dark'
+              container.status = container.status.replace(' (Paused)', '')
+            }
+            // format duration
+            container.status = container.status.replace('About ', '').replace(/^an /, '1 ').replace(/^a /, '1 ')
+            try {
+              const matches = /(\d+) (\w+)/.exec(container.status)
+              const duration = this.$moment.duration(matches[1], matches[2])
+              container.duration = this.$moment.duration(duration).asMinutes()
+              container.durationHumanized = this.$moment.duration(duration).humanize()
+            } catch (error) {
+            }
+          }
+        })
+        this.metrics = metrics
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
@@ -163,6 +208,12 @@ export default {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
       this.isLoading = false
+    },
+    sortContainersByStatus (a, b, isAsc) {
+      if (a.isActive !== b.isActive) {
+        return isAsc ? (a.isActive ? -1 : 1) : a.isActive ? 1 : -1
+      }
+      return isAsc ? a.duration - b.duration : b.duration - a.duration
     },
   },
 }
