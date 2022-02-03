@@ -21,6 +21,13 @@ export default {
   computed: {
     ...mapState(['hasEventsListenerOpen', 'hasNetwork', 'hasPollingEventsListener']),
   },
+  beforeMount () {
+    // expose events listener functions to global for outside calls
+    window.vueDomEventsListener = {
+      open: () => this.openEventsListener(new Event('openEventsListener')),
+      close: () => this.closeEventsListener(new Event('closeEventsListener')),
+    }
+  },
   methods: {
     openEventsListener (e) {
       e.preventDefault()
