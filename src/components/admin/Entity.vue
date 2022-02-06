@@ -495,7 +495,7 @@ export default {
           .filter((intent) => intent.utterances
             .some((utterance) => utterance.value.indexOf(`%${this.entity.key}%`) !== -1),
           )
-          .sort((a, b) => a.key > b.key)
+          .sort((a, b) => a.key > b.key ? 1 : -1)
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

@@ -51,7 +51,7 @@ export default {
     async getEntities () {
       this.isLoading = true
       try {
-        this.entities = (await this.$Provider.getEntities()).sort((a, b) => a.key > b.key)
+        this.entities = (await this.$Provider.getEntities()).sort((a, b) => a.key > b.key ? 1 : -1)
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }

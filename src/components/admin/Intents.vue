@@ -55,7 +55,7 @@ export default {
     async getIntents () {
       this.isLoading = true
       try {
-        this.intents = (await this.$Provider.getIntents()).sort((a, b) => a.key > b.key)
+        this.intents = (await this.$Provider.getIntents()).sort((a, b) => a.key > b.key ? 1 : -1)
       } catch (error) {
         this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
       }
