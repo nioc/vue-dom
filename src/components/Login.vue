@@ -67,6 +67,12 @@ export default {
     },
     ...mapState(['hasNetwork']),
   },
+  beforeMount () {
+    // expose login function to global for outside calls
+    window.vueDomLogin = {
+      loginWithAuthentication: (login, authentication, remember) => this.loginWithAuthentication(login, authentication, remember),
+    }
+  },
   mounted () {
     // remove navbar spacing
     document.body.classList.remove('has-navbar-fixed-top')
@@ -81,6 +87,26 @@ export default {
       this.isLoading = true
       try {
         await Auth.login(this.credentials.login, this.credentials.password, this.credentials.remember)
+        // Auth successful, redirect to requested page of home by default
+        if (this.$route.query.redirect !== undefined) {
+          this.$router.replace(this.$route.query.redirect)
+          return
+        }
+        this.$router.replace({ name: 'home' })
+      } catch (error) {
+        // Auth failed, display error message
+        this.$buefy.toast.open({
+          message: error.message,
+          type: 'is-danger',
+          position: 'is-bottom',
+        })
+      }
+      this.isLoading = false
+    },
+    async loginWithAuthentication (login, authentication, remember) {
+      this.isLoading = true
+      try {
+        await Auth.loginWithPreviousAuthentication(login, authentication, remember)
         // Auth successful, redirect to requested page of home by default
         if (this.$route.query.redirect !== undefined) {
           this.$router.replace(this.$route.query.redirect)

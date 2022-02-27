@@ -40,19 +40,26 @@ export default {
     store.dispatch('clear')
   },
 
-  // return stored user (login and api key)
+  // get stored user (login and credentials) and login with
   async restoreUser () {
     try {
       const storageKey = `${custom.provider.system}-user`
       const user = JSON.parse(localStorage.getItem(storageKey))
       if (user) {
-        const authentication = await setAuthentication(user.login, user.authentication)
-        // update stored user
-        const storageKey = `${custom.provider.system}-user`
-        localStorage.setItem(storageKey, JSON.stringify({ login: user.login, authentication }))
+        this.loginWithPreviousAuthentication(user.login, user.authentication, true)
       }
     } catch (e) {
       console.error('Error during restore user', e)
+    }
+  },
+
+  // login with a previous authentication and store it if requested
+  async loginWithPreviousAuthentication (login, providedAuthentication, remember) {
+    const authentication = await setAuthentication(login, providedAuthentication)
+    if (remember) {
+      // update stored user
+      const storageKey = `${custom.provider.system}-user`
+      localStorage.setItem(storageKey, JSON.stringify({ login, authentication }))
     }
   },
 }
