@@ -66,27 +66,18 @@
                     <th>Date d'autorisation</th>
                     <th>User agent</th>
                     <th>Adresse IP</th>
+                    <th>Date de dernière utilisation</th>
                     <th class="has-text-centered">Révoquer</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="token in tokens" :key="token.id">
-                    <td>{{ token.issuedDate | moment('LLLL') }}</td>
+                    <td><time :datetime="token.issuedDate">{{ token.issuedDate | moment('LLLL') }}</time></td>
                     <td :title="token.userAgent.ua">
-                      <span class="mr-3 is-block-mobile is-inline-block-tablet" style="white-space: nowrap;">
-                        <i :class="token.userAgent.browser.iconClass" />
-                        {{ token.userAgent.browser.name }}{{ token.userAgent.browser.version ? ' '+token.userAgent.browser.version : '' }}
-                      </span>
-                      <span class="mr-3 is-block-mobile is-inline-block-tablet" style="white-space: nowrap;">
-                        <i :class="token.userAgent.os.iconClass" />
-                        {{ token.userAgent.os.name }}{{ token.userAgent.os.version ? ' '+token.userAgent.os.version : '' }}
-                      </span>
-                      <span v-if="token.userAgent.device && token.userAgent.device.type && token.userAgent.device.type === 'mobile'" class="is-block-mobile is-inline-block-tablet" style="white-space: nowrap;">
-                        <i class="fas fa-fw fa-mobile-alt" />
-                        {{ token.userAgent.device.vendor }}{{ token.userAgent.device.model ? ' '+token.userAgent.device.model : '' }}
-                      </span>
+                      <user-agent :user-agent-string="token.userAgent" />
                     </td>
                     <td>{{ token.ip }}</td>
+                    <td><time v-if="token.lastUse" :datetime="token.lastUse" @click="refreshTokenUsesForModal = token.uses">{{ token.lastUse | moment('LLLL') }}</time></td>
                     <td class="has-text-centered"><button class="button is-danger is-light is-small" @click="deleteToken(token.id)"><i class="fa fa-trash" /></button></td>
                   </tr>
                 </tbody>
@@ -95,6 +86,39 @@
           </section>
 
         </div>
+
+        <div v-if="refreshTokenUsesForModal" class="modal is-active">
+          <div class="modal-background" />
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Utilisation du refresh token</p>
+              <button class="delete" aria-label="close" @click="refreshTokenUsesForModal = null" />
+            </header>
+            <section class="modal-card-body">
+              <div class="table-container">
+                <table class="table is-fullwidth">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>User agent</th>
+                      <th>Adresse IP</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="refreshTokenUse in refreshTokenUsesForModal" :key="refreshTokenUse.date">
+                      <td><time :datetime="refreshTokenUse.date">{{ refreshTokenUse.date | moment('LLLL') }}</time></td>
+                      <td :title="refreshTokenUse.userAgent.ua">
+                        <user-agent :user-agent-string="refreshTokenUse.userAgent" />
+                      </td>
+                      <td>{{ refreshTokenUse.ip }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -102,6 +126,7 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb'
+import UserAgent from '@/components/UserAgent'
 import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState } = createNamespacedHelpers('app')
@@ -110,6 +135,7 @@ export default {
   name: 'Profile',
   components: {
     Breadcrumb,
+    UserAgent,
   },
   mixins: [
     UnsavedChangesGuardMixin,
@@ -118,6 +144,7 @@ export default {
     return {
       user: {},
       tokens: [],
+      refreshTokenUsesForModal: null,
     }
   },
   computed: {
@@ -139,68 +166,12 @@ export default {
     async getTokens () {
       try {
         this.tokens = (await this.$Provider.getMyTokens())
+          .sort((a, b) => this.$moment(b.issuedDate) - this.$moment(a.issuedDate))
           .map((token) => {
-            switch (token.userAgent.browser.name.toLowerCase()) {
-              case 'firefox':
-                token.userAgent.browser.iconClass = 'fa-fw fab fa-firefox-browser'
-                break
-              case window.custom.provider.system:
-                token.userAgent.browser.iconClass = 'fa-fw fa fa-vue-dom'
-                break
-              case 'chrome':
-              case 'chrome webview':
-              case 'chromium':
-                token.userAgent.browser.iconClass = 'fa-fw fab fa-chrome'
-                break
-              case 'mobile safari':
-              case 'safari':
-                token.userAgent.browser.iconClass = 'fa-fw fab fa-safari'
-                break
-              case 'edge':
-                token.userAgent.browser.iconClass = 'fa-fw fab fa-edge'
-                break
-              case 'ie':
-                token.userAgent.browser.iconClass = 'fa-fw fab fa-internet-explorer'
-                break
-              default:
-                token.userAgent.browser.iconClass = 'fa-fw far fa-question-circle'
-            }
-            switch (token.userAgent.os.name) {
-              case 'Ubuntu':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-ubuntu'
-                break
-              case 'Linux':
-              case 'Debian':
-              case 'Unix':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-linux'
-                break
-              case 'Android':
-              case 'Android-x86':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-android'
-                break
-              case 'iOS':
-              case 'Mac OS':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-apple'
-                break
-              case 'Windows':
-              case 'Windows Phone':
-              case 'Windows Mobile':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-windows'
-                break
-              case 'CentOS':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-centos'
-                break
-              case 'SUSE':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-suse'
-                break
-              case 'RedHat':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-redhat'
-                break
-              case 'Fedora':
-                token.userAgent.os.iconClass = 'fa-fw fab fa-fedora'
-                break
-              default:
-                token.userAgent.os.iconClass = 'fa-fw far fa-question-circle'
+            // get last use date
+            token.lastUse = null
+            if (Object.prototype.hasOwnProperty.call(token, 'uses') && token.uses.length > 0) {
+              token.lastUse = token.uses.sort((a, b) => this.$moment(b.date) - this.$moment(a.date))[0].date
             }
             return token
           })

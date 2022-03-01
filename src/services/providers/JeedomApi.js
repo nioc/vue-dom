@@ -454,6 +454,11 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       }
     },
 
+    getBrowsersList () {
+      return [
+      ]
+    },
+
     // execute a command
     async executeAction (actionId, options) {
       const params = { id: actionId }
