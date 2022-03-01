@@ -57,7 +57,7 @@ export default {
   created () {
     this.breadcrumbItems = [
       { link: { name: 'rooms' }, icon: 'fa-home', text: 'Pièces' },
-      { link: { name: 'rooms', params: { id: this.room.id } }, icon: 'fa-cube', text: this.room.name, isActive: true },
+      { link: { name: 'rooms', params: { id: this.room.id } }, icon: this.room.icon ? this.room.icon : 'fas fa-cube', text: this.room.name, isActive: true },
     ]
   },
 }

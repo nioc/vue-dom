@@ -13,7 +13,7 @@
               <i class="is-pulled-right fa" :class="props.expanded ? 'fa-caret-down' : 'fa-caret-up'" />
             </template>
             <b-menu-item :to="{name: 'rooms'}" label="Tous" tag="router-link" />
-            <b-menu-item v-for="room in ordered" :key="room.id" :to="{name: 'room', params: {id: room.id}}" :label="room.name" tag="router-link" />
+            <b-menu-item v-for="room in ordered" :key="room.id" :to="{name: 'room', params: {id: room.id}}" :label="room.name" :icon="'fa-fw fa-mr ' + (room.icon ? room.icon : 'fas fa-cube')" tag="router-link" />
           </b-menu-item>
 
           <b-menu-item v-if="activeUserViews.length" icon="binoculars fa-fw fa-mr">

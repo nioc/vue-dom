@@ -24,6 +24,22 @@
             </div>
 
             <div class="field">
+              <label class="label">Icône</label>
+              <div class="field has-addons">
+                <div class="control has-icons-left is-expanded">
+                  <input v-model="room.icon" class="input" type="text" placeholder="Icône Font-Awesome de visualisation (fa fa-home, fas fa-smile-o)" @focus="isIconPickerVisible=true" @blur="isIconPickerVisible=false">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-pencil-alt" />
+                  </span>
+                </div>
+                <div v-if="room.icon" class="control">
+                  <span class="button is-static icon" style="height: 40px;width: 40px;"><i :class="room.icon" /></span>
+                </div>
+              </div>
+            </div>
+            <icon-picker v-if="isIconPickerVisible && room.icon" class="mb-3" :name="room.icon" @select="(icon) => room.icon = icon" />
+
+            <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
                 <b-switch v-model="room.isVisible">{{ room.isVisible ? 'Visible' : 'Masquée' }}</b-switch>
@@ -164,6 +180,7 @@
 import Breadcrumb from '@/components/Breadcrumb'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
 import TimeAgo from '@/components/TimeAgo'
+import IconPicker from '@/components/admin/IconPicker'
 import { AdminMixin } from '@/mixins/Admin'
 import { SummaryMixin } from '@/mixins/Summary'
 import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
@@ -174,6 +191,7 @@ export default {
     Breadcrumb,
     TimeAgo,
     OptionsAutocomplete,
+    IconPicker,
   },
   mixins: [
     AdminMixin,
@@ -198,6 +216,7 @@ export default {
         parentId: null,
       },
       isLoading: false,
+      isIconPickerVisible: false,
       newSummaryState: {
         state: null,
         key: null,
