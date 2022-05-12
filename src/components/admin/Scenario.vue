@@ -35,6 +35,16 @@
             </div>
 
             <div class="field">
+              <label class="label">Groupe</label>
+              <div class="control has-icons-left">
+                <input v-model="scenario.group" class="input" type="text" placeholder="Groupe du scénario (Météo, Volets, ...)">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-layer-group" />
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
               <label class="label">Statut</label>
               <div class="control">
                 <b-switch v-model="scenario.isActive">{{ scenario.isActive ? 'Actif' : 'Inactif' }}</b-switch>

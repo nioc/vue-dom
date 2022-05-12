@@ -6,7 +6,7 @@
     <div class="hero-body px-3">
       <div class="container">
         <b-loading v-model="isLoading" :is-full-page="false" />
-        <b-table :data="scenarios" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="name" class="is-clickable" @click="consultScenario">
+        <b-table :data="scenarios" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="group" class="is-clickable" @click="consultScenario">
           <template v-for="column in columns">
             <b-table-column :key="column.id" v-bind="column">
               <template v-if="column.searchable" slot="searchable" slot-scope="props">
@@ -52,6 +52,12 @@ export default {
     return {
       scenarios: [],
       columns: [
+        {
+          field: 'group',
+          label: 'Groupe',
+          searchable: true,
+          sortable: true,
+        },
         {
           field: 'name',
           label: 'Nom',
