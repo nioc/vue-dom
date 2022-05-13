@@ -276,6 +276,10 @@ export default {
         return this.equipment.alertNoCommunicationDelay
       },
       set: function (string) {
+        if (string === '') {
+          this.equipment.alertNoCommunicationDelay = null
+          return
+        }
         this.equipment.alertNoCommunicationDelay = parseInt(string)
       },
     },
