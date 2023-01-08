@@ -8,6 +8,7 @@
         <h2 class="title">Administration</h2>
         <ul class="is-size-5">
           <li><router-link :to="{name: 'admin-system'}"><i class="fa fa-server fa-fw fa-mr" />Système</router-link></li>
+          <li><router-link :to="{name: 'admin-actions-records'}"><i class="fa fa-book-open fa-fw fa-mr" />Journal des actions</router-link></li>
           <li><router-link :to="{name: 'admin-users'}"><i class="fa fa-users fa-fw fa-mr" />Utilisateurs</router-link></li>
           <li><router-link :to="{name: 'admin-rooms'}"><i class="fa fa-home fa-fw fa-mr" />Pièces</router-link></li>
           <li><router-link :to="{name: 'admin-equipments'}"><i class="fa fa-microchip fa-fw fa-mr" />Équipements</router-link></li>

@@ -140,6 +140,14 @@ const routes = [
         },
       },
       {
+        path: 'actions-records',
+        name: 'admin-actions-records',
+        component: () => import('@/components/admin/ActionsRecords.vue'),
+        meta: {
+          title: 'Journal des actions',
+        },
+      },
+      {
         path: 'users',
         name: 'admin-users',
         component: () => import('@/components/admin/Users.vue'),
