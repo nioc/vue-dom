@@ -51,10 +51,10 @@ export const useAppStore = defineStore('app', {
           return
         }
         const dataStore = useDataStore()
-        provider.openEventsListener(true, forceRefresh, this, dataStore)
+        provider.openEventsListener(true, forceRefresh)
         dataStore.vxLoadRooms()
       } else {
-        provider.closeEventsListener(this)
+        provider.closeEventsListener()
       }
     },
 

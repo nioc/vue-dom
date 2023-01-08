@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { dtFormat } from '../Datetime'
+import { useAppStore } from '@/store/app'
+import { useDataStore } from '@/store/data'
+import { useAuthStore } from '@/store/auth'
 
 const JeedomApi = function (jsonRpcApiUrl = null, websocketUrl = null, readDelay = 5000, statisticsPeriod = 86400000, trendPeriod = 3600000, trendThreshold = 0.1) {
   const socketMaxTry = 3
@@ -172,7 +175,9 @@ const JeedomApi = function (jsonRpcApiUrl = null, websocketUrl = null, readDelay
     },
 
     // suscribe to Jeedom events throught websocket
-    openEventsListener (resetCounter, forceRefresh = false, appStore, dataStore) {
+    openEventsListener (resetCounter, forceRefresh = false) {
+      const appStore = useAppStore()
+      const dataStore = useDataStore()
       if (!appStore.hasNetwork) {
         // no network
         return
@@ -185,7 +190,8 @@ const JeedomApi = function (jsonRpcApiUrl = null, websocketUrl = null, readDelay
       if (!apiKey) {
         console.warn('Missing API key')
         appStore.setInformation({ type: 'is-danger', message: 'Erreur d\'authentification, veuillez-vous reconnecter' })
-        appStore.setUser({ login: null, isAuthenticated: false })
+        const authStore = useAuthStore()
+        authStore.setUser({ login: null, isAuthenticated: false })
         return
       }
       // ensure only one socket
@@ -246,7 +252,7 @@ const JeedomApi = function (jsonRpcApiUrl = null, websocketUrl = null, readDelay
             }
             // try to reconnect
             console.warn(`Events socket connection closed (code: ${event.code}, try #${socketErrorCount}/${socketMaxTry}), reconnecting...`)
-            this.openEventsListener(false, false, appStore, dataStore)
+            this.openEventsListener(false, false)
             break
           default:
             console.warn(`Events socket connection closed (code: ${event.code}, try #${socketErrorCount})`)
@@ -255,12 +261,13 @@ const JeedomApi = function (jsonRpcApiUrl = null, websocketUrl = null, readDelay
     },
 
     // close websocket connection
-    closeEventsListener (appStore) {
+    closeEventsListener () {
       if (websocket) {
         websocket.close()
       }
       if (timerId) {
         clearTimeout(timerId)
+        const appStore = useAppStore()
         appStore.setEventsListenerStatus(false)
         appStore.setEventsListenerIsPolling(true)
       }
