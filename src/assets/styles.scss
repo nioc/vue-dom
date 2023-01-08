@@ -585,13 +585,18 @@ table.has-buttons {
   animation-iteration-count: infinite;
   animation-name: placeHolderShimmer;
   animation-timing-function: linear;
-  background: linear-gradient(45deg, hsl(0, 0%, 94%) 8%, hsl(0, 0%, 90%) 18%, hsl(0, 0%, 94%) 33%);
+  background: linear-gradient(45deg, $grey-lightest 8%, $grey-lighter 18%, $grey-lightest 33%);
   background-size: 300% 100%;
 }
 .loading-info::after {
   content: ".";
   visibility: hidden;
 }
+[data-theme="dark"] .loading-info {
+  background: linear-gradient(45deg,  $grey-darker  8%, $grey-dark 18%,  $grey-darker  33%);
+  background-size: 300% 100%;
+}
+
 
 .loading-overlay {
   z-index: 29;
