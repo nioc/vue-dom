@@ -15,11 +15,11 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import SystemJobs from '@/components/admin/SystemJobs'
-import SystemLogs from '@/components/admin/SystemLogs'
-import SystemMetrics from '@/components/admin/SystemMetrics'
-import SystemDatabase from '@/components/admin/SystemDatabase'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import SystemJobs from '@/components/admin/SystemJobs.vue'
+import SystemLogs from '@/components/admin/SystemLogs.vue'
+import SystemMetrics from '@/components/admin/SystemMetrics.vue'
+import SystemDatabase from '@/components/admin/SystemDatabase.vue'
 
 export default {
   name: 'System',

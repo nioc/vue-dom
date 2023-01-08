@@ -4,8 +4,7 @@ module.exports = {
     node: true,
   },
   extends: [
-    'plugin:vue/recommended',
-    '@vue/standard',
+    'plugin:vue/vue3-recommended',
     'eslint:recommended',
   ],
   rules: {
@@ -49,12 +48,13 @@ module.exports = {
     'vue/key-spacing': 'error',
     'key-spacing': 'error',
     'vue/object-curly-spacing': 'error',
-    'object-curly-spacing': 'error',
+    'object-curly-spacing': ['error', 'always'],
     'vue/space-unary-ops': 'error',
     'space-unary-ops': 'error',
     'vue/no-mutating-props': 'off',
-  },
-  parserOptions: {
-    parser: '@babel/eslint-parser',
+    'vue/multi-word-component-names': 'off',
+    'indent': ['error', 2, { 'SwitchCase': 1 }],
+    'no-trailing-spaces': 'error',
+    'quotes': [2, 'single', 'avoid-escape'],
   },
 }

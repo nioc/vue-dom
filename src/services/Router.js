@@ -1,15 +1,13 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import store from '@/store'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import { useAppStore } from '@/store/app'
+import { useAuthStore } from '@/store/auth'
 
 // components
-import Login from '@/components/Login'
-import Rooms from '@/components/Rooms'
-import RoomDetail from '@/components/RoomDetail'
-import Tag from '@/components/Tag'
-import UserView from '@/components/UserView'
-
-Vue.use(Router)
+import Login from '@/components/Login.vue'
+import Rooms from '@/components/Rooms.vue'
+import RoomDetail from '@/components/RoomDetail.vue'
+import Tag from '@/components/Tag.vue'
+import UserView from '@/components/UserView.vue'
 
 const custom = window.custom
 
@@ -25,60 +23,75 @@ const routes = [
   },
   {
     path: '/rooms',
-    name: 'rooms',
-    component: Rooms,
-    meta: {
-      title: 'Pièces',
-    },
-  },
-  {
-    path: '/rooms/:id',
-    name: 'room',
-    component: RoomDetail,
-    props: true,
-    meta: {
-      title: 'Pièce',
-    },
+    children: [
+      {
+        path: '',
+        name: 'rooms',
+        component: Rooms,
+        meta: {
+          title: 'Pièces',
+        },
+      },
+      {
+        path: ':id',
+        name: 'room',
+        component: RoomDetail,
+        props: true,
+        meta: {
+          title: 'Pièce',
+        },
+      },
+    ],
   },
   {
     path: '/tags',
-    name: 'tags',
-    component: Tag,
-    props: true,
-    meta: {
-      title: 'Tag',
-    },
-  },
-  {
-    path: '/tags/:tag',
-    name: 'tag',
-    component: Tag,
-    props: true,
-    meta: {
-      title: 'Tag',
-    },
+    children: [
+      {
+        path: '',
+        name: 'tags',
+        component: Tag,
+        props: true,
+        meta: {
+          title: 'Tag',
+        },
+      },
+      {
+        path: ':tag',
+        name: 'tag',
+        component: Tag,
+        props: true,
+        meta: {
+          title: 'Tag',
+        },
+      },
+    ],
   },
   {
     path: '/views',
-    name: 'views',
-    component: UserView,
-    meta: {
-      title: 'Views',
-    },
-  },
-  {
-    path: '/views/:code',
-    name: 'view',
-    props: true,
-    component: UserView,
-    meta: {
-      title: 'View',
-    },
+    children: [
+      {
+        path: '',
+        name: 'views',
+        component: UserView,
+        meta: {
+          title: 'Views',
+        },
+      },
+      {
+        path: ':code',
+        name: 'view',
+        props: true,
+        component: UserView,
+        meta: {
+          title: 'View',
+        },
+      },
+    ],
   },
   {
     path: '/scenarios',
     name: 'scenarios',
-    component: () => import(/* webpackChunkName: "Scenarios" */ '@/components/Scenarios'),
+    component: () => import('@/components/Scenarios.vue'),
     meta: {
       title: 'Scénarios',
     },
@@ -94,7 +107,7 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: () => import(/* webpackChunkName: "About" */ '@/components/About'),
+    component: () => import('@/components/About.vue'),
     meta: {
       title: 'A propos',
     },
@@ -102,7 +115,7 @@ const routes = [
   {
     path: '/profile',
     name: 'profile',
-    component: () => import(/* webpackChunkName: "Profile" */ '@/components/Profile'),
+    component: () => import('@/components/Profile.vue'),
     meta: {
       title: 'Profil',
     },
@@ -110,202 +123,212 @@ const routes = [
   {
     path: '/notifications',
     name: 'notifications',
-    component: () => import(/* webpackChunkName: "Notifications" */ '@/components/Notifications'),
+    component: () => import('@/components/Notifications.vue'),
     meta: {
       title: 'Notifications',
     },
   },
   {
     path: '/admin',
-    name: 'admin',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Admin'),
-    meta: {
-      title: 'Admin',
-    },
-  },
-  {
-    path: '/admin/users',
-    name: 'admin-users',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Users'),
-    meta: {
-      title: 'Admin utilisateurs',
-    },
-  },
-  {
-    path: '/admin/users/:id',
-    name: 'admin-user',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/User'),
-    meta: {
-      title: 'Admin utilisateur',
-    },
-  },
-  {
-    path: '/admin/rooms',
-    name: 'admin-rooms',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Rooms'),
-    meta: {
-      title: 'Admin pièces',
-    },
-  },
-  {
-    path: '/admin/rooms/:id',
-    name: 'admin-room',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Room'),
-    meta: {
-      title: 'Admin pièce',
-    },
-  },
-  {
-    path: '/admin/equipments',
-    name: 'admin-equipments',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Equipments'),
-    props: (route) => ({ search: route.query.search }),
-    meta: {
-      title: 'Admin équipements',
-    },
-  },
-  {
-    path: '/admin/equipments/:id',
-    name: 'admin-equipment',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Equipment'),
-    meta: {
-      title: 'Admin équipement',
-    },
-  },
-  {
-    path: '/admin/states',
-    name: 'admin-states',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/States'),
-    meta: {
-      title: 'Admin états',
-    },
-  },
-  {
-    path: '/admin/states/:id',
-    name: 'admin-state',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/State'),
-    meta: {
-      title: 'Admin état',
-    },
-  },
-  {
-    path: '/admin/actions',
-    name: 'admin-actions',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Actions'),
-    meta: {
-      title: 'Admin actions',
-    },
-  },
-  {
-    path: '/admin/actions/:id',
-    name: 'admin-action',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Action'),
-    meta: {
-      title: 'Admin action',
-    },
-  },
-  {
-    path: '/admin/system',
-    name: 'admin-system',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/System'),
-    meta: {
-      title: 'Admin système',
-    },
-  },
-  {
-    path: '/admin/scenarios',
-    name: 'admin-scenarios',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Scenarios'),
-    meta: {
-      title: 'Admin scénarios',
-    },
-  },
-  {
-    path: '/admin/scenarios/:id',
-    name: 'admin-scenario',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Scenario'),
-    meta: {
-      title: 'Admin scénario',
-    },
-  },
-  {
-    path: '/admin/nlp',
-    name: 'admin-nlp',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Nlp'),
-    meta: {
-      title: 'Admin traitement automatique du langage naturel',
-    },
-  },
-  {
-    path: '/admin/intents/:id',
-    name: 'admin-intent',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Intent'),
-    meta: {
-      title: 'Admin intention',
-    },
-  },
-  {
-    path: '/admin/entities/:id',
-    name: 'admin-entity',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Entity'),
-    meta: {
-      title: 'Admin entité',
-    },
-  },
-  {
-    path: '/admin/channels',
-    name: 'admin-channels',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Channels'),
-    meta: {
-      title: 'Admin canaux de communication',
-    },
-  },
-  {
-    path: '/admin/channels/:id',
-    name: 'admin-channel',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/Channel'),
-    meta: {
-      title: 'Admin canal de communication',
-    },
-  },
-  {
-    path: '/admin/views',
-    name: 'admin-views',
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/UserViews'),
-    meta: {
-      title: 'Admin vues utilisateur',
-    },
-  },
-  {
-    path: '/admin/views/:id',
-    name: 'admin-view',
-    props: true,
-    component: () => import(/* webpackChunkName: "Admin" */ '@/components/admin/UserView'),
-    meta: {
-      title: 'Admin vue utilisateur',
-    },
+    children: [
+      {
+        path: '',
+        name: 'admin',
+        component: () => import('@/components/admin/Admin.vue'),
+        meta: {
+          title: 'Admin',
+        },
+      },
+      {
+        path: 'users',
+        name: 'admin-users',
+        component: () => import('@/components/admin/Users.vue'),
+        meta: {
+          title: 'Admin utilisateurs',
+        },
+      },
+      {
+        path: 'users/:id',
+        name: 'admin-user',
+        props: true,
+        component: () => import('@/components/admin/User.vue'),
+        meta: {
+          title: 'Admin utilisateur',
+        },
+      },
+      {
+        path: 'rooms',
+        name: 'admin-rooms',
+        component: () => import('@/components/admin/Rooms.vue'),
+        meta: {
+          title: 'Admin pièces',
+        },
+      },
+      {
+        path: 'rooms/:id',
+        name: 'admin-room',
+        props: true,
+        component: () => import('@/components/admin/Room.vue'),
+        meta: {
+          title: 'Admin pièce',
+        },
+      },
+      {
+        path: 'equipments',
+        name: 'admin-equipments',
+        component: () => import('@/components/admin/Equipments.vue'),
+        props: (route) => ({ search: route.query.search }),
+        meta: {
+          title: 'Admin équipements',
+        },
+      },
+      {
+        path: 'equipments/:id',
+        name: 'admin-equipment',
+        props: true,
+        component: () => import('@/components/admin/Equipment.vue'),
+        meta: {
+          title: 'Admin équipement',
+        },
+      },
+      {
+        path: 'states',
+        name: 'admin-states',
+        component: () => import('@/components/admin/States.vue'),
+        meta: {
+          title: 'Admin états',
+        },
+      },
+      {
+        path: 'states/:id',
+        name: 'admin-state',
+        props: true,
+        component: () => import('@/components/admin/State.vue'),
+        meta: {
+          title: 'Admin état',
+        },
+      },
+      {
+        path: 'actions',
+        name: 'admin-actions',
+        component: () => import('@/components/admin/Actions.vue'),
+        meta: {
+          title: 'Admin actions',
+        },
+      },
+      {
+        path: 'actions/:id',
+        name: 'admin-action',
+        props: true,
+        component: () => import('@/components/admin/Action.vue'),
+        meta: {
+          title: 'Admin action',
+        },
+      },
+      {
+        path: 'system',
+        name: 'admin-system',
+        component: () => import('@/components/admin/System.vue'),
+        meta: {
+          title: 'Admin système',
+        },
+      },
+      {
+        path: 'scenarios',
+        name: 'admin-scenarios',
+        props: true,
+        component: () => import('@/components/admin/Scenarios.vue'),
+        meta: {
+          title: 'Admin scénarios',
+        },
+      },
+      {
+        path: 'scenarios/:id',
+        name: 'admin-scenario',
+        props: true,
+        component: () => import('@/components/admin/Scenario.vue'),
+        meta: {
+          title: 'Admin scénario',
+        },
+      },
+      {
+        path: 'nlp',
+        name: 'admin-nlp',
+        props: true,
+        component: () => import('@/components/admin/Nlp.vue'),
+        meta: {
+          title: 'Admin traitement automatique du langage naturel',
+        },
+      },
+      {
+        path: 'intents/:id',
+        name: 'admin-intent',
+        props: true,
+        component: () => import('@/components/admin/Intent.vue'),
+        meta: {
+          title: 'Admin intention',
+        },
+      },
+      {
+        path: 'entities/:id',
+        name: 'admin-entity',
+        props: true,
+        component: () => import('@/components/admin/Entity.vue'),
+        meta: {
+          title: 'Admin entité',
+        },
+      },
+      {
+        path: 'channels',
+        name: 'admin-channels',
+        props: true,
+        component: () => import('@/components/admin/Channels.vue'),
+        meta: {
+          title: 'Admin canaux de communication',
+        },
+      },
+      {
+        path: 'channels/:id',
+        name: 'admin-channel',
+        props: true,
+        component: () => import('@/components/admin/Channel.vue'),
+        meta: {
+          title: 'Admin canal de communication',
+        },
+      },
+      {
+        path: 'views',
+        name: 'admin-views',
+        component: () => import('@/components/admin/UserViews.vue'),
+        meta: {
+          title: 'Admin vues utilisateur',
+        },
+      },
+      {
+        path: 'views/:id',
+        name: 'admin-view',
+        props: true,
+        component: () => import('@/components/admin/UserView.vue'),
+        meta: {
+          title: 'Admin vue utilisateur',
+        },
+      },
+    ],
   },
 ]
 
 // create router
-const router = new Router({ routes })
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes,
+})
 
 // apply navigation guards
 router.beforeEach((to, from, next) => {
   // check authentication
-  if (!store.state.app.isAuthenticated && to.name !== 'login') {
+  const appStore = useAppStore()
+  const authStore = useAuthStore()
+  if (!authStore.isAuthenticated && to.name !== 'login') {
     next({
       name: 'login',
       query: { redirect: to.fullPath },
@@ -313,7 +336,7 @@ router.beforeEach((to, from, next) => {
     })
     return
   }
-  if (store.state.app.isAuthenticated && to.name === 'login') {
+  if (authStore.isAuthenticated && to.name === 'login') {
     next({
       name: 'home',
       replace: true,
@@ -330,8 +353,8 @@ router.beforeEach((to, from, next) => {
     document.title = title + ' | ' + custom.title
   }
   // close sidebar
-  if (store.state.app.hasSidebarOpened) {
-    store.commit('app/setSidebarStatus', false)
+  if (appStore.hasSidebarOpened) {
+    appStore.setSidebarStatus(false)
   }
   next()
 })

@@ -72,12 +72,12 @@
                 </thead>
                 <tbody>
                   <tr v-for="token in tokens" :key="token.id">
-                    <td><time :datetime="token.issuedDate">{{ token.issuedDate | moment('LLLL') }}</time></td>
+                    <td><time :datetime="token.issuedDate">{{ formatDate(token.issuedDate, 'PPPPp') }}</time></td>
                     <td :title="token.userAgent.ua">
                       <user-agent :user-agent-string="token.userAgent" />
                     </td>
                     <td>{{ token.ip }}</td>
-                    <td><time v-if="token.lastUse" :datetime="token.lastUse" @click="refreshTokenUsesForModal = token.uses">{{ token.lastUse | moment('LLLL') }}</time></td>
+                    <td><time v-if="token.lastUse" :datetime="token.lastUse" @click="refreshTokenUsesForModal = token.uses">{{ formatDate(token.lastUse, 'PPPPp') }}</time></td>
                     <td class="has-text-centered"><button class="button is-danger is-light is-small" @click="deleteToken(token.id)"><i class="fa fa-trash" /></button></td>
                   </tr>
                 </tbody>
@@ -106,7 +106,7 @@
                   </thead>
                   <tbody>
                     <tr v-for="refreshTokenUse in refreshTokenUsesForModal" :key="refreshTokenUse.date">
-                      <td><time :datetime="refreshTokenUse.date">{{ refreshTokenUse.date | moment('LLLL') }}</time></td>
+                      <td><time :datetime="refreshTokenUse.date">{{ formatDate(refreshTokenUse.date, 'PPPPp') }}</time></td>
                       <td :title="refreshTokenUse.userAgent.ua">
                         <user-agent :user-agent-string="refreshTokenUse.userAgent" />
                       </td>
@@ -125,11 +125,13 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import UserAgent from '@/components/UserAgent'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
-import { createNamespacedHelpers } from 'vuex'
-const { mapState } = createNamespacedHelpers('app')
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import UserAgent from '@/components/UserAgent.vue'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { useAppStore } from '@/store/app'
+import { useDialog } from '@/composables/useDialog'
+import { dtFormat } from '@/services/Datetime'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Profile',
@@ -137,18 +139,18 @@ export default {
     Breadcrumb,
     UserAgent,
   },
-  mixins: [
-    UnsavedChangesGuardMixin,
-  ],
+  setup() {
+    const appStore = useAppStore()
+    const { confirmDelete } = useDialog()
+    const { addUnsavedChangesGuard } = useUnsavedChangesGuard()
+    return { appStore, confirmDelete, addUnsavedChangesGuard }
+  },
   data () {
     return {
       user: {},
       tokens: [],
       refreshTokenUsesForModal: null,
     }
-  },
-  computed: {
-    ...mapState(['id']),
   },
   mounted () {
     this.getProfile()
@@ -157,26 +159,26 @@ export default {
   methods: {
     async getProfile () {
       try {
-        this.user = await this.$Provider.getMyProfile()
-        this.addUnsavedChangesGuard('user')
+        this.user = await provider.getMyProfile()
+        this.addUnsavedChangesGuard(this.user)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération du profil<br/>${error.message}` })
+        this.appStore.setInformation({ type: 'is-danger', message: `Erreur lors de la récupération du profil<br/>${error.message}` })
       }
     },
     async getTokens () {
       try {
-        this.tokens = (await this.$Provider.getMyTokens())
-          .sort((a, b) => this.$moment(b.issuedDate) - this.$moment(a.issuedDate))
+        this.tokens = (await provider.getMyTokens())
+          .sort((a, b) => new Date(b.issuedDate) - new Date(a.issuedDate))
           .map((token) => {
             // get last use date
             token.lastUse = null
             if (Object.prototype.hasOwnProperty.call(token, 'uses') && token.uses.length > 0) {
-              token.lastUse = token.uses.sort((a, b) => this.$moment(b.date) - this.$moment(a.date))[0].date
+              token.lastUse = token.uses.sort((a, b) => new Date(b.date) - new Date(a.date))[0].date
             }
             return token
           })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la récupération des tokens<br/>${error.message}` })
+        this.appStore.setInformation({ type: 'is-danger', message: `Erreur lors de la récupération des tokens<br/>${error.message}` })
       }
     },
     async updateProfile () {
@@ -184,40 +186,35 @@ export default {
       delete _user.password
       delete _user.modificationDate
       try {
-        this.user = await this.$Provider.updateMyProfile(_user)
-        this.addUnsavedChangesGuard('user')
+        this.user = await provider.updateMyProfile(_user)
+        this.addUnsavedChangesGuard(this.user)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
     },
     async updatePassword () {
       try {
-        await this.$Provider.updateMyPassword(this.user.password)
+        await provider.updateMyPassword(this.user.password)
         this.user.password = undefined
-        this.addUnsavedChangesGuard('user')
+        this.addUnsavedChangesGuard(this.user)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
     },
     async deleteToken (tokenId) {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>Le jeton sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          try {
-            await this.$Provider.deleteMyToken(tokenId)
-            this.tokens.splice(this.tokens.findIndex((token) => token.id === tokenId), 1)
-          } catch (error) {
-            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-          }
-        },
-      })
+      if (await this.confirmDelete('Le jeton sera supprimé.')) {
+        this.isLoading = true
+        try {
+          await provider.deleteMyToken(tokenId)
+          this.tokens.splice(this.tokens.findIndex((token) => token.id === tokenId), 1)
+        } catch (error) {
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
+        }
+        this.isLoading = false
+      }
+    },
+    formatDate (date, format) {
+      return dtFormat(date, format)
     },
   },
 }

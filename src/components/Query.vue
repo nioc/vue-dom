@@ -1,6 +1,6 @@
 <template>
   <div class="is-auto-expand" :class="{'is-expanded': isExpanded}">
-    <b-autocomplete
+    <o-autocomplete
       id="question"
       v-model="question"
       :data="filteredSentences"
@@ -12,19 +12,26 @@
       :loading="isLoading"
       @focus="isExpanded = true"
       @select="(option) => ask(option)"
-      @keyup.enter.native="ask()"
-      @keyup.esc.native="clear()"
+      @keyup.enter="ask()"
+      @keyup.esc="clear()"
     >
-      <template slot="empty">Aucune correspondance</template>
-    </b-autocomplete>
+      <template #empty>Aucune correspondance</template>
+    </o-autocomplete>
     <button v-if="isExpanded && !isLoading" class="delete is-medium" title="Fermer" @click="clear()" />
+    <o-icon v-if="isExpanded && isLoading" class="is-loading" icon="circle-notch" :spin="true" size="medium" />
   </div>
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Query',
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
+  },
   data () {
     return {
       question: '',
@@ -44,7 +51,7 @@ export default {
     this.getSentences()
   },
   methods: {
-    clear (isClearingQuestion) {
+    clear () {
       document.getElementById('question').blur()
       this.question = ''
       this.isExpanded = false
@@ -63,19 +70,19 @@ export default {
       }
       this.isLoading = true
       try {
-        const message = await this.$Provider.askQuestion(this.question)
+        const message = await provider.askQuestion(this.question)
         this.clear()
-        this.$store.commit('app/setInformation', { type: 'is-dark', message, position: 'is-bottom', duration: 5000 })
+        this.appStore.setInformation({ type: 'is-dark', message, position: 'bottom', duration: 5000 })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async getSentences () {
       try {
-        this.sentences = await this.$Provider.getSentences()
+        this.sentences = await provider.getSentences()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
     },
   },

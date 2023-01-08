@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -53,14 +53,14 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
-                <b-switch v-model="userView.isActive">{{ userView.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+                <o-switch v-model="userView.isActive">{{ userView.isActive ? 'Actif' : 'Inactif' }}</o-switch>
               </div>
             </div>
 
             <div class="field">
               <div class="control">
                 <label class="label">Visibilité</label>
-                <b-switch v-model="userView.isShared">{{ userView.isShared ? 'Partagé' : 'Privé' }}</b-switch>
+                <o-switch v-model="userView.isShared">{{ userView.isShared ? 'Partagé' : 'Privé' }}</o-switch>
               </div>
             </div>
 
@@ -89,43 +89,46 @@
           </header>
           <section class="card-content">
 
-            <draggable v-model="userView.cards" tag="div" handle=".handle" draggable=".dr">
-              <div v-for="(card, cardIndex) in userView.cards" :key="'card-'+cardIndex" class="dr">
-                <div class="field is-horizontal">
-                  <div class="field-body">
-                    <div class="field is-narrow">
-                      <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
-                    </div>
-                    <user-view-card :card="card" />
+            <draggable v-model="userView.cards" tag="div" handle=".handle" draggable=".dr" item-key="title">
+              <template #item="{element: card, index: cardIndex}">
+                <div class="dr">
+                  <div class="field is-horizontal">
+                    <div class="field-body">
+                      <div class="field is-narrow">
+                        <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
+                      </div>
+                      <user-view-card :card="card" />
 
-                    <div class="field is-narrow">
-                      <button class="button is-danger is-light" title="Supprimer la carte" @click="removeCard(cardIndex)">
-                        <span class="icon"><i class="fa fa-trash" /></span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <draggable v-model="card.elements" tag="div" handle=".handle" draggable=".dr" class="px-6">
-                  <div v-for="(element, elementIndex) in card.elements" :key="'element-'+elementIndex" class="dr field mb-3">
-                    <div class="field is-horizontal">
-                      <div class="field-body">
-                        <div class="field is-narrow">
-                          <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
-                        </div>
-                        <user-view-card-element :element="element" />
-
-                        <div class="field is-narrow">
-                          <button class="button is-danger is-light" title="Supprimer l'élément" @click="removeCardElement(cardIndex, elementIndex)">
-                            <span class="icon"><i class="fa fa-trash" /></span>
-                          </button>
-                        </div>
+                      <div class="field is-narrow">
+                        <button class="button is-danger is-light" title="Supprimer la carte" @click="removeCard(cardIndex)">
+                          <span class="icon"><i class="fa fa-trash" /></span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </draggable>
-                <hr>
-              </div>
+                  <draggable v-model="card.elements" tag="div" handle=".handle" draggable=".dr" class="px-6" item-key="id">
+                    <template #item="{element, index: elementIndex}">
+                      <div class="dr field mb-3">
+                        <div class="field is-horizontal">
+                          <div class="field-body">
+                            <div class="field is-narrow">
+                              <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
+                            </div>
+                            <user-view-card-element :element="element" />
+
+                            <div class="field is-narrow">
+                              <button class="button is-danger is-light" title="Supprimer l'élément" @click="removeCardElement(cardIndex, elementIndex)">
+                                <span class="icon"><i class="fa fa-trash" /></span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </draggable>
+                  <hr>
+                </div>
+              </template>
             </draggable>
 
             <div class="field is-grouped">
@@ -160,14 +163,15 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import IconPicker from '@/components/admin/IconPicker'
-import UserViewCard from '@/components/admin/UserViewCard'
-import UserViewCardElement from '@/components/admin/UserViewCardElement'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import IconPicker from '@/components/admin/IconPicker.vue'
+import UserViewCard from '@/components/admin/UserViewCard.vue'
+import UserViewCardElement from '@/components/admin/UserViewCardElement.vue'
 import draggable from 'vuedraggable'
-import { CmdMixin } from '@/mixins/Cmd'
-import { AdminMixin } from '@/mixins/Admin'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'UserView',
@@ -178,21 +182,17 @@ export default {
     UserViewCardElement,
     draggable,
   },
-  mixins: [
-    CmdMixin,
-    AdminMixin,
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const dataStore = useDataStore()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    const { confirmDelete } = useDialog()
+    return { dataStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirmDelete }
   },
   data () {
     return {
@@ -206,41 +206,43 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
+    isNew () {
+      return this.id === 'new'
+    },
   },
   mounted () {
     if (!this.isNew) {
       this.getUserView()
     } else {
-      this.addUnsavedChangesGuard('userView')
-      if (this.proposal) {
-        this.userView = Object.assign({}, this.userView, this.proposal)
+      this.addUnsavedChangesGuard(this.userView)
+      if (history.state.proposal) {
+        this.userView = Object.assign({}, this.userView, history.state.proposal)
       }
     }
   },
   methods: {
     async getUserView () {
       this.isLoading = true
-      this.userView = Object.assign({}, this.userView, await this.$Provider.getUserView(this.id))
-      this.addUnsavedChangesGuard('userView')
+      this.userView = Object.assign({}, this.userView, await provider.getUserView(this.id))
+      this.addUnsavedChangesGuard(this.userView)
       this.isLoading = false
     },
     async saveUserView () {
       this.isLoading = true
       const userView = Object.assign({}, this.userView)
-      const result = await this.vxSaveUserView({ userView, isNew: this.isNew })
+      const result = await this.dataStore.vxSaveUserView({ userView, isNew: this.isNew })
       if (result) {
         if (this.isNew) {
-          this.removeUnsavedChangesGuard('userView')
+          this.removeUnsavedChangesGuard()
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.userView = Object.assign(this.userView, result)
-        this.addUnsavedChangesGuard('userView')
+        this.addUnsavedChangesGuard(this.userView)
       }
       this.isLoading = false
     },
     copyUserView () {
-      const proposal = Object.assign({}, this.userView)
+      const proposal = JSON.parse(JSON.stringify(this.userView))
       delete proposal.id
       delete proposal.code
       proposal.name = `${proposal.name} (copie)`
@@ -248,29 +250,21 @@ export default {
         name: 'admin-view',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
     },
     async removeUserView () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>La vue sera supprimée ainsi que les cartes la constituant.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          if (await this.vxDeleteUserView({ viewId: this.userView.id, viewCode: this.userView.code })) {
-            this.removeUnsavedChangesGuard('userView')
-            this.$router.back()
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('La vue sera supprimée ainsi que les cartes la constituant.')) {
+        this.isLoading = true
+        if (await this.dataStore.vxDeleteUserView({ viewId: this.userView.id, viewCode: this.userView.code })) {
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        }
+        this.isLoading = false
+      }
     },
     addCard () {
       const card = {

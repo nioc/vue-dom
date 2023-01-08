@@ -68,20 +68,16 @@
 </template>
 
 <script>
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-import { AdminMixin } from '@/mixins/Admin'
-import { AdminScenarioMixin } from '@/mixins/AdminScenario'
+import { defineAsyncComponent } from 'vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import { useScenarioHelper } from '@/composables/useScenarioHelper'
 
 export default {
   name: 'ScenarioAsk',
   components: {
     OptionsAutocomplete,
-    ScenarioElement: () => import('@/components/admin/ScenarioElement'),
+    ScenarioElement: defineAsyncComponent(() => import('@/components/admin/ScenarioElement.vue')),
   },
-  mixins: [
-    AdminMixin,
-    AdminScenarioMixin,
-  ],
   props: {
     scenarioAsk: {
       type: Object,
@@ -95,6 +91,15 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  emits: [
+    'up',
+    'remove',
+    'down',
+  ],
+  setup() {
+    const { createScenarioElement } = useScenarioHelper()
+    return { createScenarioElement }
   },
   data () {
     return {

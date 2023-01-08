@@ -6,7 +6,7 @@
 </template>
 
 <script>
-const icons = require('@/assets/fa-icons.json')
+import icons from '@/assets/fa-icons.json'
 
 export default {
   name: 'IconPicker',
@@ -16,18 +16,23 @@ export default {
       required: true,
     },
   },
+  emits: [
+    'select',
+  ],
   data () {
     return {
       icons: [],
     }
   },
   computed: {
-    query () { return this.name.replace(/fa[srb]? fa-/, '') },
+    query () {
+      return this.name.replace(/fa[srb]? fa-/, '')
+    },
   },
   watch: {
     query: {
       immediate: true,
-      handler (newVal, oldVal) {
+      handler (newVal) {
         this.searchIcons(newVal)
       },
     },

@@ -56,7 +56,7 @@ export default {
       }
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.player) {
       this.player.dispose()
     }

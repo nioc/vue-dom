@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -34,7 +34,7 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
-                <b-switch v-model="entity.isActive">{{ entity.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+                <o-switch v-model="entity.isActive">{{ entity.isActive ? 'Actif' : 'Inactif' }}</o-switch>
               </div>
             </div>
             <div class="buttons">
@@ -122,15 +122,17 @@
           </section>
         </div>
 
-        <b-collapse class="card mb-4" animation="slide" aria-id="relatedIntents" :open="false" @open="getRelatedIntents">
-          <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="relatedIntents">
-            <p class="card-header-title">
-              <span class="icon"><i class="fa fa-comment-dots" /></span><span>Intentions utilisant cette entité</span>
-            </p>
-            <a class="card-header-icon">
-              <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-            </a>
-          </header>
+        <o-collapse class="card mb-4" animation="slide" aria-id="relatedIntents" :open="false" @open="getRelatedIntents">
+          <template #trigger="props">
+            <header class="card-header" role="button" aria-controls="relatedIntents">
+              <p class="card-header-title">
+                <span class="icon"><i class="fa fa-comment-dots" /></span><span>Intentions utilisant cette entité</span>
+              </p>
+              <a class="card-header-icon">
+                <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+              </a>
+            </header>
+          </template>
           <section class="card-content">
             <div v-if="relatedIntents.length" class="table-container">
               <table class="table is-striped is-fullwidth is-vertical-centered">
@@ -158,17 +160,19 @@
             </div>
             <span v-else>Cette entité n'est utilisée dans aucune intention</span>
           </section>
-        </b-collapse>
+        </o-collapse>
 
-        <b-collapse class="card mb-4" animation="slide" aria-id="summaryQuery" :open="false">
-          <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="summaryQuery">
-            <p class="card-header-title">
-              <span class="icon"><i class="fa fa-heartbeat" /></span><span>Générer des options depuis des résumés (pièces)</span>
-            </p>
-            <a class="card-header-icon">
-              <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-            </a>
-          </header>
+        <o-collapse class="card mb-4" animation="slide" aria-id="summaryQuery" :open="false">
+          <template #trigger="props">
+            <header class="card-header" role="button" aria-controls="summaryQuery">
+              <p class="card-header-title">
+                <span class="icon"><i class="fa fa-heartbeat" /></span><span>Générer des options depuis des résumés (pièces)</span>
+              </p>
+              <a class="card-header-icon">
+                <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+              </a>
+            </header>
+          </template>
           <section class="card-content">
             <div class="field is-required">
               <label class="label">Type</label>
@@ -194,14 +198,14 @@
             </div>
             <div class="field">
               <label class="label">Résultats</label>
-              <b-tooltip v-if="summaryResult.length > 0" position="is-bottom" type="is-dark" class="control" dashed>
+              <o-tooltip v-if="summaryResult.length > 0" position="bottom" variant="dark" class="control" dashed>
                 <span>{{ summaryResult.length }}</span>
                 <template #content>
                   <div v-for="summary in summaryResult" :key="summary.id">
                     {{ summary.name }}
                   </div>
                 </template>
-              </b-tooltip>
+              </o-tooltip>
               <div v-else class="control">0</div>
             </div>
             <button class="button is-primary" :disabled="summaryResult.length === 0" title="Générer les options" @click="generateOptionsFromSummary">
@@ -209,17 +213,19 @@
               <span>Générer</span>
             </button>
           </section>
-        </b-collapse>
+        </o-collapse>
 
-        <b-collapse class="card mb-4" animation="slide" aria-id="statesQuery" :open="false">
-          <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="statesQuery">
-            <p class="card-header-title">
-              <span class="icon"><i class="fa fa-eye" /></span><span>Générer des options depuis des états (état équipement)</span>
-            </p>
-            <a class="card-header-icon">
-              <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-            </a>
-          </header>
+        <o-collapse class="card mb-4" animation="slide" aria-id="statesQuery" :open="false">
+          <template #trigger="props">
+            <header class="card-header" role="button" aria-controls="statesQuery">
+              <p class="card-header-title">
+                <span class="icon"><i class="fa fa-eye" /></span><span>Générer des options depuis des états (état équipement)</span>
+              </p>
+              <a class="card-header-icon">
+                <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+              </a>
+            </header>
+          </template>
           <section class="card-content">
             <div class="field">
               <label class="label">Module</label>
@@ -242,13 +248,13 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut de l'équipement</label>
-                <b-switch v-model="statesQuery.equipmentOnlyIsActive">{{ statesQuery.equipmentOnlyIsActive ? 'Actifs uniquement' : 'Tous' }}</b-switch>
+                <o-switch v-model="statesQuery.equipmentOnlyIsActive">{{ statesQuery.equipmentOnlyIsActive ? 'Actifs uniquement' : 'Tous' }}</o-switch>
               </div>
             </div>
             <div class="field">
               <div class="control">
                 <label class="label">Visibilité de l'équipement</label>
-                <b-switch v-model="statesQuery.equipmentOnlyIsVisible">{{ statesQuery.equipmentOnlyIsVisible ? 'Visibles uniquement' : 'Tous' }}</b-switch>
+                <o-switch v-model="statesQuery.equipmentOnlyIsVisible">{{ statesQuery.equipmentOnlyIsVisible ? 'Visibles uniquement' : 'Tous' }}</o-switch>
               </div>
             </div>
             <div class="field">
@@ -263,19 +269,19 @@
             <div class="field">
               <div class="control">
                 <label class="label">Visibilité de l'état</label>
-                <b-switch v-model="statesQuery.stateOnlyIsVisible">{{ statesQuery.stateOnlyIsVisible ? 'Visibles uniquement' : 'tous' }}</b-switch>
+                <o-switch v-model="statesQuery.stateOnlyIsVisible">{{ statesQuery.stateOnlyIsVisible ? 'Visibles uniquement' : 'tous' }}</o-switch>
               </div>
             </div>
             <div class="field">
               <label class="label">Résultats</label>
-              <b-tooltip v-if="statesResult.length > 0" type="is-dark" class="control" dashed>
+              <o-tooltip v-if="statesResult.length > 0" variant="dark" class="control" dashed>
                 <span>{{ statesResult.length }}</span>
                 <template #content>
                   <div v-for="state in statesResult" :key="state.id">
                     {{ state.name }} {{ state.equipmentName }}
                   </div>
                 </template>
-              </b-tooltip>
+              </o-tooltip>
               <div v-else class="control">0</div>
             </div>
             <button class="button is-primary" :disabled="statesResult.length === 0" title="Générer les options" @click="generateOptionsFromStates">
@@ -283,7 +289,7 @@
               <span>Générer</span>
             </button>
           </section>
-        </b-collapse>
+        </o-collapse>
 
       </div>
     </div>
@@ -291,11 +297,14 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import Editable from '@/components/admin/Editable'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
-import { AdminMixin } from '@/mixins/Admin'
-import { SummaryMixin } from '@/mixins/Summary'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import Editable from '@/components/admin/Editable.vue'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { useSummary } from '@/composables/useSummary'
+import { useAppStore } from '@/store/app'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Entity',
@@ -303,21 +312,19 @@ export default {
     Breadcrumb,
     Editable,
   },
-  mixins: [
-    UnsavedChangesGuardMixin,
-    AdminMixin,
-    SummaryMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const appStore = useAppStore()
+    const dataStore = useDataStore()
+    const { summaryKeys, getSummaryIconClass } = useSummary()
+    const { confirmDelete } = useDialog()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    return { appStore, dataStore, summaryKeys, getSummaryIconClass, confirmDelete, addUnsavedChangesGuard, removeUnsavedChangesGuard }
   },
   data () {
     return {
@@ -348,12 +355,14 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
+    isNew () {
+      return this.id === 'new'
+    },
     summaryResult () {
       if (this.summaryQuery.key === '') {
         return []
       }
-      return Object.values(this.rooms)
+      return Object.values(this.dataStore.rooms)
         .filter((room) => {
           return (
             (room.summary && room.summary.length > 0) &&
@@ -363,7 +372,7 @@ export default {
         })
     },
     statesResult () {
-      return this.arrStatesWithEquipmentName
+      return this.dataStore.arrStatesWithEquipmentName
         .filter((state) => {
           return (
             (this.statesQuery.module === '' || (state.module && state.module.toLowerCase().includes(this.statesQuery.module.toLowerCase()))) &&
@@ -384,16 +393,16 @@ export default {
       if (!this.isNew) {
         this.isLoading = true
         try {
-          this.entity = await this.$Provider.getEntity(this.id)
-          this.addUnsavedChangesGuard('entity')
+          this.entity = await provider.getEntity(this.id)
+          this.addUnsavedChangesGuard(this.entity)
         } catch (error) {
-          this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
         }
         this.isLoading = false
       } else {
-        this.addUnsavedChangesGuard('entity')
-        if (this.proposal) {
-          this.entity = Object.assign({}, this.entity, this.proposal)
+        this.addUnsavedChangesGuard(this.entity)
+        if (history.state.proposal) {
+          this.entity = Object.assign({}, this.entity, history.state.proposal)
         }
       }
     },
@@ -401,43 +410,33 @@ export default {
       this.isLoading = true
       try {
         if (this.isNew) {
-          this.entity = await this.$Provider.createEntity(this.entity)
-          this.addUnsavedChangesGuard('entity')
+          this.entity = await provider.createEntity(this.entity)
+          this.addUnsavedChangesGuard(this.entity)
           this.$router.replace({ name: this.$route.name, params: { id: this.entity.id } })
         } else {
-          this.entity = await this.$Provider.updateEntity(this.entity)
-          this.addUnsavedChangesGuard('entity')
+          this.entity = await provider.updateEntity(this.entity)
+          this.addUnsavedChangesGuard(this.entity)
         }
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async removeEntity () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>L\'entité sera supprimée.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          try {
-            await this.$Provider.deleteEntity(this.entity.id)
-            this.removeUnsavedChangesGuard('entity')
-            this.$router.back()
-          } catch (error) {
-            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('L\'entité sera supprimée.')) {
+        this.isLoading = true
+        try {
+          await provider.deleteEntity(this.entity.id)
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        } catch (error) {
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
+        }
+        this.isLoading = false
+      }
     },
     copyEntity () {
-      const proposal = Object.assign({}, this.entity)
+      const proposal = JSON.parse(JSON.stringify(this.entity))
       delete proposal.id
       proposal.key = `${proposal.key}.copie`
       proposal.description = `${proposal.description} (copie)`
@@ -445,6 +444,8 @@ export default {
         name: 'admin-entity',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
@@ -491,13 +492,13 @@ export default {
     async getRelatedIntents () {
       this.isLoading = true
       try {
-        this.relatedIntents = (await this.$Provider.getIntents())
+        this.relatedIntents = (await provider.getIntents())
           .filter((intent) => intent.utterances
             .some((utterance) => utterance.value.indexOf(`%${this.entity.key}%`) !== -1),
           )
           .sort((a, b) => a.key > b.key ? 1 : -1)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },

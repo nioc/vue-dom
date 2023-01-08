@@ -1,20 +1,19 @@
 <template>
   <div v-if="count > 0" :class="className">
-    <b-tooltip v-if="isLink" position="is-bottom" type="is-dark">
+    <o-tooltip v-if="isLink" position="bottom" variant="dark">
       <router-link :to="{name: 'notifications'}" title="Voir les notifications" class="tag is-danger is-normal is-rounded notification-counter">{{ count }}</router-link>
       <template #content>
-        <div v-for="(notification, index) in notifications" :key="index">
+        <div v-for="(notification, index) in dataStore.notifications" :key="index">
           <span :class="{'has-text-danger': notification.level === 'error', 'has-text-warning-mid-dark': notification.level === 'warn'}">{{ notification.message }}</span>
         </div>
       </template>
-    </b-tooltip>
+    </o-tooltip>
     <span v-else class="tag is-danger is-normal is-rounded notification-counter">{{ count }}</span>
   </div>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
-const { mapState, mapGetters } = createNamespacedHelpers('data')
+import { useDataStore } from '@/store/data'
 
 export default {
   name: 'NotificationsCounter',
@@ -28,10 +27,14 @@ export default {
       default: false,
     },
   },
+  setup() {
+    const dataStore = useDataStore()
+    return { dataStore }
+  },
   computed: {
-    ...mapGetters(['getNotificationsCount']),
-    ...mapState(['notifications']),
-    count () { return this.getNotificationsCount() },
+    count () {
+      return this.dataStore.getNotificationsCount
+    },
   },
 }
 </script>

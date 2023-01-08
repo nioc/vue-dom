@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import Intents from '@/components/admin/Intents'
-import Entities from '@/components/admin/Entities'
-import NlpEngine from '@/components/admin/NlpEngine'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import Intents from '@/components/admin/Intents.vue'
+import Entities from '@/components/admin/Entities.vue'
+import NlpEngine from '@/components/admin/NlpEngine.vue'
 
 export default {
   name: 'Nlp',

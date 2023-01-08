@@ -17,6 +17,7 @@
 
 <script>
 import UAParser from 'ua-parser-js'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'UserAgent',
@@ -28,7 +29,7 @@ export default {
   },
   data () {
     return {
-      browsersList: this.$Provider.getBrowsersList(),
+      browsersList: provider.getBrowsersList(),
     }
   },
   computed: {

@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container box">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="field is-required">
           <label class="label">Login</label>
           <div class="control has-icons-left">
@@ -27,7 +27,7 @@
         <div class="field">
           <div class="control">
             <label class="label">Statut</label>
-            <b-switch v-model="user.isActive">{{ user.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+            <o-switch v-model="user.isActive">{{ user.isActive ? 'Actif' : 'Inactif' }}</o-switch>
           </div>
         </div>
         <div class="field">
@@ -58,27 +58,33 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { useAppStore } from '@/store/app'
+import { useDialog } from '@/composables/useDialog'
+import { provider } from '@/services/Provider'
 
 export default {
-  name: 'Users',
+  name: 'User',
   components: {
     Breadcrumb,
   },
-  mixins: [
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
   },
+  setup() {
+    const appStore = useAppStore()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    const { confirm, confirmDelete } = useDialog()
+    return { appStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirm, confirmDelete }
+  },
   data () {
     return {
       user: {},
-      roles: this.$Provider.getAllRoles(),
+      roles: provider.getAllRoles(),
       isLoading: false,
     }
   },
@@ -88,59 +94,48 @@ export default {
   methods: {
     async getUser () {
       this.isLoading = true
-      this.user = await this.$Provider.getUser(this.id)
+      this.user = await provider.getUser(this.id)
       if (!this.user.roles) {
         this.user.roles = []
       }
-      this.addUnsavedChangesGuard('user')
+      this.addUnsavedChangesGuard(this.user)
       this.isLoading = false
     },
     async updateUser () {
       this.isLoading = true
       try {
-        await this.$Provider.updateUser(this.user)
-        this.addUnsavedChangesGuard('user')
+        await provider.updateUser(this.user)
+        this.addUnsavedChangesGuard(this.user)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async removeUser () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>L\'utilisateur sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          try {
-            await this.$Provider.deleteUser(this.user.id)
-            this.removeUnsavedChangesGuard('user')
-            this.$router.back()
-          } catch (error) {
-            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('L\'utilisateur sera supprimé.')) {
+        this.isLoading = true
+        try {
+          await provider.deleteUser(this.user.id)
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        } catch (error) {
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
+        }
+        this.isLoading = false
+      }
     },
     async requestToken () {
       this.isLoading = true
       try {
-        const refreshToken = await this.$Provider.requestUserRefreshToken(this.user.id)
-        this.$buefy.dialog.alert({
+        const refreshToken = await provider.requestUserRefreshToken(this.user.id)
+        this.confirm({
           title: 'Refresh token',
           message: `<p class="is-selectable-all is-family-code">${refreshToken.token}</p><br/><p>Note : ce token ne sera plus consultable ultérieurement</p>`,
           hasIcon: true,
-          icon: 'key',
-          iconPack: 'fa',
+          iconClass: 'fas fa-key',
         })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },

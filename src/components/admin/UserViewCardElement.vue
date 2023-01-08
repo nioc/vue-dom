@@ -23,11 +23,7 @@
       </div>
 
       <div v-if="element.type === 'stateHistory'" class="field is-narrow">
-        <verte class="button p-0" picker="square" model="rgb" :value="element.color" menu-position="center" @input="updateColor">
-          <span class="icon is-small is-left">
-            <i class="fas fa-palette" />
-          </span>
-        </verte>
+        <color-picker :model-value="element.color" @update:model-value="updateColor" />
       </div>
 
       <div v-if="element.type === 'stateHistory'" class="control has-icons-left">
@@ -47,15 +43,14 @@
 </template>
 
 <script>
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-import Verte from 'verte'
-import 'verte/dist/verte.css'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import ColorPicker from '@/components/admin/ColorPicker.vue'
 
 export default {
   name: 'UserViewCardElement',
   components: {
     OptionsAutocomplete,
-    Verte,
+    ColorPicker,
   },
   props: {
     element: {
@@ -82,9 +77,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.verte.button .verte__guide {
-  padding: 0px 20px;
-}
-</style>

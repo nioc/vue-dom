@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -34,7 +34,7 @@
               </div>
             </div>
 
-            <div class="field">
+            <div class="field is-required">
               <label class="label">Equipement</label>
               <div class="control">
                 <div class="field has-addons">
@@ -59,14 +59,14 @@
             <div class="field">
               <div class="control">
                 <label class="label">Visibilité</label>
-                <b-switch v-model="state.isVisible">{{ state.isVisible ? 'Visible' : 'Masqué' }}</b-switch>
+                <o-switch v-model="state.isVisible">{{ state.isVisible ? 'Visible' : 'Masqué' }}</o-switch>
               </div>
             </div>
 
             <div class="field">
               <div class="control">
                 <label class="label">Historisation</label>
-                <b-switch v-model="state.isHistorized">{{ state.isHistorized ? 'Historisé' : 'Non historisé' }}</b-switch>
+                <o-switch v-model="state.isHistorized">{{ state.isHistorized ? 'Historisé' : 'Non historisé' }}</o-switch>
               </div>
             </div>
 
@@ -220,7 +220,7 @@
               <div class="field">
                 <label class="label">Valeur</label>
                 <div v-if="state.type==='boolean'" class="control">
-                  <b-switch v-model="editedValue">{{ editedValue }}</b-switch>
+                  <o-switch v-model="editedValue">{{ editedValue }}</o-switch>
                 </div>
                 <div v-else class="control has-icons-left">
                   <input v-model="editedValue" class="input" :type="state.type==='numeric' ? 'number' : 'text'" placeholder="Valeur">
@@ -246,11 +246,14 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import IconPicker from '@/components/admin/IconPicker'
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-import { AdminMixin } from '@/mixins/Admin'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import IconPicker from '@/components/admin/IconPicker.vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { dtFormat } from '@/services/Datetime'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'State',
@@ -259,20 +262,17 @@ export default {
     IconPicker,
     OptionsAutocomplete,
   },
-  mixins: [
-    AdminMixin,
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const dataStore = useDataStore()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    const { confirmDelete } = useDialog()
+    return { dataStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirmDelete }
   },
   data () {
     return {
@@ -287,25 +287,31 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
-    statecollectDate () { return this.state.date ? this.$moment(this.state.date).format('LLL') : null },
-    currentValue () { return this.state.type === 'object' ? JSON.stringify(this.state.currentValue) : this.state.currentValue },
+    isNew () {
+      return this.id === 'new'
+    },
+    statecollectDate () {
+      return this.state.date ? dtFormat(this.state.date, 'PPPpp') : null
+    },
+    currentValue () {
+      return this.state.type === 'object' ? JSON.stringify(this.state.currentValue) : this.state.currentValue
+    },
   },
   mounted () {
     if (!this.isNew) {
       this.getState()
     } else {
-      this.addUnsavedChangesGuard('state')
-      if (this.proposal) {
-        this.state = Object.assign({}, this.state, this.proposal)
+      this.addUnsavedChangesGuard(this.state)
+      if (history.state.proposal) {
+        this.state = Object.assign({}, this.state, history.state.proposal)
       }
     }
   },
   methods: {
     async getState () {
       this.isLoading = true
-      this.state = await this.$Provider.getState(this.id)
-      this.addUnsavedChangesGuard('state')
+      this.state = await provider.getState(this.id)
+      this.addUnsavedChangesGuard(this.state)
       this.isLoading = false
     },
     async saveState () {
@@ -313,14 +319,14 @@ export default {
       const state = Object.assign({}, this.state)
       delete state.currentValue
       delete state.date
-      const result = await this.vxSaveState({ state, isNew: this.isNew })
+      const result = await this.dataStore.vxSaveState({ state, isNew: this.isNew })
       if (result) {
         if (this.isNew) {
-          this.removeUnsavedChangesGuard('state')
+          this.removeUnsavedChangesGuard()
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.state = Object.assign(this.state, result)
-        this.addUnsavedChangesGuard('state')
+        this.addUnsavedChangesGuard(this.state)
       }
       this.isLoading = false
     },
@@ -328,7 +334,7 @@ export default {
       const state = {
         id: this.state.id,
         currentValue: this.editedValue,
-        date: this.$moment().format(),
+        date: dtFormat(new Date(), 'ISO'),
       }
       if (this.state.type === 'object') {
         try {
@@ -338,7 +344,7 @@ export default {
         }
       }
       this.isLoading = true
-      const result = await this.vxSaveState({ state, isNew: false })
+      const result = await this.dataStore.vxSaveState({ state, isNew: false })
       if (result) {
         this.state.currentValue = result.currentValue
         this.state.date = result.date
@@ -357,29 +363,21 @@ export default {
         name: 'admin-state',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
     },
     async removeState () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>L\'état sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          if (await this.vxDeleteState({ stateId: this.state.id, eqId: this.state.eqId })) {
-            this.removeUnsavedChangesGuard('state')
-            this.$router.back()
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('L\'état sera supprimé.')) {
+        this.isLoading = true
+        if (await this.dataStore.vxDeleteState({ stateId: this.state.id, eqId: this.state.eqId })) {
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        }
+        this.isLoading = false
+      }
     },
     setEquipmentId (equipment) {
       if (!equipment) {

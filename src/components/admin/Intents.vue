@@ -1,6 +1,6 @@
 <template>
-  <section>
-    <b-loading v-model="isLoading" :is-full-page="false" />
+  <section class="is-relative">
+    <o-loading v-model:active="isLoading" :full-page="false" />
     <div v-if="intents.length" class="table-container">
       <table class="table is-striped is-fullwidth is-vertical-centered">
         <thead>
@@ -39,8 +39,17 @@
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
+import { useDataStore } from '@/store/data'
+import { provider } from '@/services/Provider'
+
 export default {
   name: 'Intents',
+  setup() {
+    const appStore = useAppStore()
+    const dataStore = useDataStore()
+    return { appStore, dataStore }
+  },
   data () {
     return {
       intents: [],
@@ -55,9 +64,9 @@ export default {
     async getIntents () {
       this.isLoading = true
       try {
-        this.intents = (await this.$Provider.getIntents()).sort((a, b) => a.key > b.key ? 1 : -1)
+        this.intents = (await provider.getIntents()).sort((a, b) => a.key > b.key ? 1 : -1)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
       this.isLoaded = true

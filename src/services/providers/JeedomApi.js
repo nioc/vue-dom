@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { dtFormat } from '../Datetime'
 
-const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, store = null, readDelay = 5000, statisticsPeriod = 86400000, trendPeriod = 3600000, trendThreshold = 0.1) {
+const JeedomApi = function (jsonRpcApiUrl = null, websocketUrl = null, readDelay = 5000, statisticsPeriod = 86400000, trendPeriod = 3600000, trendThreshold = 0.1) {
   const socketMaxTry = 3
   let apiKey = null
   let websocket = null
@@ -55,14 +56,14 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     return response.data.result
   }
 
-  function handleEventsResponse (events) {
+  function handleEventsResponse (events, appStore, dataStore) {
     lastEventsTimestamp = events.datetime
     const updateCmds = []
     events.result.forEach((event) => {
       switch (event.name) {
         case 'cmd::update': {
           // convert boolean value
-          const state = store.getters['data/getStateById'](event.option.cmd_id)
+          const state = dataStore.getStateById(event.option.cmd_id)
           const currentValue = (state && state.type === 'boolean') ? event.option.value === 1 : event.option.value
           updateCmds.push({
             id: event.option.cmd_id,
@@ -73,11 +74,11 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
         }
         case 'jeeObject::summary::update':
           for (const key in event.option.keys) {
-            store.commit('data/saveRoomSummary', { id: event.option.object_id, key, value: event.option.keys[key].value })
+            dataStore.saveRoomSummary({ id: event.option.object_id, key, value: event.option.keys[key].value })
           }
           break
         case 'scenario::update':
-          store.commit('data/updateScenario', {
+          dataStore.updateScenario({
             id: event.option.scenario_id,
             state: event.option.state,
           })
@@ -96,7 +97,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
               type = 'is-warning'
               break
           }
-          store.commit('app/setInformation', { type, message: event.option.message })
+          appStore.setInformation({ type, message: event.option.message })
           break
         }
         case 'notify': {
@@ -116,9 +117,9 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
           if (event.option.message) {
             message += event.option.message
           }
-          store.commit('app/setInformation', { type, message })
-          store.commit('data/addNotification', {
-            date: Vue.moment().format('YYYY-MM-DD HH:mm:ss'),
+          appStore.setInformation({ type, message })
+          dataStore.addNotification({
+            date: dtFormat(new Date(), 'yyyy-MM-dd HH:mm:ss'),
             message: event.option.message,
           })
           break
@@ -129,7 +130,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     })
     // commit cmd::update batch
     if (updateCmds.length > 0) {
-      store.commit('data/updateStatesActions', updateCmds)
+      dataStore.updateStatesActions(updateCmds)
     }
   }
 
@@ -171,20 +172,20 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     },
 
     // suscribe to Jeedom events throught websocket
-    openEventsListener (resetCounter, forceRefresh = false) {
-      if (!store.state.app.hasNetwork) {
+    openEventsListener (resetCounter, forceRefresh = false, appStore, dataStore) {
+      if (!appStore.hasNetwork) {
         // no network
         return
       }
       if (websocketUrl === null) {
         // websocket url not set, fallback to HTTP polling
-        this.openEventsListenerFallback(true)
+        this.openEventsListenerFallback(true, appStore, dataStore)
         return
       }
       if (!apiKey) {
         console.warn('Missing API key')
-        store.commit('app/setInformation', { type: 'is-danger', message: 'Erreur d\'authentification, veuillez-vous reconnecter' })
-        store.commit('app/setUser', { login: null, isAuthenticated: false })
+        appStore.setInformation({ type: 'is-danger', message: 'Erreur d\'authentification, veuillez-vous reconnecter' })
+        appStore.setUser({ login: null, isAuthenticated: false })
         return
       }
       // ensure only one socket
@@ -193,7 +194,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
         return
       }
       if (forceRefresh) {
-        this.openEventsListenerFallback(false)
+        this.openEventsListenerFallback(true, appStore, dataStore)
       }
       isSocketOpen = true
       // reset error count
@@ -207,12 +208,12 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
         console.info('Events socket connection opened')
         const authMsg = JSON.stringify({ apiKey })
         websocket.send(authMsg)
-        store.commit('app/setEventsListenerStatus', true)
+        appStore.setEventsListenerStatus(true)
       }
       // on message, handle events
       websocket.onmessage = (message) => {
         try {
-          handleEventsResponse(JSON.parse(message.data))
+          handleEventsResponse(JSON.parse(message.data), appStore, dataStore)
         } catch (error) {
           console.error('Error during events parsing', error)
         }
@@ -224,7 +225,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       }
       // on connection close, store status and retry if it was an abnormal closure
       websocket.onclose = (event) => {
-        store.commit('app/setEventsListenerStatus', false)
+        appStore.setEventsListenerStatus(false)
         isSocketOpen = false
         switch (event.code) {
           case 1000:
@@ -233,19 +234,19 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
             break
           case 1006:
             // abnormal closure
-            if (!store.state.app.hasNetwork) {
+            if (!appStore.hasNetwork) {
               // no network
               console.warn(`Network failure, events socket connection closed (code: ${event.code}, try #${socketErrorCount}/${socketMaxTry})`)
               return
             }
             if (socketErrorCount >= socketMaxTry) {
               console.warn(`Events socket connection closed (code: ${event.code}, try #${socketErrorCount}/${socketMaxTry})`)
-              this.openEventsListenerFallback(true)
+              this.openEventsListenerFallback(true, appStore, dataStore)
               return
             }
             // try to reconnect
             console.warn(`Events socket connection closed (code: ${event.code}, try #${socketErrorCount}/${socketMaxTry}), reconnecting...`)
-            this.openEventsListener(false, false)
+            this.openEventsListener(false, false, appStore, dataStore)
             break
           default:
             console.warn(`Events socket connection closed (code: ${event.code}, try #${socketErrorCount})`)
@@ -254,32 +255,34 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
     },
 
     // close websocket connection
-    closeEventsListener () {
+    closeEventsListener (appStore) {
       if (websocket) {
         websocket.close()
       }
       if (timerId) {
         clearTimeout(timerId)
-        store.commit('app/setEventsListenerStatus', false)
-        store.commit('app/setEventsListenerIsPolling', true)
+        appStore.setEventsListenerStatus(false)
+        appStore.setEventsListenerIsPolling(true)
       }
     },
 
     // request events by JSON-RPC API
-    async openEventsListenerFallback (isPolling) {
+    async openEventsListenerFallback (isPolling, appStore, dataStore) {
       try {
-        store.commit('app/setEventsListenerStatus', true)
+        appStore.setEventsListenerStatus(true)
         const events = await jsonRpcCall('event::changes', { datetime: lastEventsTimestamp })
         lastEventsTimestamp = events.datetime
-        handleEventsResponse(events)
+        handleEventsResponse(events, appStore, dataStore)
         if (isPolling) {
-          timerId = setTimeout(function () { this.openEventsListenerFallback(true) }.bind(this), readDelay)
-          store.commit('app/setEventsListenerIsPolling', true)
+          timerId = setTimeout(function () {
+            this.openEventsListenerFallback(true, appStore, dataStore)
+          }.bind(this), readDelay)
+          appStore.setEventsListenerIsPolling(true)
         }
         return
       } catch (error) {
-        store.commit('app/setEventsListenerStatus', false)
-        store.commit('app/setInformation', { type: 'is-danger', message: 'Erreur de communication avec le serveur' })
+        appStore.setEventsListenerStatus(false)
+        appStore.setInformation({ type: 'is-danger', message: 'Erreur de communication avec le serveur' })
         console.error(error)
       }
     },
@@ -334,7 +337,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
                 equipment.hasLowBattery = true
               }
               if (jEqLogic.status.lastCommunication) {
-                equipment.lastCommunication = Vue.moment(jEqLogic.status.lastCommunication).format()
+                equipment.lastCommunication = dtFormat(jEqLogic.status.lastCommunication, 'ISO')
               }
               if (jEqLogic.status.timeout || jEqLogic.status.warning || jEqLogic.status.danger) {
                 equipment.hasNoCommunication = true
@@ -515,8 +518,8 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       if (startTime === null) {
         startTime = new Date(endTime.getTime() - statisticsPeriod)
       }
-      params.startTime = Vue.moment(startTime).format('YYYY-MM-DD HH:mm:ss')
-      params.endTime = Vue.moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+      params.startTime = dtFormat(startTime, 'yyyy-MM-dd HH:mm:ss')
+      params.endTime = dtFormat(endTime, 'yyyy-MM-dd HH:mm:ss')
       const result = {
         min: null,
         max: null,
@@ -530,7 +533,7 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
           result.avg = Number.parseFloat(Number.parseFloat(statistics.avg).toPrecision(3))
           result.max = Number.parseFloat(Number.parseFloat(statistics.max).toPrecision(3))
         }
-        params.startTime = Vue.moment(new Date(endTime.getTime() - trendPeriod)).format('YYYY-MM-DD HH:mm:ss')
+        params.startTime = dtFormat(new Date(endTime.getTime() - trendPeriod), 'yyyy-MM-dd HH:mm:ss')
         const trendThresholdCoef = 10
         const trend = await jsonRpcCall('cmd::getTendance', params)
         if (trend <= -trendThreshold * trendThresholdCoef) {
@@ -560,14 +563,14 @@ const JeedomApi = function (Vue, jsonRpcApiUrl = null, websocketUrl = null, stor
       if (startTime === null) {
         startTime = new Date(endTime.getTime() - 86400000)
       }
-      params.startTime = Vue.moment(startTime).format('YYYY-MM-DD HH:mm:ss')
-      params.endTime = Vue.moment(endTime).format('YYYY-MM-DD HH:mm:ss')
+      params.startTime = dtFormat(startTime, 'yyyy-MM-dd HH:mm:ss')
+      params.endTime = dtFormat(endTime, 'yyyy-MM-dd HH:mm:ss')
       try {
         const history = await jsonRpcCall('cmd::getHistory', params)
         return history.map((point) => {
           return {
             value: parseFloat(point.value),
-            date: Vue.moment(point.datetime).valueOf(),
+            date: new Date(point.datetime).getTime(),
           }
         })
       } catch (error) {

@@ -5,19 +5,17 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
-        <b-table :data="processed" :paginated="true" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="name" class="is-clickable" @click="consultChannel">
-          <template v-for="column in columns">
-            <b-table-column :key="column.id" v-bind="column">
-              <template #default="props">
-                <router-link v-if="column.field==='name'" :to="{name: 'admin-channel', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
-                <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
-                <i v-else-if="column.field==='hasPendingRequest'" class="fas fa-fw" :class="{'fa-user-clock': props.row.hasPendingRequest}" :title="props.row.hasPendingRequest ? 'En attente d\'une réponse de l\'utilisateur' : null" />
-                <span v-else>{{ props.row[column.field] }}</span>
-              </template>
-            </b-table-column>
-          </template>
-        </b-table>
+        <o-loading v-model:active="isLoading" :full-page="false" />
+        <o-table :data="processed" :paginated="true" striped hoverable :mobile-cards="false" sort-icon="caret-up" default-sort="name" class="is-clickable" @click="consultChannel">
+          <o-table-column v-for="column in columns" :key="column.id" v-bind="column">
+            <template #default="props">
+              <router-link v-if="column.field==='name'" :to="{name: 'admin-channel', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
+              <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
+              <i v-else-if="column.field==='hasPendingRequest'" class="fas fa-fw" :class="{'fa-user-clock': props.row.hasPendingRequest}" :title="props.row.hasPendingRequest ? 'En attente d\'une réponse de l\'utilisateur' : null" />
+              <span v-else>{{ props.row[column.field] }}</span>
+            </template>
+          </o-table-column>
+        </o-table>
         <span class="buttons pt-3">
           <button class="button is-primary" @click="getChannels">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
@@ -32,17 +30,18 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import { AdminMixin } from '@/mixins/Admin'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import { useDataStore } from '@/store/data'
 
 export default {
   name: 'Channels',
   components: {
     Breadcrumb,
   },
-  mixins: [
-    AdminMixin,
-  ],
+  setup() {
+    const dataStore = useDataStore()
+    return { dataStore }
+  },
   data () {
     return {
       isLoading: false,
@@ -87,10 +86,10 @@ export default {
   },
   computed: {
     processed () {
-      return this.arrChannels.map((channel) => {
+      return this.dataStore.arrChannels.map((channel) => {
         const _channel = Object.assign({}, channel)
-        _channel.inputName = this.getStateById(channel.input).name || channel.input
-        _channel.outputName = this.getActionById(channel.output).name || channel.output
+        _channel.inputName = this.dataStore.getStateById(channel.input).name || channel.input
+        _channel.outputName = this.dataStore.getActionById(channel.output).name || channel.output
         return _channel
       })
     },
@@ -101,7 +100,7 @@ export default {
   methods: {
     async getChannels () {
       this.isLoading = true
-      await this.vxRefreshChannels()
+      await this.dataStore.vxRefreshChannels()
       this.isLoading = false
     },
     consultChannel (channel) {

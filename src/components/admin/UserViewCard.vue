@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
 
 export default {
   name: 'UserViewCard',

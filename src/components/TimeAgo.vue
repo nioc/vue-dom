@@ -1,4 +1,7 @@
 <script>
+import { h } from 'vue'
+import { dtMomentFromNow, dtFormat } from '@/services/Datetime'
+
 export default {
   name: 'TimeAgo',
   props: {
@@ -16,34 +19,45 @@ export default {
     },
     interval: {
       type: Number,
-      default: 30000,
+      default: 10000,
+    },
+    isStrict: {
+      type: Boolean,
+      default: true,
+    },
+    titleFormat: {
+      type: String,
+      default: null,
     },
   },
   data () {
     return {
-      fromNow: this.$moment(this.date).fromNow(this.dropFixes),
+      fromNow: null,
       intervalId: null,
     }
   },
   watch: {
-    date: function () { this.updateFromNow() },
+    date: function () {
+      this.updateFromNow()
+    },
   },
   mounted () {
+    this.updateFromNow()
     this.intervalId = setInterval(this.updateFromNow, this.interval)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     clearInterval(this.intervalId)
   },
   methods: {
     updateFromNow () {
-      const fromNow = this.$moment(this.date).fromNow(this.dropFixes)
+      const fromNow = dtMomentFromNow(this.date, this.dropFixes, this.isStrict)
       if (fromNow !== this.fromNow) {
         this.fromNow = fromNow
       }
     },
   },
-  render (h) {
-    return h(this.tag, { style: 'white-space: nowrap;' }, this.fromNow)
+  render () {
+    return h(this.tag, { style: `white-space: nowrap;${this.titleFormat ? 'cursor: help;' : ''}`, title: this.titleFormat ? dtFormat(this.date, this.titleFormat) : null }, this.fromNow)
   },
 }
 </script>

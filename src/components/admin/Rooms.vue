@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import RoomsTree from '@/components/admin/RoomsTree'
-import { AdminMixin } from '@/mixins/Admin'
-import { RoomsTreeMixin } from '@/mixins/RoomsTree'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import RoomsTree from '@/components/admin/RoomsTree.vue'
+import { useRoomsTree } from '@/composables/useRoomsTree.js'
+import { useDataStore } from '@/store/data'
 
 export default {
   name: 'Rooms',
@@ -37,21 +37,24 @@ export default {
     Breadcrumb,
     RoomsTree,
   },
-  mixins: [
-    AdminMixin,
-    RoomsTreeMixin,
-  ],
+  setup() {
+    const dataStore = useDataStore()
+    const { getRoomsTree } = useRoomsTree()
+    return { dataStore, getRoomsTree }
+  },
   data () {
     return {
       search: '',
     }
   },
   computed: {
-    roomsTree () { return this.getRoomsTree(this.rooms, this.search.toLowerCase()) },
+    roomsTree () {
+      return this.getRoomsTree(this.dataStore.rooms, this.search.toLowerCase())
+    },
   },
   methods: {
     async getRooms () {
-      this.vxRefreshRooms()
+      this.dataStore.vxRefreshRooms()
     },
     createRoom () {
       this.$router.push({ name: 'admin-room', params: { id: 'new' } })

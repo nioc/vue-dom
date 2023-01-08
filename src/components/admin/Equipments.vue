@@ -5,24 +5,22 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
-        <b-table :data="processed" :paginated="true" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="roomName" class="is-clickable" @click="consultEquipment">
-          <template v-for="column in columns">
-            <b-table-column :key="column.id" v-bind="column">
-              <template v-if="column.searchable" slot="searchable" slot-scope="props">
-                <b-input v-model="props.filters[props.column.field]" placeholder="Rechercher..." icon="search" size="is-small" />
-              </template>
-              <template #default="props">
-                <router-link v-if="column.field==='name'" :to="{name: 'admin-equipment', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
-                <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
-                <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
-                <time-ago v-else-if="column.field==='lastCommunication' && props.row.lastCommunication" :date="props.row.lastCommunication" :drop-fixes="true" :title="props.row.lastCommunication | moment('LLL')" :class="{'has-text-danger': props.row.hasNoCommunication}" />
-                <span v-else-if="column.field==='battery' && props.row.battery" :class="{'has-text-danger': props.row.battery < 10}">{{ props.row.battery }}%</span>
-                <span v-else>{{ props.row[column.field] }}</span>
-              </template>
-            </b-table-column>
-          </template>
-        </b-table>
+        <o-loading v-model:active="isLoading" :full-page="false" />
+        <o-table :data="processed" :debounce-search="300" :paginated="true" striped hoverable :mobile-cards="false" sort-icon="caret-up" default-sort="roomName" class="is-clickable" @click="consultEquipment">
+          <o-table-column v-for="column in columns" v-bind="column" :key="column.field">
+            <template v-if="column.searchable" #searchable="props">
+              <o-input v-model="props.filters[props.column.field]" placeholder="Rechercher..." icon="search" size="small" />
+            </template>
+            <template #default="props">
+              <router-link v-if="column.field==='name'" :to="{name: 'admin-equipment', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
+              <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
+              <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
+              <time-ago v-else-if="column.field==='lastCommunication' && props.row.lastCommunication" :date="props.row.lastCommunication" :drop-fixes="true" title-format="PPPPpp" :class="{'has-text-danger': props.row.hasNoCommunication}" />
+              <span v-else-if="column.field==='battery' && props.row.battery" :class="{'has-text-danger': props.row.battery < 10}">{{ props.row.battery }}%</span>
+              <span v-else>{{ props.row[column.field] }}</span>
+            </template>
+          </o-table-column>
+        </o-table>
         <span class="buttons pt-3">
           <button class="button is-primary" @click="getEquipments()">
             <span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span>
@@ -37,9 +35,9 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import TimeAgo from '@/components/TimeAgo'
-import { AdminMixin } from '@/mixins/Admin'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import TimeAgo from '@/components/TimeAgo.vue'
+import { useDataStore } from '@/store/data'
 
 export default {
   name: 'Equipments',
@@ -47,7 +45,10 @@ export default {
     Breadcrumb,
     TimeAgo,
   },
-  mixins: [AdminMixin],
+  setup() {
+    const dataStore = useDataStore()
+    return { dataStore }
+  },
   data () {
     return {
       isLoading: false,
@@ -111,9 +112,9 @@ export default {
   },
   computed: {
     processed () {
-      return this.arrEquipments.map((equipment) => {
+      return this.dataStore.arrEquipments.map((equipment) => {
         const _equipment = Object.assign({}, equipment)
-        _equipment.roomName = this.getRoomById(_equipment.roomId).name || _equipment.roomId
+        _equipment.roomName = this.dataStore.getRoomById(_equipment.roomId).name || _equipment.roomId
         if (_equipment.tags) {
           _equipment.tagsText = _equipment.tags.join(' • ')
         }
@@ -124,7 +125,7 @@ export default {
   methods: {
     async getEquipments () {
       this.isLoading = true
-      await this.vxRefreshEquipments()
+      await this.dataStore.vxRefreshEquipments()
       this.isLoading = false
     },
     createEquipment () {

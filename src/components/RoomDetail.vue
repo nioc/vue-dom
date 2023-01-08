@@ -1,7 +1,7 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items.sync="breadcrumbItems" :summary="summary" />
+      <breadcrumb v-model:items="breadcrumbItems" :summary="summary" />
     </div>
     <div class="hero-body">
       <div class="container">
@@ -16,10 +16,9 @@
 </template>
 
 <script>
-import Equipment from '@/components/Equipment'
-import Breadcrumb from '@/components/Breadcrumb'
-import { SummaryMixin } from '@/mixins/Summary'
-import { RoomMixin } from '@/mixins/Room'
+import Equipment from '@/components/Equipment.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import { useDataStore } from '@/store/data'
 
 export default {
   name: 'RoomDetail',
@@ -27,12 +26,15 @@ export default {
     Breadcrumb,
     Equipment,
   },
-  mixins: [SummaryMixin, RoomMixin],
   props: {
     id: {
       type: String,
       required: true,
     },
+  },
+  setup() {
+    const dataStore = useDataStore()
+    return { dataStore }
   },
   data () {
     return {
@@ -40,24 +42,28 @@ export default {
     }
   },
   computed: {
-    room () { return this.getRoomById(this.id) },
-    title () { return this.room.name },
-    summary () { return this.getRoomSummaryById(this.id) },
-    equipments () { return this.getRoomVisiblesEquipment(this.id) },
+    room () {
+      return this.dataStore.getRoomById(this.id)
+    },
+    title () {
+      document.title = document.title.replace('Pièce |', this.room.name + ' |')
+      return this.room.name
+    },
+    summary () {
+      return this.dataStore.getRoomSummaryById(this.id)
+    },
+    equipments () {
+      return this.dataStore.getRoomVisiblesEquipment(this.id)
+    },
   },
   watch: {
-    title: {
-      handler (title) {
-        document.title = document.title.replace('Pièce |', title + ' |')
-        this.breadcrumbItems[1].text = title
-      },
-      deep: true,
+    title () {
     },
   },
   created () {
     this.breadcrumbItems = [
       { link: { name: 'rooms' }, icon: 'fa-home', text: 'Pièces' },
-      { link: { name: 'rooms', params: { id: this.room.id } }, icon: this.room.icon ? this.room.icon : 'fas fa-cube', text: this.room.name, isActive: true },
+      { link: { name: 'room', params: { id: this.room.id } }, icon: this.room.icon ? this.room.icon : 'fas fa-cube', text: this.room.name, isActive: true },
     ]
   },
 }

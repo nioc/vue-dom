@@ -3,17 +3,19 @@
 </template>
 
 <script>
-import LoadingComponent from '@/components/equipment/LoadingComponent'
+import { defineAsyncComponent } from 'vue'
+import LoadingComponent from '@/components/equipment/LoadingComponent.vue'
 const customComponents = window.custom.components
 
 export default {
+  name: 'CustomEquipment',
   components: Object.keys(customComponents).reduce((components, moduleName) => {
     const componentName = customComponents[moduleName]
     return Object.assign(components, {
-      [componentName]: () => ({
-        component: import(/* webpackChunkName: "[request]" */ '@/components/equipment/' + componentName),
-        loading: LoadingComponent,
-        delay: 0,
+      [componentName]: defineAsyncComponent({
+        loader: () => import(`./${componentName}/index.vue`),
+        loadingComponent: LoadingComponent,
+        delay: 250,
       }),
     })
   }, {}),

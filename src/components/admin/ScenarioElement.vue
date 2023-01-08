@@ -1,7 +1,7 @@
 <template>
   <div class="scenario-element is-flex">
 
-    <b-switch v-model="element.isActive" size="is-small" title="Statut de l'élément" />
+    <o-switch v-model="element.isActive" size="is-small" title="Statut de l'élément" />
 
     <fieldset :disabled="!element.isActive">
       <scenario-rule
@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import ScenarioRule from '@/components/admin/ScenarioRule'
-import ScenarioAction from '@/components/admin/ScenarioAction'
-import ScenarioAsk from '@/components/admin/ScenarioAsk'
+import ScenarioRule from '@/components/admin/ScenarioRule.vue'
+import ScenarioAction from '@/components/admin/ScenarioAction.vue'
+import ScenarioAsk from '@/components/admin/ScenarioAsk.vue'
 
 export default {
   name: 'ScenarioElement',
@@ -61,6 +61,11 @@ export default {
       required: true,
     },
   },
+  emits: [
+    'remove',
+    'up',
+    'down',
+  ],
   created () {
     if (!Object.prototype.hasOwnProperty.call(this.element, 'isActive')) {
       this.element.isActive = true

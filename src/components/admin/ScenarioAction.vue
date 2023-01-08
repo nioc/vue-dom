@@ -36,17 +36,13 @@
 </template>
 
 <script>
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-import { AdminMixin } from '@/mixins/Admin'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
 
 export default {
   name: 'ScenarioAction',
   components: {
     OptionsAutocomplete,
   },
-  mixins: [
-    AdminMixin,
-  ],
   props: {
     scenarioAction: {
       type: Object,
@@ -61,6 +57,11 @@ export default {
       required: true,
     },
   },
+  emits: [
+    'up',
+    'remove',
+    'down',
+  ],
   data () {
     return {
       paramsClass: '',

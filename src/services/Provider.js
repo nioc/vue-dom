@@ -1,27 +1,29 @@
-const provider = window.custom.provider
+const providerConfig = window.custom.provider
 
-export default {
-  install (Vue, options = { store: null }) {
-    if (provider === undefined || !('system' in provider)) {
-      throw new Error('No system provider set, check your local.js')
+export let provider = null
+
+export async function initProvider() {
+  if (provider) {
+    return provider
+  }
+  if (providerConfig === undefined || !('system' in providerConfig)) {
+    throw new Error('No system provider set, check your local.js')
+  }
+  switch (providerConfig.system) {
+    case 'jeedom': {
+      const { JeedomApi } = await import ('@/services/providers/JeedomApi')
+      provider = JeedomApi(
+        providerConfig.jsonRpcApiUrl,
+        providerConfig.websocketUrl,
+        providerConfig.readDelay,
+        providerConfig.statisticsPeriod,
+        providerConfig.trendPeriod,
+        providerConfig.trendThreshold,
+      )
+      break
     }
-    switch (provider.system) {
-      case 'jeedom': {
-        Vue.prototype.$Provider = require('@/services/providers/JeedomApi').JeedomApi(
-          Vue,
-          provider.jsonRpcApiUrl,
-          provider.websocketUrl,
-          options.store,
-          provider.readDelay,
-          provider.statisticsPeriod,
-          provider.trendPeriod,
-          provider.trendThreshold,
-        )
-        break
-      }
-      default:
-        Vue.prototype.$Provider = {}
-        throw new Error(`System provider "${provider.system}" is not handled`)
-    }
-  },
+    default:
+      throw new Error(`System provider "${providerConfig.system}" is not handled`)
+  }
+  return provider
 }

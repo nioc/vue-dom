@@ -11,7 +11,7 @@
                 <option value="PT24H">24 heures</option>
                 <option value="P7D">7 jours</option>
                 <option value="P30D">30 jours</option>
-                <option :value="null">Personnalisé</option>
+                <option value="">Personnalisé</option>
               </select>
               <div class="icon is-small is-left">
                 <i class="fas fa-history" />
@@ -19,11 +19,11 @@
             </div>
           </div>
         </div>
-        <div v-if="duration === null" class="field" title="Date de début">
-          <b-datetimepicker v-model="startDate" :max-datetime="today" size="is-small" />
+        <div v-if="duration === ''" class="field" title="Date de début">
+          <o-datetimepicker v-model="startDate" :max-datetime="today" size="small" />
         </div>
-        <div v-if="duration === null" class="field" title="Date de fin">
-          <b-datetimepicker v-model="endDate" :max-datetime="today" size="is-small" />
+        <div v-if="duration === ''" class="field" title="Date de fin">
+          <o-datetimepicker v-model="endDate" :max-datetime="today" size="small" />
         </div>
         <div class="field">
           <button class="button is-primary is-rounded is-small" @click="getHistory"><span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span></button>
@@ -35,8 +35,12 @@
 </template>
 
 <script>
-import Chart from '@/components/Chart'
+import Chart from '@/components/Chart.vue'
+import { dtSub, durParse, durToMinutes, dtFormatDuration } from '@/services/Datetime'
+import { provider } from '@/services/Provider'
+
 export default {
+  name: 'History',
   components: {
     Chart,
   },
@@ -59,7 +63,9 @@ export default {
     }
   },
   computed: {
-    today () { return new Date() },
+    today () {
+      return new Date()
+    },
   },
   created () {
     this.endDate = new Date()
@@ -68,9 +74,10 @@ export default {
   },
   methods: {
     async getHistory () {
-      if (this.duration !== null) {
-        this.startDate = this.$moment().subtract(this.$moment.duration(this.duration)).toDate()
-        this.endDate = this.$moment().toDate()
+      if (this.duration !== '') {
+        const now = new Date()
+        this.startDate = dtSub(now, durParse(this.duration))
+        this.endDate = now
       }
       if (this.series === undefined || this.series.length === 0 || this.series[0].id === undefined) {
         console.error('History called without series')
@@ -78,7 +85,7 @@ export default {
       }
       const datasets = []
       await Promise.all(this.series.map(async (serie) => {
-        const history = await this.$Provider.getHistory(serie.id, this.startDate, this.endDate)
+        const history = await provider.getHistory(serie.id, this.startDate, this.endDate)
         let format = (point) => {
           return {
             x: point.date,
@@ -96,11 +103,12 @@ export default {
             format = (point) => {
               return {
                 x: point.date,
-                y: this.$moment.duration(point.value).as('minutes'),
+                y: durToMinutes(point.value),
+                label: dtFormatDuration(durParse(point.value)),
               }
             }
             this.tooltipCallbacks = {
-              label: (context) => `${serie.name}: ${this.$moment.duration(context.raw.y, 'minutes').humanize()}`,
+              label: (context) => `${serie.name}: ${context.raw.label}`,
             }
             break
           }
@@ -120,7 +128,7 @@ export default {
       this.loaded = true
     },
     updateDates () {
-      if (this.duration !== null) {
+      if (this.duration !== '') {
         this.getHistory()
       }
     },

@@ -1,47 +1,49 @@
 <template>
-  <b-collapse class="card mb-4" animation="slide" aria-id="databaseContent" :open="false" @open="getDatabaseCollections">
-    <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="databaseContent">
-      <p class="card-header-title">
-        <span class="icon"><i class="fa fa-database" /></span><span>Base de données</span>
-      </p>
-      <a class="card-header-icon">
-        <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-      </a>
-    </header>
+  <o-collapse class="card mb-4" animation="slide" aria-id="databaseContent" :open="false" @open="getDatabaseCollections">
+    <template #trigger="props">
+      <header class="card-header" role="button" aria-controls="databaseContent" :aria-expanded="props.open">
+        <p class="card-header-title">
+          <span class="icon"><i class="fa fa-database" /></span><span>Base de données</span>
+        </p>
+        <a class="card-header-icon">
+          <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+        </a>
+      </header>
+    </template>
 
-    <section class="card-content">
-      <b-loading v-model="isLoading" :is-full-page="false" />
+    <section class="card-content is-relative">
+      <o-loading v-model:active="isLoading" :full-page="false" />
 
       <div class="field">
         <div class="control">
           <label class="label">Collections à inclure dans la sauvegarde (toutes par défaut)</label>
-          <b-table :data="collections" striped hoverable checkable :header-checkable="false" :checked-rows.sync="selectedCollections" :mobile-cards="false" sort-icon="menu-up" default-sort="name">
-            <b-table-column v-slot="props" field="name" label="Nom" sortable>
+          <o-table v-model:checked-rows="selectedCollections" :data="collections" striped hoverable checkable :header-checkable="false" :mobile-cards="false" sort-icon="caret-up" default-sort="name">
+            <o-table-column v-slot="props" field="name" label="Nom" sortable>
               <span class="is-family-code">{{ props.row.name }}</span>
-            </b-table-column>
-            <b-table-column v-slot="props" field="stats.count" label="Nombre" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="stats.count" label="Nombre" sortable numeric position="right">
               {{ props.row.stats.count }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="stats.size" label="Taille" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="stats.size" label="Taille" sortable numeric position="right">
               {{ getHumanSizeCei(props.row.stats.size) }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="stats.avgObjSize" label="Taille unitaire" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="stats.avgObjSize" label="Taille unitaire" sortable numeric position="right">
               {{ getHumanSizeCei(props.row.stats.avgObjSize) }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="stats.storageSize" label="Données" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="stats.storageSize" label="Données" sortable numeric position="right">
               {{ getHumanSizeCei(props.row.stats.storageSize) }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="stats.totalIndexSize" label="Index" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="stats.totalIndexSize" label="Index" sortable numeric position="right">
               {{ getHumanSizeCei(props.row.stats.totalIndexSize) }}
-            </b-table-column>
-          </b-table>
+            </o-table-column>
+          </o-table>
         </div>
       </div>
 
       <div class="field">
         <div class="control">
           <label class="label">Format</label>
-          <b-switch v-model="isJson" type="is-danger" passive-type="is-primary">{{ isJson ? 'JSON (incompatible avec l\'import)' : 'BSON encodé' }}</b-switch>
+          <o-switch v-model="isJson" type="is-danger" passive-type="is-primary">{{ isJson ? 'JSON (incompatible avec l\'import)' : 'BSON encodé' }}</o-switch>
         </div>
       </div>
 
@@ -65,17 +67,23 @@
         </div>
       </span>
     </section>
-  </b-collapse>
+  </o-collapse>
 </template>
 
 <script>
-import { ConversionMixin } from '@/mixins/Conversion'
+import { useConversions } from '@/composables/useConversions'
+import { useAppStore } from '@/store/app'
+import { useDialog } from '@/composables/useDialog'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'SystemDatabase',
-  mixins: [
-    ConversionMixin,
-  ],
+  setup() {
+    const appStore = useAppStore()
+    const { confirm } = useDialog()
+    const { getHumanSizeCei } = useConversions()
+    return { appStore, confirm, getHumanSizeCei }
+  },
   data () {
     return {
       isLoading: false,
@@ -89,18 +97,18 @@ export default {
     async getDatabaseCollections () {
       this.isLoading = true
       try {
-        this.collections = await this.$Provider.getDatabaseCollections()
+        this.collections = await provider.getDatabaseCollections()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async getDatabaseBackup () {
       this.isLoading = true
       try {
-        await this.$Provider.getDatabaseBackup({ isJson: this.isJson, collections: this.selectedCollections.map((collection) => collection.name) })
+        await provider.getDatabaseBackup({ isJson: this.isJson, collections: this.selectedCollections.map((collection) => collection.name) })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
@@ -111,28 +119,26 @@ export default {
       }
       this.isLoading = true
       try {
-        const results = await this.$Provider.importDatabaseBackup(this.file)
+        const results = await provider.importDatabaseBackup(this.file)
         let message = '<ul>'
         results.forEach((result) => {
           message += `<li>${result.name}: ${result.count}</li>`
         })
         message += '</ul>'
-        this.$buefy.dialog.alert({
+        this.confirm({
           title: 'Base de données restaurée',
           message,
           hasIcon: true,
-          icon: 'database',
-          iconPack: 'fa',
+          iconClass: 'fas fa-database',
         })
         this.file = {}
       } catch (error) {
-        this.$buefy.dialog.alert({
+        this.confirm({
           type: 'is-danger',
           title: 'Erreur lors de la restauration',
           message: error.message,
           hasIcon: true,
-          icon: 'database',
-          iconPack: 'fa',
+          iconClass: 'fas fa-database',
         })
       }
       this.isLoading = false

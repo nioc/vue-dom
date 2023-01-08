@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -59,21 +59,21 @@
             <div class="field is-required">
               <div class="control">
                 <label class="label">Visibilité</label>
-                <b-switch v-model="action.isVisible">{{ action.isVisible ? 'Visible' : 'Masqué' }}</b-switch>
+                <o-switch v-model="action.isVisible">{{ action.isVisible ? 'Visible' : 'Masqué' }}</o-switch>
               </div>
             </div>
 
             <div class="field is-required">
               <div class="control">
                 <label class="label">Requiert une confirmation lors de l'exécution</label>
-                <b-switch v-model="action.needsConfirm">{{ action.needsConfirm ? 'Oui' : 'Non' }}</b-switch>
+                <o-switch v-model="action.needsConfirm">{{ action.needsConfirm ? 'Oui' : 'Non' }}</o-switch>
               </div>
             </div>
 
             <div class="field">
               <div class="control">
                 <label class="label">Utilisable pour une demande utilisateur</label>
-                <b-switch v-model="action.isAsk">{{ action.isAsk ? 'Oui' : 'Non' }}</b-switch>
+                <o-switch v-model="action.isAsk">{{ action.isAsk ? 'Oui' : 'Non' }}</o-switch>
               </div>
             </div>
 
@@ -129,27 +129,31 @@
                       <th />
                     </tr>
                   </thead>
-                  <draggable v-model="action.options" tag="tbody" handle=".handle" draggable=".dr">
-                    <tr v-for="(option, index) in action.options" :key="index" class="dr">
-                      <td><span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span></td>
-                      <td><input v-model="option.value" class="input is-static" type="text" readonly></td>
-                      <td><input v-model="option.label" class="input is-static" type="text" readonly></td>
-                      <td>
-                        <button class="button is-danger is-light" title="Supprimer l'option" @click="removeOption(index)">
-                          <span class="icon"><i class="fa fa-trash" /></span>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td />
-                      <td><input v-model="newOption.value" class="input" type="text" placeholder="Valeur"></td>
-                      <td><input v-model="newOption.label" class="input" type="text" placeholder="Libellé"></td>
-                      <td>
-                        <button :disabled="newOption.value === ''" class="button is-primary is-light" title="Ajouter l'option" @click="addOption">
-                          <span class="icon"><i class="fa fa-plus-circle" /></span>
-                        </button>
-                      </td>
-                    </tr>
+                  <draggable v-model="action.options" tag="tbody" handle=".handle" draggable=".dr" item-key="value">
+                    <template #item="{element: option, index}">
+                      <tr class="dr">
+                        <td><span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span></td>
+                        <td><input v-model="option.value" class="input is-static" type="text" readonly></td>
+                        <td><input v-model="option.label" class="input is-static" type="text" readonly></td>
+                        <td>
+                          <button class="button is-danger is-light" title="Supprimer l'option" @click="removeOption(index)">
+                            <span class="icon"><i class="fa fa-trash" /></span>
+                          </button>
+                        </td>
+                      </tr>
+                    </template>
+                    <template #footer>
+                      <tr>
+                        <td />
+                        <td><input v-model="newOption.value" class="input" type="text" placeholder="Valeur"></td>
+                        <td><input v-model="newOption.label" class="input" type="text" placeholder="Libellé"></td>
+                        <td>
+                          <button :disabled="newOption.value === ''" class="button is-primary is-light" title="Ajouter l'option" @click="addOption">
+                            <span class="icon"><i class="fa fa-plus-circle" /></span>
+                          </button>
+                        </td>
+                      </tr>
+                    </template>
                   </draggable>
                 </table>
               </div>
@@ -238,11 +242,13 @@
 
 <script>
 import draggable from 'vuedraggable'
-import Breadcrumb from '@/components/Breadcrumb'
-import IconPicker from '@/components/admin/IconPicker'
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-import { AdminMixin } from '@/mixins/Admin'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import IconPicker from '@/components/admin/IconPicker.vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Action',
@@ -252,20 +258,17 @@ export default {
     IconPicker,
     OptionsAutocomplete,
   },
-  mixins: [
-    AdminMixin,
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const dataStore = useDataStore()
+    const { confirmDelete } = useDialog()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    return { dataStore, confirmDelete, addUnsavedChangesGuard, removeUnsavedChangesGuard }
   },
   data () {
     return {
@@ -286,8 +289,12 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
-    hasParamsError () { return this.jsonError && this.action.paramsType === 'json' },
+    isNew () {
+      return this.id === 'new'
+    },
+    hasParamsError () {
+      return this.jsonError && this.action.paramsType === 'json'
+    },
     params: {
       get: function () {
         switch (this.action.paramsType) {
@@ -308,9 +315,9 @@ export default {
     if (!this.isNew) {
       this.getAction()
     } else {
-      this.addUnsavedChangesGuard('action')
-      if (this.proposal) {
-        this.action = Object.assign({}, this.action, this.proposal)
+      this.addUnsavedChangesGuard(this.action)
+      if (history.state.proposal) {
+        this.action = Object.assign({}, this.action, history.state.proposal)
       }
       if (this.action.paramsType === 'json') {
         this.jsonError = null
@@ -320,24 +327,24 @@ export default {
   methods: {
     async getAction () {
       this.isLoading = true
-      this.action = await this.$Provider.getAction(this.id)
+      this.action = await provider.getAction(this.id)
       if (this.action.paramsType === 'json') {
         this.jsonError = null
       }
-      this.addUnsavedChangesGuard('action')
+      this.addUnsavedChangesGuard(this.action)
       this.isLoading = false
     },
     async saveAction () {
       this.isLoading = true
       const action = Object.assign({}, this.action)
-      const result = await this.vxSaveAction({ action, isNew: this.isNew })
+      const result = await this.dataStore.vxSaveAction({ action, isNew: this.isNew })
       if (result) {
         if (this.isNew) {
-          this.removeUnsavedChangesGuard('action')
+          this.removeUnsavedChangesGuard()
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.action = Object.assign(this.action, result)
-        this.addUnsavedChangesGuard('action')
+        this.addUnsavedChangesGuard(this.action)
       }
       this.isLoading = false
     },
@@ -350,36 +357,28 @@ export default {
         name: 'admin-action',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
     },
     async removeAction () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>L\'action sera supprimée.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          if (await this.vxDeleteAction({ actionId: this.action.id, eqId: this.action.eqId })) {
-            this.removeUnsavedChangesGuard('action')
-            this.$router.back()
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('L\'action sera supprimée.')) {
+        this.isLoading = true
+        if (await this.dataStore.vxDeleteAction({ actionId: this.action.id, eqId: this.action.eqId })) {
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        }
+        this.isLoading = false
+      }
     },
     async executeAction () {
       this.isLoading = true
       try {
-        await this.$Provider.executeAction(this.action.id, {})
+        await provider.executeAction(this.action.id, {})
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },

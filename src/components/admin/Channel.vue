@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -47,7 +47,7 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
-                <b-switch v-model="channel.isActive">{{ channel.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+                <o-switch v-model="channel.isActive">{{ channel.isActive ? 'Actif' : 'Inactif' }}</o-switch>
               </div>
             </div>
 
@@ -78,7 +78,7 @@
             <div class="field">
               <div class="control">
                 <label class="label">En attente d'une réponse utilisateur</label>
-                <b-switch v-model="channel.hasPendingRequest" disabled />
+                <o-switch v-model="channel.hasPendingRequest" disabled />
               </div>
             </div>
 
@@ -107,10 +107,12 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-import { AdminMixin } from '@/mixins/Admin'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Channel',
@@ -118,20 +120,17 @@ export default {
     Breadcrumb,
     OptionsAutocomplete,
   },
-  mixins: [
-    AdminMixin,
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const dataStore = useDataStore()
+    const { confirmDelete } = useDialog()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    return { dataStore, confirmDelete,addUnsavedChangesGuard, removeUnsavedChangesGuard }
   },
   data () {
     return {
@@ -144,37 +143,39 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
+    isNew () {
+      return this.id === 'new'
+    },
   },
   mounted () {
     if (!this.isNew) {
       this.getChannel()
     } else {
-      this.addUnsavedChangesGuard('channel')
-      if (this.proposal) {
-        this.channel = Object.assign({}, this.channel, this.proposal)
+      this.addUnsavedChangesGuard(this.channel)
+      if (history.state.proposal) {
+        this.channel = Object.assign({}, this.channel, history.state.proposal)
       }
     }
   },
   methods: {
     async getChannel () {
       this.isLoading = true
-      this.channel = await this.$Provider.getChannel(this.id)
-      this.addUnsavedChangesGuard('channel')
+      this.channel = await provider.getChannel(this.id)
+      this.addUnsavedChangesGuard(this.channel)
       this.isLoading = false
     },
     async saveChannel () {
       this.isLoading = true
       const channel = Object.assign({}, this.channel)
       delete channel.hasPendingRequest
-      const result = await this.vxSaveChannel({ channel, isNew: this.isNew })
+      const result = await this.dataStore.vxSaveChannel({ channel, isNew: this.isNew })
       if (result) {
         if (this.isNew) {
-          this.removeUnsavedChangesGuard('channel')
+          this.removeUnsavedChangesGuard()
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.channel = Object.assign(this.channel, result)
-        this.addUnsavedChangesGuard('channel')
+        this.addUnsavedChangesGuard(this.channel)
       }
       this.isLoading = false
     },
@@ -187,34 +188,26 @@ export default {
         name: 'admin-channel',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
     },
     async removeChannel () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>Le canal sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          if (await this.vxDeleteChannel({ channelId: this.channel.id })) {
-            this.removeUnsavedChangesGuard('channel')
-            this.$router.back()
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('Le canal sera supprimé.')) {
+        this.isLoading = true
+        if (await this.dataStore.vxDeleteChannel({ channelId: this.channel.id })) {
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        }
+        this.isLoading = false
+      }
     },
     async resetChannel () {
       const channel = Object.assign({}, this.channel)
       channel.hasPendingRequest = false
-      await this.vxSaveChannel({ channel, isNew: false })
+      await this.dataStore.vxSaveChannel({ channel, isNew: false })
       this.getChannel()
     },
     setInput (state) {

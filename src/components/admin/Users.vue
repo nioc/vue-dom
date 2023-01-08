@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container box">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="field">
           <p class="control has-icons-left">
             <input v-model="search" class="input" type="text" placeholder="Rechercher un utilisateur">
@@ -46,7 +46,8 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Users',
@@ -61,7 +62,9 @@ export default {
     }
   },
   computed: {
-    filtered () { return this.users.filter((user) => user.login.toLowerCase().indexOf(this.search.toLowerCase()) > -1) },
+    filtered () {
+      return this.users.filter((user) => user.login.toLowerCase().indexOf(this.search.toLowerCase()) > -1)
+    },
   },
   mounted () {
     this.getUsers()
@@ -69,7 +72,7 @@ export default {
   methods: {
     async getUsers () {
       this.isLoading = true
-      const users = await this.$Provider.getUsers()
+      const users = await provider.getUsers()
       this.users = users.map((user) => {
         if (user.roles) {
           user.roles = user.roles.join(', ')
@@ -80,14 +83,14 @@ export default {
     },
     async createUser () {
       try {
-        const userCreated = await this.$Provider.createUser({
+        const userCreated = await provider.createUser({
           login: 'Nouveau',
           password: 'pass',
         })
         this.users.push(userCreated)
         this.$router.push({ name: 'admin-user', params: { id: userCreated.id } })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
     },
     editUser (id) {

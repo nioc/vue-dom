@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -43,13 +43,13 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
-                <b-switch v-model="equipment.isActive">{{ equipment.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+                <o-switch v-model="equipment.isActive">{{ equipment.isActive ? 'Actif' : 'Inactif' }}</o-switch>
               </div>
             </div>
             <div class="field">
               <div class="control">
                 <label class="label">Visibilité</label>
-                <b-switch v-model="equipment.isVisible">{{ equipment.isVisible ? 'Visible' : 'Masqué' }}</b-switch>
+                <o-switch v-model="equipment.isVisible">{{ equipment.isVisible ? 'Visible' : 'Masqué' }}</o-switch>
               </div>
             </div>
             <div class="field">
@@ -60,7 +60,7 @@
                     <span class="select">
                       <select v-model="equipment.roomId">
                         <option :value="null">Aucun</option>
-                        <option v-for="room in rooms" :key="room.id" :value="room.id">{{ room.name }}</option>
+                        <option v-for="room in dataStore.rooms" :key="room.id" :value="room.id">{{ room.name }}</option>
                       </select>
                     </span>
                     <span class="icon is-small is-left">
@@ -108,18 +108,16 @@
             </div>
             <div class="field">
               <label class="label">Tags</label>
-              <b-taginput
+              <o-inputitems
                 v-model="equipment.tags"
                 :data="filteredTags"
                 autocomplete
                 allow-new
                 open-on-focus
                 icon="tags"
-                dropdown-position="top"
                 placeholder="Nouveau tag"
                 aria-close-label="Retirer ce tag"
                 @typing="getFilteredTags"
-                @input="getFilteredTags()"
               />
             </div>
             <div class="buttons">
@@ -169,7 +167,7 @@
                     <td :title="state.genericType"><i class="fa-fw" :class="getIconClass(state)" /></td>
                     <td>{{ getFormattedStateCurrentValue(state) }} {{ state.unit }}</td>
                     <td>
-                      <time-ago v-if="state.date" :date="state.date" :drop-fixes="true" :title="state.date | moment('LLL')" />
+                      <time-ago v-if="state.date" :date="state.date" :drop-fixes="true" title-format="PPPPpp" />
                     </td>
                   </tr>
                 </tbody>
@@ -210,7 +208,7 @@
                     <td><i class="fas fa-fw" :class="action.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="action.isVisible ? 'Visible' : 'Masqué'" /></td>
                     <td :title="action.type"><i class="fa-fw" :class="getActionTypeClass(action.type)" /></td>
                     <td :title="action.icon"><i class="fa-fw" :class="getIconClass(action)" /></td>
-                    <td :title="action.stateFeedbackId">{{ getStateById(action.stateFeedbackId).name || action.stateFeedbackId }}</td>
+                    <td :title="action.stateFeedbackId">{{ dataStore.getStateById(action.stateFeedbackId).name || action.stateFeedbackId }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -228,11 +226,14 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import TimeAgo from '@/components/TimeAgo'
-import { CmdMixin } from '@/mixins/Cmd'
-import { AdminMixin } from '@/mixins/Admin'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import TimeAgo from '@/components/TimeAgo.vue'
+import { useDataStore } from '@/store/data'
+import { useEquipmentsHelper } from '@/composables/useEquipmentsHelper'
+import { useDialog } from '@/composables/useDialog'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { dtFormat } from '@/services/Datetime'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Equipment',
@@ -240,21 +241,18 @@ export default {
     Breadcrumb,
     TimeAgo,
   },
-  mixins: [
-    CmdMixin,
-    AdminMixin,
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const dataStore = useDataStore()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    const { confirmDelete } = useDialog()
+    const { getStateTypeClass, getIconClass, getFormattedStateCurrentValue, getActionTypeClass } = useEquipmentsHelper()
+    return { dataStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirmDelete, getStateTypeClass, getIconClass, getFormattedStateCurrentValue, getActionTypeClass }
   },
   data () {
     return {
@@ -269,8 +267,12 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
-    equipmentLastCommunication () { return this.equipment.lastCommunication ? this.$moment(this.equipment.lastCommunication).format('LLL') : null },
+    isNew () {
+      return this.id === 'new'
+    },
+    equipmentLastCommunication () {
+      return this.equipment.lastCommunication ? dtFormat(this.equipment.lastCommunication, 'PPPPpp') : null
+    },
     alertNoCommunicationDelay: {
       get: function () {
         return this.equipment.alertNoCommunicationDelay
@@ -288,17 +290,17 @@ export default {
     if (!this.isNew) {
       this.getEquipment()
     } else {
-      this.addUnsavedChangesGuard('equipment')
-      if (this.proposal) {
-        this.equipment = Object.assign({}, this.equipment, this.proposal)
+      this.addUnsavedChangesGuard(this.equipment)
+      if (history.state.proposal) {
+        this.equipment = Object.assign({}, this.equipment, history.state.proposal)
       }
     }
   },
   methods: {
     async getEquipment () {
       this.isLoading = true
-      this.equipment = Object.assign({}, this.equipment, await this.$Provider.getEquipment(this.id))
-      this.addUnsavedChangesGuard('equipment')
+      this.equipment = Object.assign({}, this.equipment, await provider.getEquipment(this.id))
+      this.addUnsavedChangesGuard(this.equipment)
       this.getFilteredTags()
       this.isLoading = false
     },
@@ -309,19 +311,19 @@ export default {
       delete equipment.lastCommunication
       delete equipment.actions
       delete equipment.states
-      const result = await this.vxSaveEquipment({ equipment, isNew: this.isNew })
+      const result = await this.dataStore.vxSaveEquipment({ equipment, isNew: this.isNew })
       if (result) {
         if (this.isNew) {
-          this.removeUnsavedChangesGuard('equipment')
+          this.removeUnsavedChangesGuard()
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.equipment = Object.assign(this.equipment, result)
-        this.addUnsavedChangesGuard('equipment')
+        this.addUnsavedChangesGuard(this.equipment)
       }
       this.isLoading = false
     },
     copyEquipment () {
-      const proposal = Object.assign({}, this.equipment)
+      const proposal = JSON.parse(JSON.stringify(this.equipment))
       delete proposal.id
       delete proposal.logicalId
       delete proposal.battery
@@ -335,32 +337,24 @@ export default {
         name: 'admin-equipment',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
     },
     async removeEquipment () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>L\'équipement sera supprimé ainsi que ses actions et états.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          if (await this.vxDeleteEquipment({ equipmentId: this.equipment.id, roomId: this.equipment.roomId })) {
-            this.removeUnsavedChangesGuard('equipment')
-            this.$router.back()
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('L\'équipement sera supprimé ainsi que ses actions et états.')) {
+        this.isLoading = true
+        if (await this.dataStore.vxDeleteEquipment({ equipmentId: this.equipment.id, roomId: this.equipment.roomId })) {
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        }
+        this.isLoading = false
+      }
     },
     getFilteredTags (query) {
-      this.filteredTags = this.tagsList.filter((tag) => {
+      this.filteredTags = this.dataStore.tagsList.filter((tag) => {
         // remove tags already present and filter with query if provided
         return (!this.equipment.tags.includes(tag) && (query === undefined || tag
           .toLowerCase()
@@ -373,6 +367,8 @@ export default {
         name: 'admin-state',
         params: {
           id: 'new',
+        },
+        state: {
           proposal: {
             eqId: this.equipment.id,
             module: this.equipment.module,
@@ -385,6 +381,8 @@ export default {
         name: 'admin-action',
         params: {
           id: 'new',
+        },
+        state: {
           proposal: {
             eqId: this.equipment.id,
             module: this.equipment.module,

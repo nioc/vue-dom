@@ -47,8 +47,12 @@ export default {
     },
   },
   computed: {
-    percent () { return Math.round(100 * this.value / this.max) },
-    humanValueCalc () { return this.humanValue || this.value.toString() },
+    percent () {
+      return Math.round(100 * this.value / this.max)
+    },
+    humanValueCalc () {
+      return this.humanValue || this.value.toString()
+    },
     colorClass () {
       if (this.type) {
         return this.type

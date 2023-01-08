@@ -1,11 +1,11 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-rooms'}, icon: 'fa-home', text: 'Pièces'}, {link: {name: 'admin-rooms', params: {id}}, text: room.name, isActive: true}]" />
+      <breadcrumb :items="[{link: {name: 'admin'}, icon: 'fa-tools', text: 'Admin', isActive: false}, {link: {name: 'admin-rooms'}, icon: 'fa-home', text: 'Pièces'}, {link: {name: 'admin-room', params: {id}}, text: room.name, isActive: true}]" />
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -42,7 +42,7 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
-                <b-switch v-model="room.isVisible">{{ room.isVisible ? 'Visible' : 'Masquée' }}</b-switch>
+                <o-switch v-model="room.isVisible">{{ room.isVisible ? 'Visible' : 'Masquée' }}</o-switch>
               </div>
             </div>
 
@@ -52,7 +52,7 @@
                 <div class="select">
                   <select v-model="room.parentId">
                     <option :value="null">Aucun</option>
-                    <option v-for="parentRoom in rooms" :key="parentRoom.id" :value="parentRoom.id">{{ parentRoom.name }}</option>
+                    <option v-for="parentRoom in dataStore.rooms" :key="parentRoom.id" :value="parentRoom.id">{{ parentRoom.name }}</option>
                   </select>
                 </div>
               </div>
@@ -103,7 +103,7 @@
                     <td><i class="fas fa-fw" :class="equipment.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="equipment.isActive ? 'Actif' : 'Inactif'" /></td>
                     <td><i class="fas fa-fw" :class="equipment.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="equipment.isVisible ? 'Visible' : 'Masqué'" /></td>
                     <td>
-                      <time-ago v-if="equipment.lastCommunication" :date="equipment.lastCommunication" :drop-fixes="true" :title="equipment.lastCommunication | moment('LLL')" />
+                      <time-ago v-if="equipment.lastCommunication" :date="equipment.lastCommunication" :drop-fixes="true" title-format="PPPPpp" />
                     </td>
                     <td><span v-if="equipment.battery" :class="{'has-text-danger': equipment.battery < 10}">{{ equipment.battery }}%</span></td>
                   </tr>
@@ -136,7 +136,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(summary, index) in room.summaryStates" :key="index">
-                    <td>{{ getStateFullName(summary.state) }}</td>
+                    <td>{{ dataStore.getStateFullName(summary.state) }}</td>
                     <td><i class="fa-fw" :class="getSummaryIconClass(summary.key.toLowerCase())" />{{ getSummaryTypeLabel(summary.key) }}</td>
                     <td>
                       <button class="button is-danger is-light" title="Retirer l'état du résumé" @click="removeSummaryState(index)">
@@ -177,13 +177,16 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-import TimeAgo from '@/components/TimeAgo'
-import IconPicker from '@/components/admin/IconPicker'
-import { AdminMixin } from '@/mixins/Admin'
-import { SummaryMixin } from '@/mixins/Summary'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import TimeAgo from '@/components/TimeAgo.vue'
+import IconPicker from '@/components/admin/IconPicker.vue'
+import { useAppStore } from '@/store/app'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { useSummary } from '@/composables/useSummary'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Room',
@@ -193,21 +196,19 @@ export default {
     OptionsAutocomplete,
     IconPicker,
   },
-  mixins: [
-    AdminMixin,
-    SummaryMixin,
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const dataStore = useDataStore()
+    const appStore = useAppStore()
+    const { confirmDelete } = useDialog()
+    const { summaryKeys, getSummaryIconClass, getSummaryTypeLabel } = useSummary()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    return { dataStore, appStore, confirmDelete, summaryKeys, getSummaryIconClass, getSummaryTypeLabel, addUnsavedChangesGuard, removeUnsavedChangesGuard }
   },
   data () {
     return {
@@ -224,16 +225,20 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
-    isNewSummaryStateValid () { return (this.newSummaryState.key !== null && this.newSummaryState.state) },
+    isNew () {
+      return this.id === 'new'
+    },
+    isNewSummaryStateValid () {
+      return (this.newSummaryState.key !== null && this.newSummaryState.state)
+    },
   },
   mounted () {
     if (!this.isNew) {
       this.getRoom()
     } else {
-      this.addUnsavedChangesGuard('room')
-      if (this.proposal) {
-        this.room = Object.assign({}, this.room, this.proposal)
+      this.addUnsavedChangesGuard(this.room)
+      if (history.state.proposal) {
+        this.room = Object.assign({}, this.room, history.state.proposal)
       }
     }
   },
@@ -241,23 +246,23 @@ export default {
     async getRoom () {
       this.isLoading = true
       try {
-        this.room = await this.$Provider.getRoom(this.id, true)
-        this.addUnsavedChangesGuard('room')
+        this.room = await provider.getRoom(this.id, true)
+        this.addUnsavedChangesGuard(this.room)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async saveRoom () {
       this.isLoading = true
-      const result = await this.vxSaveRoom({ room: this.room, isNew: this.isNew })
+      const result = await this.dataStore.vxSaveRoom({ room: this.room, isNew: this.isNew })
       if (result) {
         if (this.isNew) {
-          this.removeUnsavedChangesGuard('room')
+          this.removeUnsavedChangesGuard()
           this.$router.replace({ name: this.$route.name, params: { id: result.id } })
         }
         this.room = Object.assign(this.room, result)
-        this.addUnsavedChangesGuard('room')
+        this.addUnsavedChangesGuard(this.room)
       }
       this.isLoading = false
     },
@@ -272,35 +277,29 @@ export default {
         name: 'admin-room',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
     },
     async removeRoom () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>La pièce sera supprimée.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          if (await this.vxDeleteRoom(this.room.id)) {
-            this.removeUnsavedChangesGuard('room')
-            this.$router.back()
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('La pièce sera supprimée.')) {
+        this.isLoading = true
+        if (await this.dataStore.vxDeleteRoom(this.room.id)) {
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        }
+        this.isLoading = false
+      }
     },
     addEquipment () {
       this.$router.push({
         name: 'admin-equipment',
         params: {
           id: 'new',
+        },
+        state: {
           proposal: {
             roomId: this.room.id,
           },
@@ -318,7 +317,7 @@ export default {
     },
     addSummaryState () {
       if (this.room.summaryStates.findIndex((summaryState) => (summaryState.state === this.newSummaryState.state && summaryState.key === this.newSummaryState.key)) !== -1) {
-        this.$store.commit('app/setInformation', { type: 'is-warning', message: 'Cet état est déjà dans le résumé' })
+        this.appStore.setInformation({ type: 'is-warning', message: 'Cet état est déjà dans le résumé' })
         return
       }
       this.room.summaryStates.push(Object.assign({}, this.newSummaryState))

@@ -11,31 +11,33 @@
 </template>
 
 <script>
-import Action from '@/components/Action'
-import Info from '@/components/Info'
-import { CmdMixin } from '@/mixins/Cmd'
-import { createNamespacedHelpers } from 'vuex'
-const { mapGetters } = createNamespacedHelpers('data')
+import Action from '@/components/Action.vue'
+import Info from '@/components/Info.vue'
+import { useDataStore } from '@/store/data'
 
 export default {
+  name: 'GenericEquipment',
   components: {
     Action,
     Info,
   },
-  mixins: [CmdMixin],
   props: {
     equipment: {
       type: Object,
       required: true,
     },
   },
+  setup() {
+    const dataStore = useDataStore()
+    return { dataStore }
+  },
   computed: {
     attributes: function () {
       const actionsList = []
       const actionsHiddenList = []
       const statesList = []
-      const actions = this.getActionsByIds(this.equipment.actions).filter((action) => action.isVisible)
-      this.getStatesByIds(this.equipment.states).filter((state) => state.isVisible).forEach(state => {
+      const actions = this.dataStore.getActionsByIds(this.equipment.actions).filter((action) => action.isVisible)
+      this.dataStore.getStatesByIds(this.equipment.states).filter((state) => state.isVisible).forEach(state => {
         if (state.type === 'boolean') {
           // search for switch and on/off actions
           const actionOn = actions.find((action) => action.stateFeedbackId === state.id && action.type === 'switch_on')
@@ -77,7 +79,6 @@ export default {
       })
       return { states: statesList, actions: actionsList }
     },
-    ...mapGetters(['getEquipmentById']),
   },
 }
 </script>

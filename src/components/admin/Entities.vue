@@ -1,6 +1,6 @@
 <template>
-  <section>
-    <b-loading v-model="isLoading" :is-full-page="false" />
+  <section class="is-relative">
+    <o-loading v-model:active="isLoading" :full-page="false" />
     <div v-if="entities.length" class="table-container">
       <table class="table is-striped is-fullwidth is-vertical-centered">
         <thead>
@@ -35,8 +35,15 @@
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
+import { provider } from '@/services/Provider'
+
 export default {
   name: 'Entities',
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
+  },
   data () {
     return {
       entities: [],
@@ -51,9 +58,9 @@ export default {
     async getEntities () {
       this.isLoading = true
       try {
-        this.entities = (await this.$Provider.getEntities()).sort((a, b) => a.key > b.key ? 1 : -1)
+        this.entities = (await provider.getEntities()).sort((a, b) => a.key > b.key ? 1 : -1)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
       this.isLoaded = true

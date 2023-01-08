@@ -65,6 +65,10 @@ export default {
       default: true,
     },
   },
+  emits: [
+    'remove',
+    'update',
+  ],
   data () {
     return {
       isEdited: false,
@@ -73,8 +77,12 @@ export default {
   },
   computed: {
     editedValue: {
-      get: function () { return this.value },
-      set: function (value) { this.$emit('update', value) },
+      get: function () {
+        return this.value
+      },
+      set: function (value) {
+        this.$emit('update', value)
+      },
     },
     readOnlyValue () {
       switch (this.type) {

@@ -5,7 +5,7 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
 
         <div class="card mb-4">
           <header class="card-header">
@@ -47,21 +47,21 @@
             <div class="field">
               <label class="label">Statut</label>
               <div class="control">
-                <b-switch v-model="scenario.isActive">{{ scenario.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+                <o-switch v-model="scenario.isActive">{{ scenario.isActive ? 'Actif' : 'Inactif' }}</o-switch>
               </div>
             </div>
 
             <div class="field">
               <label class="label">Visibilité</label>
               <div class="control">
-                <b-switch v-model="scenario.isVisible">{{ scenario.isVisible ? 'Visible' : 'Masqué' }}</b-switch>
+                <o-switch v-model="scenario.isVisible">{{ scenario.isVisible ? 'Visible' : 'Masqué' }}</o-switch>
               </div>
             </div>
 
             <div class="field">
               <label class="label">Exécution synchrone</label>
               <div class="control">
-                <b-switch v-model="scenario.isSync">{{ scenario.isSync ? 'Synchrone (traitements des éléments l\'un après l\'autre)' : 'Asynchrone (traitements des éléments en parallèle)' }}</b-switch>
+                <o-switch v-model="scenario.isSync">{{ scenario.isSync ? 'Synchrone (traitements des éléments l\'un après l\'autre)' : 'Asynchrone (traitements des éléments en parallèle)' }}</o-switch>
               </div>
             </div>
 
@@ -80,7 +80,7 @@
                     <tbody>
                       <tr v-for="(trigger, index) in scenario.triggers" :key="trigger.id">
                         <td>{{ (trigger.type === 'state') ? 'Etat' : 'Date' }}</td>
-                        <td v-if="trigger.type === 'state'">{{ getStateFullName(trigger.value) }}</td>
+                        <td v-if="trigger.type === 'state'">{{ dataStore.getStateFullName(trigger.value) }}</td>
                         <td v-else>{{ trigger.value }}</td>
                         <td>
                           <button class="button is-danger is-light" title="Supprimer le déclencheur" @click="removeTrigger(index)">
@@ -196,13 +196,16 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import ScenarioElement from '@/components/admin/ScenarioElement'
-import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete'
-
-import { AdminMixin } from '@/mixins/Admin'
-import { AdminScenarioMixin } from '@/mixins/AdminScenario'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import ScenarioElement from '@/components/admin/ScenarioElement.vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import { useAppStore } from '@/store/app'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { useScenarioHelper } from '@/composables/useScenarioHelper'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { dtFormat } from '@/services/Datetime'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Scenario',
@@ -211,21 +214,19 @@ export default {
     ScenarioElement,
     OptionsAutocomplete,
   },
-  mixins: [
-    AdminMixin,
-    AdminScenarioMixin,
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const appStore = useAppStore()
+    const dataStore = useDataStore()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    const { confirmDelete } = useDialog()
+    const { createScenarioElement } = useScenarioHelper()
+    return { appStore, dataStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirmDelete, createScenarioElement }
   },
   data () {
     return {
@@ -245,8 +246,12 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
-    lastExecution () { return this.scenario.lastExecution ? this.$moment(this.scenario.lastExecution).format('LLL') : '' },
+    isNew () {
+      return this.id === 'new'
+    },
+    lastExecution () {
+      return this.scenario.lastExecution ? dtFormat(this.scenario.lastExecution, 'PPPpp') : null
+    },
   },
   mounted () {
     this.getScenario()
@@ -256,16 +261,16 @@ export default {
       if (!this.isNew) {
         this.isLoading = true
         try {
-          this.scenario = await this.$Provider.getScenario(this.id)
-          this.addUnsavedChangesGuard('scenario')
+          this.scenario = await provider.getScenario(this.id)
+          this.addUnsavedChangesGuard(this.scenario)
         } catch (error) {
-          this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
         }
         this.isLoading = false
       } else {
-        this.addUnsavedChangesGuard('scenario')
-        if (this.proposal) {
-          this.scenario = Object.assign({}, this.scenario, this.proposal)
+        this.addUnsavedChangesGuard(this.scenario)
+        if (history.state.proposal) {
+          this.scenario = Object.assign({}, this.scenario, history.state.proposal)
         }
       }
     },
@@ -273,43 +278,33 @@ export default {
       this.isLoading = true
       try {
         if (this.isNew) {
-          this.scenario = await this.$Provider.createScenario(this.scenario)
-          this.addUnsavedChangesGuard('scenario')
+          this.scenario = await provider.createScenario(this.scenario)
+          this.addUnsavedChangesGuard(this.scenario)
           this.$router.replace({ name: this.$route.name, params: { id: this.scenario.id } })
         } else {
-          this.scenario = await this.$Provider.updateScenario(this.scenario)
-          this.addUnsavedChangesGuard('scenario')
+          this.scenario = await provider.updateScenario(this.scenario)
+          this.addUnsavedChangesGuard(this.scenario)
         }
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async removeScenario () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>Le scénario sera supprimé.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          try {
-            await this.$Provider.deleteScenario(this.scenario.id)
-            this.removeUnsavedChangesGuard('scenario')
-            this.$router.back()
-          } catch (error) {
-            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('Le scénario sera supprimé.')) {
+        this.isLoading = true
+        try {
+          await provider.deleteScenario(this.scenario.id)
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        } catch (error) {
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
+        }
+        this.isLoading = false
+      }
     },
     copyScenario () {
-      const proposal = Object.assign({}, this.scenario)
+      const proposal = JSON.parse(JSON.stringify(this.scenario))
       delete proposal.id
       delete proposal.lastExecution
       proposal.name = `${proposal.name} (copie)`
@@ -317,6 +312,8 @@ export default {
         name: 'admin-scenario',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
@@ -324,11 +321,11 @@ export default {
     async testScenario () {
       this.isLoading = true
       try {
-        await this.$Provider.changeScenarioState(this.scenario.id, 'run')
-        this.$store.commit('app/setInformation', { type: 'is-success', message: 'Scénario exécuté avec succès' })
+        await provider.changeScenarioState(this.scenario.id, 'run')
+        this.appStore.setInformation({ type: 'is-success', message: 'Scénario exécuté avec succès' })
         this.getScenario()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },

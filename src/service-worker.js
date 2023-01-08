@@ -1,44 +1,27 @@
-/* global workbox */
+import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching'
+import { registerRoute } from 'workbox-routing'
+import { NetworkFirst } from 'workbox-strategies'
 
-workbox.precaching.precacheAndRoute([])
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+})
 
-workbox.routing.registerRoute(
-  /.*(?:\/local.js)$/,
-  workbox.strategies.staleWhileRevalidate({
-    cacheName: 'local-js-css-cache',
-  }),
-)
+cleanupOutdatedCaches()
 
-workbox.routing.registerRoute(
-  /.*\.(?:css|js)$/,
-  workbox.strategies.cacheFirst({
-    cacheName: 'js-css-cache',
-  }),
-)
-
-workbox.routing.registerRoute(
-  /.*\.(?:png|jpg|jpeg|svg|gif)$/,
-  workbox.strategies.cacheFirst({
-    cacheName: 'images-cache',
-  }),
-)
-
-workbox.routing.registerRoute(
-  /.*\.(?:woff|woff2|ttf|eot)$/,
-  workbox.strategies.cacheFirst({
-    cacheName: 'fonts-cache',
-  }),
-)
-
-workbox.routing.registerRoute(
-  /.*\.(?:php)$/,
-  workbox.strategies.networkFirst({
+registerRoute(
+  /\/api\//,
+  new NetworkFirst({
     cacheName: 'api-cache',
   }),
 )
 
-self.addEventListener('message', (message) => {
-  if (message.data === 'skipWaiting') {
-    self.skipWaiting()
-  }
-})
+registerRoute(
+  /local\.js$/,
+  new NetworkFirst({
+    cacheName: 'localjs-cache',
+  }),
+)
+
+precacheAndRoute(self.__WB_MANIFEST)

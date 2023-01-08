@@ -89,15 +89,16 @@ See also the list of [contributors](https://github.com/nioc/vue-dom/contributors
 This project is powered by the following components:
 - [VueJS](https://vuejs.org/) (MIT)
 - [Bulma](https://bulma.io/) (MIT)
-- [Buefy](https://buefy.github.io) (MIT)
-- [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) (Font Awesome Free License)
-- [axios](https://github.com/axios/axios ) (MIT)
+- [Oruga UI](https://oruga.io/) (MIT)
+- [Font Awesome](https://fontawesome.com/) (Font Awesome Free License)
+- [axios](https://axios-http.com/) (MIT)
 - [normalizr](https://github.com/paularmstrong/normalizr) (MIT)
 - [Chart.js](https://www.chartjs.org/) (MIT)
-- [vue-chartjs](https://vue-chartjs.org/) (MIT)
-- [vuex-persist](https://github.com/championswimmer/vuex-persist) (MIT)
-- [Moment.js](https://momentjs.com/) (MIT)
-- [vue-moment](https://github.com/brockpetrie/vue-moment) (MIT)
+- [Pinia](https://pinia.vuejs.org/) (MIT)
+- [date-fns](https://date-fns.org/) (MIT)
+- [TinyDuration](https://github.com/MelleB/tinyduration/) (MIT)
+- [Video.js](https://videojs.com/) (Apache License)
+- [Vue.Draggable](https://github.com/SortableJS/vue.draggable.next/) (MIT)
 
 ## License
 

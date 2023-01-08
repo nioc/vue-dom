@@ -1,6 +1,6 @@
 <template>
-  <section class="card-content">
-    <b-loading v-model="isLoading" :is-full-page="false" />
+  <section class="card-content is-relative">
+    <o-loading v-model:active="isLoading" :full-page="false" />
     <span class="buttons pt-3">
       <button class="button is-primary" title="Lancer l'apprentissage du corpus" @click="train">
         <span class="icon"><i class="fa fa-brain" /></span><span>Entraîner</span>
@@ -150,8 +150,15 @@
 </template>
 
 <script>
+import { useAppStore } from '@/store/app'
+import { provider } from '@/services/Provider'
+
 export default {
   name: 'NlpEngine',
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
+  },
   data () {
     return {
       test: {
@@ -163,8 +170,12 @@ export default {
     }
   },
   computed: {
-    duration () { return `${this.test.result.duration} ms` },
-    formattedAnswer () { return this.test.result.answer.replace(/(\\+n)+/g, '\r\n') },
+    duration () {
+      return `${this.test.result.duration} ms`
+    },
+    formattedAnswer () {
+      return this.test.result.answer.replace(/(\\+n)+/g, '\r\n')
+    },
   },
   mounted () {
     this.getIntentActions()
@@ -173,9 +184,9 @@ export default {
     async train () {
       this.isLoading = true
       try {
-        await this.$Provider.trainNlp()
+        await provider.trainNlp()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
@@ -185,14 +196,14 @@ export default {
       }
       this.isLoading = true
       try {
-        this.test.result = await this.$Provider.processNlp(this.test.utterance)
+        this.test.result = await provider.processNlp(this.test.utterance)
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async getIntentActions () {
-      this.actionOptions = await this.$Provider.getIntentActions()
+      this.actionOptions = await provider.getIntentActions()
     },
     getActionLabel (optionValue) {
       const option = this.actionOptions.find((option) => option.value === optionValue)

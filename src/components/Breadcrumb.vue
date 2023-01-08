@@ -19,9 +19,10 @@
 </template>
 
 <script>
-import { SummaryMixin } from '@/mixins/Summary'
+import { useSummary } from '@/composables/useSummary'
+
 export default {
-  mixins: [SummaryMixin],
+  name: 'Breadcrumb',
   props: {
     items: {
       type: Array,
@@ -32,6 +33,10 @@ export default {
       required: false,
       default: null,
     },
+  },
+  setup() {
+    const { getSummaryIconClass, getSummaryUnit } = useSummary()
+    return { getSummaryIconClass, getSummaryUnit }
   },
 }
 </script>

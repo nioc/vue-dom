@@ -1,7 +1,7 @@
 <template>
-  <section class="hero">
+  <section v-if="userView.id" class="hero">
     <div class="hero-head">
-      <breadcrumb :items.sync="breadcrumbItems" />
+      <breadcrumb :items="breadcrumbItems" />
     </div>
     <div class="hero-body">
       <div class="container">
@@ -16,7 +16,7 @@
                 <p class="card-header-title">{{ card.title }}</p>
                 <aside class="card-header-icon is-size-7-mobile">
                   <span v-if="card.battery" :class="[card.hasLowBattery ? 'has-text-danger' : 'has-text-grey']"><i class="fa-mr" :class="getBatteryLevelIconClass(card.battery)" />{{ card.battery }}%</span>
-                  <span v-if="card.lastCommunication" :title="card.lastCommunication | moment('LLLL')" :class="[card.hasNoCommunication ? 'has-text-danger' : 'has-text-grey']" class="ml-2"><i class="fa-mr far fa-clock" /><time-ago :date="card.lastCommunication" :drop-fixes="true" /></span>
+                  <span v-if="card.lastCommunication" :title="lastCommunicationTitle" :class="[card.hasNoCommunication ? 'has-text-danger' : 'has-text-grey']" class="ml-2"><i class="fa-mr far fa-clock" /><time-ago :date="card.lastCommunication" :drop-fixes="true" /></span>
                 </aside>
               </header>
 
@@ -35,32 +35,47 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import Equipment from '@/components/Equipment'
-import Info from '@/components/Info'
-import UserViewHistory from '@/components/UserViewHistory'
-import { UserViewsMixin } from '@/mixins/UserViews'
-import { createNamespacedHelpers } from 'vuex'
-const { mapGetters } = createNamespacedHelpers('data')
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import TimeAgo from '@/components/TimeAgo.vue'
+import Equipment from '@/components/Equipment.vue'
+import Info from '@/components/Info.vue'
+import UserViewHistory from '@/components/UserViewHistory.vue'
+import { useDataStore } from '@/store/data'
+import { useEquipmentsHelper } from '@/composables/useEquipmentsHelper'
+import { dtFormat } from '@/services/Datetime'
 
 export default {
   name: 'UserView',
   components: {
     Breadcrumb,
+    TimeAgo,
     Equipment,
     Info,
     UserViewHistory,
   },
-  mixins: [UserViewsMixin],
   props: {
     code: {
       type: String,
       required: true,
     },
   },
+  setup() {
+    const dataStore = useDataStore()
+    const { getBatteryLevelIconClass } = useEquipmentsHelper()
+    return { dataStore, getBatteryLevelIconClass }
+  },
+  data () {
+    return {
+      breadcrumbItems: [],
+    }
+  },
   computed: {
-    ...mapGetters(['getUserViewByCode']),
-    userView () { return this.getUserViewByCode(this.code) },
+    userView () {
+      return this.dataStore.getUserViewByCode(this.code)
+    },
+    lastCommunicationTitle () {
+      return dtFormat(this.equipment.lastCommunication, 'PPPPpp')
+    },
   },
   created () {
     document.title = document.title.replace('View |', this.userView.title + ' |')

@@ -2,8 +2,8 @@
   <div>
     <div class="is-flex-space-between mb-2">
       <span class="is-flex is-align-items-center"><i class="fa-fw mr-4" :class="iconClass" /><span class="info-label">{{ label || state.name }}</span><a v-if="state.isHistorized" class="ml-2 has-text-grey-light" title="Voir l'historique" @click="hasHistoryDisplayed = true"><i class="fa fa-fw fa-chart-area" /></a></span>
-      <b-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" :left-label="true" class="mr-0" @input="action" />
-      <b-slider v-else-if="state.type === 'numeric' && action" v-model="value" lazy class="ml-5 my-2" :title="state.name" :min="action.minValue" :max="action.maxValue" :tooltip="false" indicator rounded @change="action.f" />
+      <o-switch v-if="state.type==='boolean'" v-model="value" :disabled="!action" :title="state.name" class="mr-0" position="left" @update:model-value="action" />
+      <o-slider v-else-if="state.type === 'numeric' && action" v-model="value" lazy class="ml-5 my-2" :title="state.name" :min="action.minValue" :max="action.maxValue" :tooltip="false" indicator rounded @change="action.f" />
       <span v-else-if="datetimeFormattedValue" class="is-flex-space-between">
         <span class="has-text-weight-semi-bold info-value" :class="{'has-text-danger': state.isTooHigh || state.isTooLow}">{{ datetimeFormattedValue }}</span>
       </span>
@@ -36,13 +36,16 @@
 </template>
 
 <script>
-import { CmdMixin } from '@/mixins/Cmd'
-import History from '@/components/History'
+import { useDataStore } from '@/store/data'
+import { useEquipmentsHelper } from '@/composables/useEquipmentsHelper'
+import { dtFormat, durParse, dtFormatDuration } from '@/services/Datetime.js'
+import History from '@/components/History.vue'
+
 export default {
+  name: 'Info',
   components: {
     History,
   },
-  mixins: [CmdMixin],
   props: {
     id: {
       type: String,
@@ -57,51 +60,65 @@ export default {
       default: null,
     },
   },
+  setup() {
+    const dataStore = useDataStore()
+    const { getIconClass } = useEquipmentsHelper()
+    return { dataStore, getIconClass }
+  },
   data () {
     return {
       hasHistoryDisplayed: false,
     }
   },
   computed: {
-    state () { return this.getStateById(this.id) },
+    state () {
+      return this.dataStore.getStateById(this.id)
+    },
     value: {
-      // computed to avoid vuex mutation
-      get: function () { return this.state.currentValue },
+      // computed to avoid mutation
+      get: function () {
+        return this.state.currentValue
+      },
       set: () => {},
     },
-    iconClass () { return this.getIconClass(this.state) },
-    unit () { return this.state.unit ? ' ' + this.state.unit : '' },
+    iconClass () {
+      return this.getIconClass(this.state)
+    },
+    unit () {
+      return this.state.unit ? ' ' + this.state.unit : ''
+    },
     datetimeFormattedValue () {
       switch (this.state.type) {
         case 'datetime':
-          return this.$moment(this.state.currentValue).format('LLL')
+          return dtFormat(this.state.currentValue, 'PPPp')
         case 'date':
-          return this.$moment(this.state.currentValue).format('LL')
+          return dtFormat(this.state.currentValue, 'PPP')
         case 'time':
-          return this.$moment(this.state.currentValue).format('LT')
+          return dtFormat(this.state.currentValue, 'p')
         case 'duration': {
           try {
             if (this.state.currentValue === 'P0D') {
               return 'nulle'
             }
-            const duration = this.$moment.duration(this.state.currentValue)
+            const duration = durParse(this.state.currentValue)
             let result = ''
-            const units = ['y', 'M', 'd', 'h', 'm', 's']
-            const thresholds = { M: 30, d: 7, h: 24, m: 60, s: 60 }
+            const units = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds']
             for (let index = 0; index < units.length; index++) {
               const mainUnit = units[index]
-              const durationMainUnit = duration.get(mainUnit)
-              if (durationMainUnit !== 0) {
-                result = this.$moment.duration(durationMainUnit, mainUnit).humanize(thresholds)
-                if (index < units.length) {
-                  const detailUnit = units[index + 1]
-                  const durationDetailUnit = duration.get(detailUnit)
-                  if (durationDetailUnit !== 0) {
-                    result += ` ${this.$moment.duration(durationDetailUnit, detailUnit).humanize(thresholds)}`
-                  }
-                }
-                break
+              const durationMainUnit = duration[mainUnit]
+              if (durationMainUnit === undefined) {
+                // no value for this unit
+                continue
               }
+              result = dtFormatDuration(duration, { format: [mainUnit] })
+              if (index < units.length) {
+                const detailUnit = units[index + 1]
+                const durationDetailUnit = duration[detailUnit]
+                if (durationDetailUnit !== undefined) {
+                  result += ` ${dtFormatDuration(duration, { format: [detailUnit] })}`
+                }
+              }
+              break
             }
             return result
           } catch (error) {
@@ -114,7 +131,7 @@ export default {
       }
     },
     action () {
-      const actions = this.getActionsByEquipmentId(this.equipmentId)
+      const actions = this.dataStore.getActionsByEquipmentId(this.equipmentId)
       const actionOn = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch_on')
       const actionOff = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch_off')
       const actionSwitch = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'switch')
@@ -127,42 +144,44 @@ export default {
       if (actionSwitch) {
         return async (newValue) => {
           // execute action with switch value
-          vm.vxExecuteAction({ id: actionSwitch.id, options: { value: newValue } })
+          vm.dataStore.vxExecuteAction({ id: actionSwitch.id, options: { value: newValue } })
         }
       }
       if (actionSelect) {
         return async (newValue) => {
           // execute action with select value
-          vm.vxExecuteAction({ id: actionSelect.id, options: { select: newValue.target.value } })
+          vm.dataStore.vxExecuteAction({ id: actionSelect.id, options: { select: newValue.target.value } })
         }
       }
       if (actionSlider) {
-        const action = this.getActionById(actionSlider.id)
+        const action = this.dataStore.getActionById(actionSlider.id)
         return {
           minValue: action.minValue,
           maxValue: action.maxValue,
           f: async (newValue) => {
             // execute action with slider value
-            vm.vxExecuteAction({ id: actionSlider.id, options: { slider: newValue } })
+            vm.dataStore.vxExecuteAction({ id: actionSlider.id, options: { slider: newValue } })
           },
         }
       }
       return async (newValue) => {
         // execute action whose value is related to switch
         const actionId = newValue ? actionOn.id : actionOff.id
-        vm.vxExecuteAction({ id: actionId })
+        vm.dataStore.vxExecuteAction({ id: actionId })
       }
     },
     actionOptions () {
       // return possibles options for "select" typed action
-      const actions = this.getActionsByEquipmentId(this.equipmentId)
+      const actions = this.dataStore.getActionsByEquipmentId(this.equipmentId)
       const actionSelect = actions.find((action) => action.stateFeedbackId === this.state.id && action.type === 'select')
       if (!actionSelect || !actionSelect.options) {
         return []
       }
       return actionSelect.options
     },
-    statistics () { return this.getStateStatisticsById(this.id) },
+    statistics () {
+      return this.dataStore.getStateStatisticsById(this.id)
+    },
     trendClass () {
       let trendClass = ''
       switch (this.statistics.trend) {
@@ -191,7 +210,7 @@ export default {
   },
   created () {
     if (this.state.isHistorized && this.state.type === 'numeric') {
-      this.vxLoadStateStatistics(this.state.id)
+      this.dataStore.vxLoadStateStatistics(this.state.id)
     }
   },
 }

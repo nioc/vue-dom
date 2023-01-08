@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-@import "~bulma/sass/utilities/initial-variables";
+@import "/node_modules/bulma/sass/utilities/initial-variables";
 
 $primary: #96c927;
 $breadcrumb-item-color: $primary;
@@ -19,7 +19,7 @@ $navbar-breakpoint: 300px;
   }
 }
 
-@import "~bulma/bulma.sass";
+@import "/node_modules/bulma/bulma.sass";
 
 $slider-thumb-background: findLightColor($primary);
 $slider-thumb-border: 1px solid $primary;
@@ -35,6 +35,16 @@ $slider-thumb-border: 1px solid $primary;
   transform: unset;
 }
 
+.notification-counter-mobile {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+}
+.notification-counter-mobile .tag {
+  font-size: 0.5rem !important;
+  background-color: rgba($danger, 1) !important;
+}
+
 .sidebar-content .router-link-exact-active :not(.notification-counter) {
   color: $primary !important
 }
@@ -42,7 +52,30 @@ $slider-thumb-border: 1px solid $primary;
   max-height: 3.5rem;
 }
 
-@import "~buefy/src/scss/buefy";
+@import "/node_modules/bulma/bulma";
+@import '/node_modules/@oruga-ui/theme-bulma/dist/scss/bulma';
+
+.toast-notification {
+  box-shadow: 0 1px 4px rgb(0 0 0 / 12%), 0 0 6px rgb(0 0 0 / 4%);
+  border-radius: 2em;
+  padding: 0.75em 1.5em;
+  pointer-events: auto;
+}
+
+.dialog .modal-card {
+  max-width: 460px;
+  width: auto;
+    @include mobile {
+      width: 100%;
+      margin: 0 auto !important;
+    }
+    .modal-card-foot {
+      justify-content: flex-end;
+      .button {
+        font-weight: 600;
+      }
+    }
+}
 
 [data-theme="dark"] {
   $primary: #96c927bd;
@@ -291,6 +324,12 @@ $slider-thumb-border: 1px solid $primary;
     &.is-primary {
       background-color: $primary;
     }
+    @each $name, $pair in $colors {
+      $color: nth($pair, 1);
+      &.is-#{$name} {
+        background-color: $color;
+      }
+    }
   }
   .modal-card-head,
   .modal-card-foot {
@@ -320,6 +359,7 @@ $slider-thumb-border: 1px solid $primary;
       background-color: $grey-lighter;
     }
   }
+  .loading .loading-overlay,
   .loading-overlay .loading-background {
     background-color: rgba($dt-black-bis, 0.5);
   }
@@ -344,7 +384,7 @@ $slider-thumb-border: 1px solid $primary;
     color: $color !important
   }
   .has-text-#{$name}-mid-dark {
-    color: rgba(darken($color, 20%), 1) !important
+    color: rgba(darken($color, 20%), 1) !important;
   }
 }
 
@@ -467,9 +507,12 @@ a {
   }
 }
 
-.b-slider-thumb {
+.b-slider .b-slider-thumb {
   padding: 16px 8px !important;
   font-size: 0.9rem;
+  width: auto;
+  display: flex;
+  align-items: center;
 }
 
 .navbar .is-auto-expand {
@@ -504,6 +547,15 @@ a {
   position: fixed;
   right: 18px;
   top: 14px;
+}
+
+.navbar .is-auto-expand .is-loading {
+  position: fixed;
+  right: 18px;
+  top: 14px;
+  height: 24px;
+  width: 24px;
+  color: #dbdbdb;
 }
 
 table.is-vertical-centered td, table.is-vertical-centered th {

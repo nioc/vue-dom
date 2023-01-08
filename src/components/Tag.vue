@@ -1,12 +1,12 @@
 <template>
   <section class="hero">
     <div class="hero-head">
-      <breadcrumb :items.sync="breadcrumbItems" />
+      <breadcrumb :items="breadcrumbItems" />
     </div>
     <div class="hero-body">
       <div class="container">
         <ul>
-          <li v-for="equipmentId in equipments" :key="equipmentId">
+          <li v-for="equipmentId in dataStore.getEquipmentsIdByTag(tag)" :key="equipmentId">
             <equipment :id="equipmentId" />
           </li>
         </ul>
@@ -16,10 +16,9 @@
 </template>
 
 <script>
-import Equipment from '@/components/Equipment'
-import Breadcrumb from '@/components/Breadcrumb'
-import { createNamespacedHelpers } from 'vuex'
-const { mapGetters } = createNamespacedHelpers('data')
+import Equipment from '@/components/Equipment.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import { useDataStore } from '@/store/data'
 
 export default {
   name: 'Tag',
@@ -33,14 +32,19 @@ export default {
       required: true,
     },
   },
+  setup() {
+    const dataStore = useDataStore()
+    return { dataStore }
+  },
   data () {
     return {
       breadcrumbItems: [],
     }
   },
   computed: {
-    ...mapGetters(['getEquipmentsIdByTag']),
-    equipments () { return this.getEquipmentsIdByTag(this.tag) },
+    equipments () {
+      return this.dataStore.getEquipmentsIdByTag(this.tag)
+    },
   },
   created () {
     document.title = document.title.replace('Tag |', this.tag + ' |')

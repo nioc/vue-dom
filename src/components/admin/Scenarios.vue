@@ -5,25 +5,23 @@
     </div>
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
-        <b-table :data="scenarios" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="group" class="is-clickable" @click="consultScenario">
-          <template v-for="column in columns">
-            <b-table-column :key="column.id" v-bind="column">
-              <template v-if="column.searchable" slot="searchable" slot-scope="props">
-                <b-input v-model="props.filters[props.column.field]" placeholder="Rechercher..." icon="search" size="is-small" />
-              </template>
-              <template #default="props">
-                <router-link v-if="column.field==='name'" :to="{name: 'admin-scenario', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
-                <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
-                <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
-                <i v-else-if="column.field==='isCronTriggered'" :class="{'fas fa-fw fa-bell': props.row.isCronTriggered}" />
-                <i v-else-if="column.field==='isStateTriggered'" :class="{'fas fa-fw fa-eye': props.row.isStateTriggered}" />
-                <time-ago v-else-if="column.field==='lastExecution' && props.row.lastExecution" :date="props.row.lastExecution" :drop-fixes="true" :title="props.row.lastExecution | moment('LLL')" />
-                <span v-else>{{ props.row[column.field] }}</span>
-              </template>
-            </b-table-column>
-          </template>
-        </b-table>
+        <o-loading v-model:active="isLoading" :full-page="false" />
+        <o-table :data="scenarios" striped hoverable :mobile-cards="false" sort-icon="caret-up" default-sort="group" class="is-clickable" @click="consultScenario">
+          <o-table-column v-for="column in columns" v-bind="column" :key="column.id">
+            <template v-if="column.searchable" #searchable="props">
+              <o-input v-model="props.filters[props.column.field]" placeholder="Rechercher..." icon="search" size="small" />
+            </template>
+            <template #default="props">
+              <router-link v-if="column.field==='name'" :to="{name: 'admin-scenario', params: {id: props.row.id}}">{{ props.row.name }}</router-link>
+              <i v-else-if="column.field==='isActive'" class="fas fa-fw" :class="props.row.isActive ? 'fa-toggle-on has-text-success' : 'fa-toggle-off has-text-grey'" :title="props.row.isActive ? 'Actif' : 'Inactif'" />
+              <i v-else-if="column.field==='isVisible'" class="fas fa-fw" :class="props.row.isVisible ? 'fa-eye has-text-success' : 'fa-eye-slash has-text-grey'" :title="props.row.isVisible ? 'Visible' : 'Masqué'" />
+              <i v-else-if="column.field==='isCronTriggered'" :class="{'fas fa-fw fa-bell': props.row.isCronTriggered}" />
+              <i v-else-if="column.field==='isStateTriggered'" :class="{'fas fa-fw fa-eye': props.row.isStateTriggered}" />
+              <time-ago v-else-if="column.field==='lastExecution' && props.row.lastExecution" :date="props.row.lastExecution" :drop-fixes="true" title-format="PPPPpp" />
+              <span v-else>{{ props.row[column.field] }}</span>
+            </template>
+          </o-table-column>
+        </o-table>
 
         <span class="buttons pt-3">
           <button class="button is-primary" @click="getScenario">
@@ -39,14 +37,20 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
-import TimeAgo from '@/components/TimeAgo'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import TimeAgo from '@/components/TimeAgo.vue'
+import { useAppStore } from '@/store/app'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Scenarios',
   components: {
     Breadcrumb,
     TimeAgo,
+  },
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
   },
   data () {
     return {
@@ -100,14 +104,14 @@ export default {
     async getScenario () {
       this.isLoading = true
       try {
-        const scenarios = await this.$Provider.getScenarios()
+        const scenarios = await provider.getScenarios()
         this.scenarios = scenarios.map((scenario) => {
           scenario.isCronTriggered = scenario.triggers.some((trigger) => trigger.type === 'datetime')
           scenario.isStateTriggered = scenario.triggers.some((trigger) => trigger.type === 'state')
           return scenario
         })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'danger', message: error.message })
       }
       this.isLoading = false
     },

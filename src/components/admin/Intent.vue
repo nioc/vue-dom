@@ -6,7 +6,7 @@
 
     <div class="hero-body px-3">
       <div class="container">
-        <b-loading v-model="isLoading" :is-full-page="false" />
+        <o-loading v-model:active="isLoading" :full-page="false" />
         <div class="card mb-4">
 
           <header class="card-header">
@@ -39,7 +39,7 @@
             <div class="field">
               <div class="control">
                 <label class="label">Statut</label>
-                <b-switch v-model="intent.isActive">{{ intent.isActive ? 'Actif' : 'Inactif' }}</b-switch>
+                <o-switch v-model="intent.isActive">{{ intent.isActive ? 'Actif' : 'Inactif' }}</o-switch>
               </div>
             </div>
 
@@ -110,15 +110,17 @@
           </section>
         </div>
 
-        <b-collapse class="card mb-4" animation="slide" aria-id="relatedEntities" :open="false" @open="getRelatedEntities">
-          <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="relatedEntities">
-            <p class="card-header-title">
-              <span class="icon"><i class="fa fa-cubes" /></span><span>Entités utilisées par cette intention</span>
-            </p>
-            <a class="card-header-icon">
-              <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-            </a>
-          </header>
+        <o-collapse class="card mb-4" animation="slide" aria-id="relatedEntities" :open="false" @open="getRelatedEntities">
+          <template #trigger="props">
+            <header class="card-header" role="button" aria-controls="relatedEntities">
+              <p class="card-header-title">
+                <span class="icon"><i class="fa fa-cubes" /></span><span>Entités utilisées par cette intention</span>
+              </p>
+              <a class="card-header-icon">
+                <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+              </a>
+            </header>
+          </template>
           <section class="card-content">
             <div v-if="relatedEntities.length" class="table-container">
               <table class="table is-striped is-fullwidth is-vertical-centered">
@@ -145,7 +147,7 @@
             </div>
             <span v-else>Aucune entité dans les énoncés de l'intention</span>
           </section>
-        </b-collapse>
+        </o-collapse>
 
         <div class="card mb-4">
           <header class="card-header">
@@ -301,9 +303,13 @@
 </template>
 
 <script>
-import Breadcrumb from '@/components/Breadcrumb'
+import Breadcrumb from '@/components/Breadcrumb.vue'
 import Editable from '@/components/admin/Editable.vue'
-import { UnsavedChangesGuardMixin } from '@/mixins/UnsavedChangesGuard'
+import { useAppStore } from '@/store/app'
+import { useDataStore } from '@/store/data'
+import { useDialog } from '@/composables/useDialog'
+import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'Intent',
@@ -311,19 +317,18 @@ export default {
     Breadcrumb,
     Editable,
   },
-  mixins: [
-    UnsavedChangesGuardMixin,
-  ],
   props: {
     id: {
       type: String,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
+  },
+  setup() {
+    const appStore = useAppStore()
+    const dataStore = useDataStore()
+    const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
+    const { confirmDelete } = useDialog()
+    return { appStore, dataStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirmDelete }
   },
   data () {
     return {
@@ -357,7 +362,9 @@ export default {
     }
   },
   computed: {
-    isNew () { return this.id === 'new' },
+    isNew () {
+      return this.id === 'new'
+    },
   },
   mounted () {
     this.getIntent()
@@ -368,16 +375,16 @@ export default {
       if (!this.isNew) {
         this.isLoading = true
         try {
-          this.intent = await this.$Provider.getIntent(this.id)
-          this.addUnsavedChangesGuard('intent')
+          this.intent = await provider.getIntent(this.id)
+          this.addUnsavedChangesGuard(this.intent)
         } catch (error) {
-          this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
         }
         this.isLoading = false
       } else {
-        this.addUnsavedChangesGuard('intent')
-        if (this.proposal) {
-          this.intent = Object.assign({}, this.intent, this.proposal)
+        this.addUnsavedChangesGuard(this.intent)
+        if (history.state.proposal) {
+          this.intent = Object.assign({}, this.intent, history.state.proposal)
         }
       }
     },
@@ -385,43 +392,33 @@ export default {
       this.isLoading = true
       try {
         if (this.isNew) {
-          this.intent = await this.$Provider.createIntent(this.intent)
-          this.addUnsavedChangesGuard('intent')
+          this.intent = await provider.createIntent(this.intent)
+          this.addUnsavedChangesGuard(this.intent)
           this.$router.replace({ name: this.$route.name, params: { id: this.intent.id } })
         } else {
-          this.intent = await this.$Provider.updateIntent(this.intent)
-          this.addUnsavedChangesGuard('intent')
+          this.intent = await provider.updateIntent(this.intent)
+          this.addUnsavedChangesGuard(this.intent)
         }
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async removeIntent () {
-      this.$buefy.dialog.confirm({
-        type: 'is-danger',
-        title: 'Confirmation de suppression',
-        message: '<p>L\'intention sera supprimée.</p><p>Souhaitez-vous continuer ?</p>',
-        hasIcon: true,
-        icon: 'trash',
-        iconPack: 'fa',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler',
-        onConfirm: async () => {
-          this.isLoading = true
-          try {
-            await this.$Provider.deleteIntent(this.intent.id)
-            this.removeUnsavedChangesGuard('intent')
-            this.$router.back()
-          } catch (error) {
-            this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
-          }
-          this.isLoading = false
-        },
-      })
+      if (await this.confirmDelete('L\'intention sera supprimée.')) {
+        this.isLoading = true
+        try {
+          await provider.deleteIntent(this.intent.id)
+          this.removeUnsavedChangesGuard()
+          this.$router.back()
+        } catch (error) {
+          this.appStore.setInformation({ type: 'is-danger', message: error.message })
+        }
+        this.isLoading = false
+      }
     },
     copyIntent () {
-      const proposal = Object.assign({}, this.intent)
+      const proposal = JSON.parse(JSON.stringify(this.intent))
       delete proposal.id
       proposal.key = `${proposal.key}.copie`
       proposal.description = `${proposal.description} (copie)`
@@ -429,12 +426,14 @@ export default {
         name: 'admin-intent',
         params: {
           id: 'new',
+        },
+        state: {
           proposal,
         },
       }).catch(() => {})
     },
     async getIntentActions () {
-      this.actionOptions = await this.$Provider.getIntentActions()
+      this.actionOptions = await provider.getIntentActions()
     },
     removeUtterance (index) {
       this.intent.utterances.splice(index, 1)
@@ -452,7 +451,7 @@ export default {
       this.isLoading = true
       try {
         // get entities
-        const entities = await this.$Provider.getEntities()
+        const entities = await provider.getEntities()
         // get entered entities in utterances (inside %)
         const enteredEntities = {}
         this.intent.utterances
@@ -473,7 +472,7 @@ export default {
             }
           })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },

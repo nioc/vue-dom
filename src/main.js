@@ -1,38 +1,37 @@
-import Vue from 'vue'
-import store from '@/store'
-import Provider from '@/services/Provider'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import router from '@/services/Router'
-import Auth from '@/services/Auth'
-import Buefy from '@/mixins/Buefy'
-import VueMoment from 'vue-moment'
-import moment from 'moment'
-import 'moment/locale/fr'
-import App from '@/App'
+import { initProvider } from '@/services/Provider'
+import { useAuthStore } from '@/store/auth'
+import Oruga from '@oruga-ui/oruga-next'
+import { bulmaConfig } from '@oruga-ui/theme-bulma'
+import App from '@/App.vue'
 import '@fortawesome/fontawesome-free/css/fontawesome.css'
 import '@fortawesome/fontawesome-free/css/regular.css'
 import '@fortawesome/fontawesome-free/css/solid.css'
 import '@fortawesome/fontawesome-free/css/brands.css'
 import '@/assets/styles.scss'
-import '@/registerServiceWorker'
 
-Vue.use(VueMoment, {
-  moment,
-})
+async function main() {
+  const app = createApp(App)
 
-Vue.use(Provider, {
-  store,
-})
+  await initProvider()
 
-Vue.use(Buefy)
+  const pinia = createPinia()
+  pinia.use(piniaPluginPersistedstate)
+  app.use(pinia)
 
-Vue.config.productionTip = false
-Vue.config.performance = process.env.NODE_ENV !== 'production'
+  app.use(Oruga, {
+    ...bulmaConfig,
+    iconPack: 'fas',
+  })
 
-// try to restore user
-Auth.restoreUser().then(() => {
-  new Vue({
-    store,
-    router,
-    render: (h) => h(App),
-  }).$mount('#vue-dom')
-})
+  app.use(router)
+
+  await useAuthStore().restoreUser()
+
+  app.mount('#body')
+}
+
+main()

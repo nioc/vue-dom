@@ -1,22 +1,24 @@
 <template>
-  <b-collapse class="card mb-4" animation="slide" :aria-id="'history-'+card.title" :open="false" @open="displayHistory(card)" @close="isLoaded=false">
-    <header slot="trigger" slot-scope="props" class="card-header" role="button" :aria-controls="'history-'+card.title">
-      <p class="card-header-title">
-        <span>{{ card.title }}</span>
-      </p>
-      <a class="card-header-icon">
-        <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-      </a>
-    </header>
+  <o-collapse class="card mb-4" animation="slide" :aria-id="'history-'+card.title" :open="false" @open="displayHistory(card)" @close="isLoaded=false">
+    <template #trigger="props">
+      <header class="card-header" role="button" :aria-controls="'history-'+card.title" :aria-expanded="props.open">
+        <p class="card-header-title">
+          <span>{{ card.title }}</span>
+        </p>
+        <a class="card-header-icon">
+          <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+        </a>
+      </header>
+    </template>
     <div class="card-content">
       <history v-if="isLoaded" :series="series" />
     </div>
-  </b-collapse>
+  </o-collapse>
 
 </template>
 
 <script>
-import History from '@/components/History'
+import History from '@/components/History.vue'
 
 export default {
   name: 'UserViewHistory',

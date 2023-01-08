@@ -1,15 +1,17 @@
 <template>
-  <b-collapse class="card mb-4" animation="slide" aria-id="logsContent" :open="false" @open="load">
-    <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="logsContent">
-      <p class="card-header-title">
-        <span class="icon"><i class="fa fa-clipboard-list" /></span><span>Logs</span>
-      </p>
-      <a class="card-header-icon">
-        <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-      </a>
-    </header>
-    <section class="card-content">
-      <b-loading v-model="isLoading" :is-full-page="false" />
+  <o-collapse class="card mb-4" animation="slide" aria-id="logsContent" :open="false" @open="load">
+    <template #trigger="props">
+      <header class="card-header" role="button" aria-controls="logsContent" :aria-expanded="props.open">
+        <p class="card-header-title">
+          <span class="icon"><i class="fa fa-clipboard-list" /></span><span>Logs</span>
+        </p>
+        <a class="card-header-icon">
+          <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+        </a>
+      </header>
+    </template>
+    <section class="card-content is-relative">
+      <o-loading v-model:active="isLoading" :full-page="false" />
       <div class="field is-horizontal">
         <div class="field-body">
 
@@ -42,25 +44,25 @@
           </div>
 
           <div class="field is-narrow" title="Date de début">
-            <b-datetimepicker v-model="search.startDate" placeholder="Début" :datetime-formatter="datetimeFormatter" :datetime-parser="datetimeParser" editable>
+            <o-datetimepicker v-model="search.startDate" placeholder="Début" editable>
               <template #left>
                 <button class="button is-primary" title="Utiliser l'heure courante" @click="search.startDate = new Date()"><i class="fas fa-clock" /></button>
               </template>
               <template #right>
                 <button class="button" title="Supprimer le filtre" @click="search.startDate = null"><i class="fas fa-times-circle" /></button>
               </template>
-            </b-datetimepicker>
+            </o-datetimepicker>
           </div>
 
           <div class="field is-narrow" title="Date de fin">
-            <b-datetimepicker v-model="search.endDate" placeholder="Fin" :datetime-formatter="datetimeFormatter" :datetime-parser="datetimeParser" editable>
+            <o-datetimepicker v-model="search.endDate" placeholder="Fin" editable>
               <template #left>
                 <button class="button is-primary" title="Utiliser l'heure courante" @click="search.endDate = new Date()"><i class="fas fa-clock" /></button>
               </template>
               <template #right>
                 <button class="button" title="Supprimer le filtre" @click="search.endDate = null"><i class="fas fa-times-circle" /></button>
               </template>
-            </b-datetimepicker>
+            </o-datetimepicker>
           </div>
 
           <div class="field is-narrow">
@@ -87,7 +89,7 @@
 
           <div class="field is-narrow is-flex">
             <div class="control is-flex">
-              <b-switch v-model="search.isRemoteQuery" size="is-small" class="m-0" :title="`Recherche ${search.isRemoteQuery ? 'sur le serveur' : 'locale'}`"><span class="is-size-6 is-hidden-tablet">Recherche {{ search.isRemoteQuery ? 'sur le serveur' : 'locale' }}</span></b-switch>
+              <o-switch v-model="search.isRemoteQuery" size="is-small" class="m-0" :title="`Recherche ${search.isRemoteQuery ? 'sur le serveur' : 'locale'}`"><span class="is-size-6 is-hidden-tablet">Recherche {{ search.isRemoteQuery ? 'sur le serveur' : 'locale' }}</span></o-switch>
             </div>
           </div>
 
@@ -104,30 +106,30 @@
         </div>
       </div>
 
-      <b-table ref="LogsTable" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" :current-page.sync="currentPage" @click="showLogDetails">
-        <b-table-column v-slot="props" field="service" label="">
+      <o-table ref="LogsTable" v-model:current-page="currentPage" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" @click="showLogDetails">
+        <o-table-column v-slot="props" field="service" label="">
           <i class="fas fa-fw" :class="props.row.serviceIcon" :title="props.row.service" />
-        </b-table-column>
-        <b-table-column v-slot="props" field="timestamp" label="Date">
-          <time-ago v-if="props.row.timestamp" :date="props.row.timestamp" :drop-fixes="true" :title="props.row.timestamp | moment('L LTS')" />
-        </b-table-column>
-        <b-table-column v-slot="props" field="level" label="Niveau">
+        </o-table-column>
+        <o-table-column v-slot="props" field="timestamp" label="Date">
+          <time-ago v-if="props.row.timestamp" :date="props.row.timestamp" :drop-fixes="true" :title="props.row.timestamp" />
+        </o-table-column>
+        <o-table-column v-slot="props" field="level" label="Niveau">
           {{ props.row.level }}
-        </b-table-column>
-        <b-table-column v-slot="props" field="message" label="Message" cell-class="message-cell">
+        </o-table-column>
+        <o-table-column v-slot="props" field="message" label="Message" cell-class="message-cell">
           {{ props.row.message }}
-        </b-table-column>
-        <template slot="detail" slot-scope="props">
+        </o-table-column>
+        <template #detail="props">
           <ul class="is-selectable">
             <li v-for="(value, key) in stripLog(props.row)" :key="key">
               <label class="label">{{ key.charAt(0).toUpperCase() + key.slice(1) }}</label>
               <pre v-if="key==='requestId'" class="is-size-7 message-cell is-selectable-all">{{ value }}<a class="ml-3" title="Rechercher cette requête" @click="search.query=value"><i class="fa fa-search" /></a></pre>
-              <pre v-else-if="key==='timestamp'" class="is-size-7 message-cell">{{ value }}<a class="ml-3" title="Rechercher jusqu'à cette date" @click="search.endDate=$moment(value).add(1, 's').toDate()"><i class="fa fa-backward" /></a><a class="ml-3" title="Rechercher à partir de cette date" @click="search.startDate=$moment(value).toDate()"><i class="fa fa-forward" /></a></pre>
+              <pre v-else-if="key==='timestamp'" class="is-size-7 message-cell">{{ value }}<a class="ml-3" title="Rechercher jusqu'à cette date" @click="search.endDate=addDate(value, {seconds: 1})"><i class="fa fa-backward" /></a><a class="ml-3" title="Rechercher à partir de cette date" @click="search.startDate=addDate(value, {seconds: 0})"><i class="fa fa-forward" /></a></pre>
               <pre v-else class="is-size-7 message-cell">{{ value }}</pre>
             </li>
           </ul>
         </template>
-      </b-table>
+      </o-table>
 
       <div v-for="loggerLevel in loggersLevel" :key="loggerLevel.logger" class="field">
         <label class="label">Verbosité d'enregistrement des logs {{ loggerLevel.logger }}</label>
@@ -146,16 +148,23 @@
 
     </section>
 
-  </b-collapse>
+  </o-collapse>
 </template>
 
 <script>
-import TimeAgo from '@/components/TimeAgo'
+import TimeAgo from '@/components/TimeAgo.vue'
+import { useAppStore } from '@/store/app'
+import { dtFormat, dtParse, dtAdd } from '@/services/Datetime'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'SystemLogs',
   components: {
     TimeAgo,
+  },
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
   },
   data () {
     return {
@@ -207,17 +216,17 @@ export default {
           limit: this.search.limit,
         }
         if (this.search.startDate !== null) {
-          query.from = this.$moment(this.search.startDate).format()
+          query.from = dtFormat(this.search.startDate, 'ISO')
         }
         if (this.search.endDate !== null) {
-          query.until = this.$moment(this.search.endDate).format()
+          query.until = dtFormat(this.search.endDate, 'ISO')
         }
         if (this.search.isRemoteQuery) {
           query.text = this.search.query
         }
-        this.logs = await this.$Provider.getLogs(query)
+        this.logs = await provider.getLogs(query)
         this.logs.forEach((log) => {
-          log.isNew = this.$moment(log.timestamp).isAfter(this.lastLogsRead)
+          log.isNew = dtParse(log.timestamp) > this.lastLogsRead
           switch (log.service) {
             case 'core':
               log.serviceIcon = 'fa-server'
@@ -238,26 +247,26 @@ export default {
         this.lastLogsFetch = new Date()
         this.currentPage = 1
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async getLoggersLevel () {
       try {
-        this.loggersLevel = await this.$Provider.getLoggersLevel()
+        this.loggersLevel = await provider.getLoggersLevel()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
     },
     async setLoggerLevel (loggerLevel) {
       this.isLoading = true
       try {
-        const updatedLoggerLevel = await this.$Provider.setLoggerLevel(loggerLevel)
+        const updatedLoggerLevel = await provider.setLoggerLevel(loggerLevel)
         this.loggersLevel
           .find((_loggerLevel) => _loggerLevel.logger === loggerLevel.logger)
           .level = updatedLoggerLevel.level
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
@@ -317,30 +326,27 @@ export default {
           })
           .join('\n\n')
         await navigator.clipboard.writeText(logs)
-        this.$store.commit('app/setInformation', { type: 'is-success', message: 'Logs copiés dans le presse-papier' })
+        this.appStore.setInformation({ type: 'is-success', message: 'Logs copiés dans le presse-papier' })
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: `Erreur lors de la copie des logs : ${error.message}` })
+        this.appStore.setInformation({ type: 'is-danger', message: `Erreur lors de la copie des logs : ${error.message}` })
       }
     },
-    datetimeFormatter (date) {
-      return this.$moment(date).format('DD/MM/YY LT')
-    },
-    datetimeParser (dateText) {
-      return this.$moment(dateText, 'DD/MM/YY LT').toDate()
+    addDate (date, duration) {
+      return dtAdd(date, duration)
     },
   },
 }
 </script>
 
 <style scoped>
-.b-table >>> .message-cell {
+.b-table ::v-deep(.message-cell) {
   line-break: anywhere;
   white-space: pre-wrap;
 }
-.b-table >>> td:not(:last-child){
+.b-table ::v-deep(td:not(:last-child)){
   white-space: nowrap;
 }
-.b-table >>> td:last-child{
+.b-table ::v-deep(td:last-child){
   width: 100%;
 }
 .datepicker {

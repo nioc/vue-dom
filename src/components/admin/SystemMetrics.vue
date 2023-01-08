@@ -1,16 +1,18 @@
 <template>
-  <b-collapse class="card mb-4" animation="slide" aria-id="metricsContent" :open="false" @open="getSystemMetrics">
-    <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="metricsContent">
-      <p class="card-header-title">
-        <span class="icon"><i class="fa fa-server" /></span><span>Etat du système</span>
-      </p>
-      <a class="card-header-icon">
-        <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-      </a>
-    </header>
+  <o-collapse class="card mb-4" animation="slide" aria-id="metricsContent" :open="false" @open="getSystemMetrics">
+    <template #trigger="props">
+      <header class="card-header" role="button" aria-controls="metricsContent" :aria-expanded="props.open">
+        <p class="card-header-title">
+          <span class="icon"><i class="fa fa-server" /></span><span>Etat du système</span>
+        </p>
+        <a class="card-header-icon">
+          <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+        </a>
+      </header>
+    </template>
 
-    <section class="card-content">
-      <b-loading v-model="isLoading" :is-full-page="false" />
+    <section class="card-content is-relative">
+      <o-loading v-model:active="isLoading" :full-page="false" />
 
       <div v-if="health" class="field mb-5">
         <div class="control">
@@ -56,17 +58,17 @@
         <div class="control">
           <label class="label">Connexions à la base de données</label>
           <system-metric :label="`Nombre de connexions actives (${health.dbConnections.active}) / ouvertes (${health.dbConnections.current}) / totales (${health.dbConnections.totalCreated})`" :value="health.dbConnections.active" :max="health.dbConnections.current" />
-          <b-table :data="health.dbConnections.clients" striped hoverable :mobile-cards="false" sort-icon="menu-up" :default-sort="['active', 'desc']">
-            <b-table-column v-slot="props" field="ip" label="Adresse IP" sortable>
+          <o-table :data="health.dbConnections.clients" striped hoverable :mobile-cards="false" sort-icon="caret-up" :default-sort="['active', 'desc']">
+            <o-table-column v-slot="props" field="ip" label="Adresse IP" sortable>
               <span class="is-family-code">{{ props.row.ip }}</span>
-            </b-table-column>
-            <b-table-column v-slot="props" field="active" label="Connexions actives" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="active" label="Connexions actives" sortable numeric position="right">
               {{ props.row.active }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="current" label="Connexions ouvertes" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="current" label="Connexions ouvertes" sortable numeric position="right">
               {{ props.row.current }}
-            </b-table-column>
-          </b-table>
+            </o-table-column>
+          </o-table>
         </div>
       </div>
 
@@ -95,31 +97,31 @@
       <div v-if="metrics && metrics.containers" class="field mb-5">
         <div class="control">
           <label class="label">Conteneurs Docker</label>
-          <b-table :data="metrics.containers" striped hoverable :mobile-cards="false" sort-icon="menu-up" default-sort="name">
-            <b-table-column v-slot="props" field="name" label="Nom" sortable>
+          <o-table :data="metrics.containers" striped hoverable :mobile-cards="false" sort-icon="caret-up" default-sort="name">
+            <o-table-column v-slot="props" field="name" label="Nom" sortable>
               <span class="is-family-code">{{ props.row.name }}</span>
-            </b-table-column>
-            <b-table-column v-slot="props" field="cpu" label="CPU" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="cpu" label="CPU" sortable numeric position="right">
               <span :class="{'has-text-danger': props.row.cpu > cpuThreshold}">{{ props.row.cpu }}%</span>
-            </b-table-column>
-            <b-table-column v-slot="props" field="memory.percent" label="Mémoire" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="memory.percent" label="Mémoire" sortable numeric position="right">
               <span :class="{'has-text-danger': props.row.memory.percent > memThreshold}">{{ props.row.memory.percent }}%</span>
-            </b-table-column>
-            <b-table-column v-slot="props" field="memory.usage" label="Mémoire (détail)" sortable numeric>
+            </o-table-column>
+            <o-table-column v-slot="props" field="memory.usage" label="Mémoire (détail)" sortable numeric position="right">
               <span :class="{'has-text-danger': props.row.memory.percent > memThreshold}">{{ getHumanSizeCei(props.row.memory.usage, 'o', 1) }}<span class="has-text-weight-light"> / {{ getHumanSizeCei(props.row.memory.size, 'o', 1) }}</span></span>
-            </b-table-column>
-            <b-table-column v-slot="props" field="status" label="Statut" sortable :custom-sort="sortContainersByStatus">
+            </o-table-column>
+            <o-table-column v-slot="props" field="status" label="Statut" sortable :custom-sort="sortContainersByStatus">
               <span :title="props.row.rawStatus" style="white-space: nowrap;">
                 <i class="mr-1 fas fa-fw fa-power-off" :class="props.row.isActive ? 'has-text-success' :'has-text-danger'" />
                 <span class="has-text-weight-light">{{ props.row.durationHumanized }}</span>
                 <i v-if="props.row.healthClass" class="ml-3 fas fa-fw" :class="props.row.healthClass" />
               </span>
-            </b-table-column>
-          </b-table>
+            </o-table-column>
+          </o-table>
         </div>
       </div>
 
-      <div v-if="metrics && metrics.date" class="has-text-weight-light is-italic mb-3">Informations collectées <time-ago v-if="metrics.date" :drop-fixes="false" :date="metrics.date" :title="metrics.date | moment('LLL')" /></div>
+      <div v-if="metrics && metrics.date" class="has-text-weight-light is-italic mb-3">Informations collectées <time-ago v-if="metrics.date" :drop-fixes="false" :date="metrics.date" title-format="PPPPpp" /></div>
 
       <span class="buttons">
         <button class="button is-primary" title="Rafraichir l'état" @click="getSystemMetrics">
@@ -129,13 +131,16 @@
       </span>
 
     </section>
-  </b-collapse>
+  </o-collapse>
 </template>
 
 <script>
-import SystemMetric from '@/components/admin/SystemMetric'
-import TimeAgo from '@/components/TimeAgo'
-import { ConversionMixin } from '@/mixins/Conversion'
+import SystemMetric from '@/components/admin/SystemMetric.vue'
+import TimeAgo from '@/components/TimeAgo.vue'
+import { useConversions } from '@/composables/useConversions'
+import { useAppStore } from '@/store/app'
+import { dtFormatDuration, dtSub } from '@/services/Datetime'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'SystemMetrics',
@@ -143,9 +148,11 @@ export default {
     SystemMetric,
     TimeAgo,
   },
-  mixins: [
-    ConversionMixin,
-  ],
+  setup() {
+    const { getHumanSizeCei } = useConversions()
+    const appStore = useAppStore()
+    return { getHumanSizeCei, appStore }
+  },
   data () {
     return {
       isLoading: false,
@@ -159,10 +166,11 @@ export default {
     async getSystemMetrics () {
       this.isLoading = true
       try {
-        const metrics = await this.$Provider.getSystemMetrics()
+        const metrics = await provider.getSystemMetrics()
+        const now = new Date()
         metrics.containers.forEach(container => {
           container.healthClass = null
-          container.duration = null
+          container.statusDate = null
           container.rawStatus = container.status
           if (container.status) {
             // handle status
@@ -191,21 +199,25 @@ export default {
             container.status = container.status.replace('About ', '').replace(/^an /, '1 ').replace(/^a /, '1 ')
             try {
               const matches = /(\d+) (\w+)/.exec(container.status)
-              const duration = this.$moment.duration(matches[1], matches[2])
-              container.duration = this.$moment.duration(duration).asMinutes()
-              container.durationHumanized = this.$moment.duration(duration).humanize()
+              if (matches[1] < 2) {
+                matches[2] += 's'
+              }
+              const duration = { [matches[2]]: Number.parseInt(matches[1]) }
+              container.statusDate = dtSub(now, duration)
+              container.durationHumanized = dtFormatDuration(duration)
             } catch (error) {
+              console.warn(`Error on duration for container ${container.name}`, error.message)
             }
           }
         })
         this.metrics = metrics
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       try {
-        this.health = await this.$Provider.getSystemHealth()
+        this.health = await provider.getSystemHealth()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
@@ -213,7 +225,7 @@ export default {
       if (a.isActive !== b.isActive) {
         return isAsc ? (a.isActive ? -1 : 1) : a.isActive ? 1 : -1
       }
-      return isAsc ? a.duration - b.duration : b.duration - a.duration
+      return isAsc ? a.statusDate - b.statusDate : b.statusDate - a.statusDate
     },
   },
 }

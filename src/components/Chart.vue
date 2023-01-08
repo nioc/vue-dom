@@ -6,7 +6,9 @@
 
 <script>
 import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation } from 'chart.js'
-import 'chartjs-adapter-moment'
+import 'chartjs-adapter-date-fns'
+import { fr } from 'date-fns/locale'
+import cloneDeep from 'lodash.clonedeep'
 
 Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation)
 
@@ -26,7 +28,7 @@ export default {
     options: {
       type: Object,
       required: false,
-      default () {
+      default (props) {
         return {
           parsing: false,
           plugins: {
@@ -35,7 +37,7 @@ export default {
               position: 'bottom',
             },
             tooltip: {
-              callbacks: this.tooltipCallbacks,
+              callbacks: props.tooltipCallbacks,
             },
             decimation: {
               enabled: true,
@@ -61,13 +63,19 @@ export default {
           scales: {
             x: {
               type: 'time',
+              adapters: {
+                date: {
+                  locale: fr,
+                },
+              },
               time: {
-                tooltipFormat: 'llll',
+                tooltipFormat: 'eee PPPpp',
                 displayFormats: {
-                  second: 'LTS',
-                  minute: 'LT',
-                  hour: 'LT',
-                  day: 'DD/MM',
+                  millisecond: 'pp SSS',
+                  second: 'pp',
+                  minute: 'p',
+                  hour: 'p',
+                  day: 'eee dd/LL',
                 },
               },
             },
@@ -87,17 +95,21 @@ export default {
   data () {
     return {
       chart: null,
+      localOptions: cloneDeep(this.options),
     }
   },
   watch: {
     chartData: function () {
       this.render()
     },
+    tooltipCallbacks: function (val) {
+      this.localOptions.plugins.tooltip.callbacks = val
+    },
   },
   mounted () {
     this.render()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.chart) {
       this.chart.destroy()
     }
@@ -109,13 +121,13 @@ export default {
         this.chart.destroy()
       }
       if (this.chartData.datasets.length > 1) {
-        this.options.plugins.legend.display = true
-        this.options.elements.line.fill = false
-        delete this.options.scales.yLeft
-        delete this.options.scales.yRight
+        this.localOptions.plugins.legend.display = true
+        this.localOptions.elements.line.fill = false
+        delete this.localOptions.scales.yLeft
+        delete this.localOptions.scales.yRight
         if (this.chartData.datasets.some((dataset) => dataset.yAxisID === 'yRight')) {
-          this.options.scales.yLeft = {}
-          this.options.scales.yRight = {
+          this.localOptions.scales.yLeft = {}
+          this.localOptions.scales.yRight = {
             type: 'linear',
             position: 'right',
             display: true,
@@ -125,7 +137,7 @@ export default {
       this.chart = new Chart(ctx, {
         type: 'line',
         data: this.chartData,
-        options: this.options,
+        options: this.localOptions,
       })
     },
   },

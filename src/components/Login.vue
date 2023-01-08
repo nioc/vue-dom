@@ -24,9 +24,9 @@
                 </div>
               </div>
               <div class="field has-text-left pl-3">
-                <b-checkbox v-model="credentials.remember" :class="{'has-text-grey-light': !credentials.remember}">
+                <o-checkbox v-model="credentials.remember" :class="{'has-text-grey-light': !credentials.remember}">
                   Rester connecté
-                </b-checkbox>
+                </o-checkbox>
               </div>
               <div class="field">
                 <button type="submit" class="button is-block is-primary is-medium is-fullwidth" :class="{'is-loading': isLoading}" :disabled="isDisabled"><span class="fa fa-sign-in-alt fa-fw mr-3" aria-hidden="true" />Login</button>
@@ -43,12 +43,17 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
-import Auth from '@/services/Auth'
-const { mapState } = createNamespacedHelpers('app')
+import { useAppStore } from '@/store/app'
+import { useAuthStore } from '@/store/auth'
 const custom = window.custom
 
 export default {
+  name: 'Login',
+  setup() {
+    const appStore = useAppStore()
+    const authStore = useAuthStore()
+    return { appStore, authStore }
+  },
   data () {
     return {
       title: custom.title,
@@ -63,9 +68,8 @@ export default {
   },
   computed: {
     isDisabled () {
-      return this.isLoading || !this.credentials.login || !this.credentials.password || !this.hasNetwork
+      return this.isLoading || !this.credentials.login || !this.credentials.password || !this.appStore.hasNetwork
     },
-    ...mapState(['hasNetwork']),
   },
   beforeMount () {
     // expose login function to global for outside calls
@@ -86,7 +90,7 @@ export default {
       // call the auth service
       this.isLoading = true
       try {
-        await Auth.login(this.credentials.login, this.credentials.password, this.credentials.remember)
+        await this.authStore.doLogin(this.credentials.login, this.credentials.password, this.credentials.remember)
         // Auth successful, redirect to requested page of home by default
         if (this.$route.query.redirect !== undefined) {
           this.$router.replace(this.$route.query.redirect)
@@ -95,18 +99,14 @@ export default {
         this.$router.replace({ name: 'home' })
       } catch (error) {
         // Auth failed, display error message
-        this.$buefy.toast.open({
-          message: error.message,
-          type: 'is-danger',
-          position: 'is-bottom',
-        })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async loginWithAuthentication (login, authentication, remember) {
       this.isLoading = true
       try {
-        await Auth.loginWithPreviousAuthentication(login, authentication, remember)
+        await this.authStore.loginWithPreviousAuthentication(login, authentication, remember)
         // Auth successful, redirect to requested page of home by default
         if (this.$route.query.redirect !== undefined) {
           this.$router.replace(this.$route.query.redirect)
@@ -115,11 +115,7 @@ export default {
         this.$router.replace({ name: 'home' })
       } catch (error) {
         // Auth failed, display error message
-        this.$buefy.toast.open({
-          message: error.message,
-          type: 'is-danger',
-          position: 'is-bottom',
-        })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },

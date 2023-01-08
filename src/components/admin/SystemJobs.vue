@@ -1,34 +1,36 @@
 <template>
-  <b-collapse class="card mb-4" animation="slide" aria-id="schedulerContent" :open="false" @open="getScheduledJobs(false)">
-    <header slot="trigger" slot-scope="props" class="card-header" role="button" aria-controls="schedulerContent">
-      <p class="card-header-title">
-        <span class="icon"><i class="far fa-calendar-check" /></span><span>Tâches programmées</span>
-      </p>
-      <a class="card-header-icon">
-        <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
-      </a>
-    </header>
+  <o-collapse class="card mb-4" animation="slide" aria-id="schedulerContent" :open="false" @open="getScheduledJobs(false)">
+    <template #trigger="props">
+      <header class="card-header" role="button" aria-controls="schedulerContent" :aria-expanded="props.open">
+        <p class="card-header-title">
+          <span class="icon"><i class="far fa-calendar-check" /></span><span>Tâches programmées</span>
+        </p>
+        <a class="card-header-icon">
+          <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+        </a>
+      </header>
+    </template>
 
-    <section class="card-content">
-      <b-loading v-model="isLoading" :is-full-page="false" />
+    <section class="card-content is-relative">
+      <o-loading v-model:active="isLoading" :full-page="false" />
 
-      <b-table ref="scheduledJobsTable" :data="scheduledJobs" striped hoverable :mobile-cards="false" :paginated="scheduledJobs.length>1" per-page="10">
-        <b-table-column v-slot="props" field="name" label="Nom">
+      <o-table ref="scheduledJobsTable" :data="scheduledJobs" striped hoverable :mobile-cards="false" :paginated="scheduledJobs.length>1" per-page="10">
+        <o-table-column v-slot="props" field="name" label="Nom">
           {{ props.row.name }}
-        </b-table-column>
-        <b-table-column v-slot="props" field="cronTime" label="Cron">
+        </o-table-column>
+        <o-table-column v-slot="props" field="cronTime" label="Cron">
           {{ props.row.cronTime }}
-        </b-table-column>
-        <b-table-column v-slot="props" field="isRunning" label="Statut">
+        </o-table-column>
+        <o-table-column v-slot="props" field="isRunning" label="Statut" position="centered">
           <span class="icon"><i class="fa" :class="props.row.isRunning ? 'fa-play-circle has-text-success' : 'fa-stop-circle has-text-danger'" /></span>
-        </b-table-column>
-        <b-table-column v-slot="props" field="lastDate" label="Dernière exécution">
-          <time-ago v-if="props.row.lastDate" :date="props.row.lastDate" :drop-fixes="false" :title="props.row.lastDate | moment('L LTS')" />
-        </b-table-column>
-        <b-table-column v-slot="props" field="nextDate" label="Prochaine exécution">
-          <time-ago v-if="props.row.nextDate" :date="props.row.nextDate" :drop-fixes="false" :title="props.row.nextDate | moment('L LTS')" />
-        </b-table-column>
-      </b-table>
+        </o-table-column>
+        <o-table-column v-slot="props" field="lastDate" label="Dernière exécution">
+          <time-ago v-if="props.row.lastDate" :date="props.row.lastDate" :drop-fixes="false" title-format="PPPPpp" />
+        </o-table-column>
+        <o-table-column v-slot="props" field="nextDate" label="Prochaine exécution">
+          <time-ago v-if="props.row.nextDate" :date="props.row.nextDate" :drop-fixes="false" title-format="PPPPpp" />
+        </o-table-column>
+      </o-table>
 
       <span class="buttons">
         <button class="button is-primary" title="Rafraichir les tâches" @click="getScheduledJobs(true)">
@@ -41,16 +43,22 @@
         </button>
       </span>
     </section>
-  </b-collapse>
+  </o-collapse>
 </template>
 
 <script>
-import TimeAgo from '@/components/TimeAgo'
+import TimeAgo from '@/components/TimeAgo.vue'
+import { useAppStore } from '@/store/app'
+import { provider } from '@/services/Provider'
 
 export default {
   name: 'SystemJobs',
   components: {
     TimeAgo,
+  },
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
   },
   data () {
     return {
@@ -65,18 +73,23 @@ export default {
       }
       this.isLoading = true
       try {
-        this.scheduledJobs = await this.$Provider.getJobs()
+        this.scheduledJobs.map(job => {
+          job.lastDate = null
+          job.nextDate = null
+          return job
+        })
+        this.scheduledJobs = await provider.getJobs()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },
     async restartScheduledJobs () {
       this.isLoading = true
       try {
-        this.scheduledJobs = await this.$Provider.restartJobs()
+        this.scheduledJobs = await provider.restartJobs()
       } catch (error) {
-        this.$store.commit('app/setInformation', { type: 'is-danger', message: error.message })
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
       this.isLoading = false
     },

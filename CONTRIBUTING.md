@@ -9,13 +9,12 @@ In order to contribute to this VueJS frontend:
 0. Install prerequisite:
   - [Node.js](https://nodejs.org/)
   - npm `npm install npm@latest -g`
-  - Vue-cli `npm install -g @vue/cli`
 1. Access the frontend folder in a shell `cd /var/www/vue-dom`
 2. Build the project `npm install` and wait for the downloads
-3. Start the vue-cli server `npm run serve`
+3. Start the vite server `npm run dev`
 4. Edit the code!
 
-If you are using Docker, you can use the [Dockerfile-dev](/docker/Dockerfile-dev) to avoid installing vue-cli on your local computer:
+If you are using Docker, you can use the [Dockerfile-dev](/docker/Dockerfile-dev) to avoid installing Node.js on your local computer:
 ```
 docker build \
 -f docker/Dockerfile-dev \
@@ -26,7 +25,7 @@ docker build \
 And then run vue-cli serve in container:
 ```
 docker run -it \
--p 8080:8080 \
+-p 3000:3000 \
 --rm \
 -v "$(pwd)":/app \
 -v "/app/node_modules" \
@@ -72,7 +71,7 @@ This file must expose an object with required functions:
 For example:
 
 ``` js
-const AutomoticApi = function (Vue, restApiUrl = null, websocketUrl = null, store = null, statisticsPeriod = 86400000) {
+const AutomoticApi = function (restApiUrl = null, websocketUrl = null, statisticsPeriod = 86400000) {
   // if you need privates methods, write it before the return
 
   return {
@@ -170,11 +169,10 @@ Add your newly created provider in `src/services/Provider.js`:
 
 ```js
       case 'automotic': {
-        Vue.prototype.$Provider = require('@/services/providers/AutomoticApi').AutomoticApi(
-          Vue,
+        const { AutomoticApi } = await import ('@/services/providers/AutomoticApi')
+        provider = AutomoticApi(
           provider.restApiUrl,
           provider.websocketUrl,
-          options.store,
           provider.statisticsPeriod,
         )
         break

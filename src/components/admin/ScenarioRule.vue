@@ -17,14 +17,14 @@
         </div>
 
         <div class="field is-narrow">
-          <b-checkbox-button v-model="rule.skipRepeated" :native-value="true" class="is-success is-light" type="is-danger is-light">
+          <button class="button" :class="{'is-danger is-light': rule.skipRepeated}" @click="rule.skipRepeated = !rule.skipRepeated">
             <span v-if="rule.skipRepeated" class="icon is-small is-left m-0" title="Ignorer si l'évaluation de la règle est inchangée">
               <i class="fas fa-ban" />
             </span>
             <span v-else class="icon is-small is-left m-0" title="À chaque fois">
               <i class="fas fa-redo" />
             </span>
-          </b-checkbox-button>
+          </button>
         </div>
 
         <div class="field is-grouped">
@@ -85,18 +85,16 @@
 </template>
 
 <script>
-import ScenarioCriteria from '@/components/admin/ScenarioCriteria'
-import { AdminScenarioMixin } from '@/mixins/AdminScenario'
+import { defineAsyncComponent } from 'vue'
+import ScenarioCriteria from '@/components/admin/ScenarioCriteria.vue'
+import { useScenarioHelper } from '@/composables/useScenarioHelper'
 
 export default {
   name: 'ScenarioRule',
   components: {
     ScenarioCriteria,
-    ScenarioElement: () => import('@/components/admin/ScenarioElement'),
+    ScenarioElement: defineAsyncComponent(() => import('@/components/admin/ScenarioElement.vue')),
   },
-  mixins: [
-    AdminScenarioMixin,
-  ],
   props: {
     rule: {
       type: Object,
@@ -112,8 +110,19 @@ export default {
       required: true,
     },
   },
+  emits: [
+    'up',
+    'remove',
+    'down',
+  ],
+  setup() {
+    const { createScenarioElement } = useScenarioHelper()
+    return { createScenarioElement }
+  },
   computed: {
-    hasSub () { return (this.rule.criterias.some((rule) => (rule.criterias))) },
+    hasSub () {
+      return (this.rule.criterias.some((rule) => (rule.criterias)))
+    },
   },
   methods: {
     addRule () {

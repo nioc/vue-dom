@@ -1,10 +1,11 @@
 <template>
-  <b-autocomplete
+  <o-autocomplete
     ref="autocomplete"
     v-model="searchInput"
     :data="filteredOptions"
     field="name"
-    :group-field="groupField"
+    group-field="name"
+    group-options="items"
     :placeholder="placeholder"
     :icon="icon"
     :title="titleComputed"
@@ -16,23 +17,20 @@
     @typing="autocompleteClass = 'is-danger'"
     @select="selectOption"
   >
-    <template slot-scope="props">
+    <template #default="props">
       <span v-if="type==='equipment'" :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.isActive || !props.option.roomIsVisible}">{{ props.option.name }}</span>
       <span v-else-if="type==='channel'" :class="{'has-text-grey is-italic': !props.option.isActive}">{{ props.option.name }}</span>
       <span v-else :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.equipmentIsVisible || !props.option.equipmentIsActive}">{{ props.option.name }}</span>
     </template>
-    <template slot="empty">Aucune correspondance</template>
-  </b-autocomplete>
+    <template #empty>Aucune correspondance</template>
+  </o-autocomplete>
 </template>
 
 <script>
-import { AdminMixin } from '@/mixins/Admin'
+import { useDataStore } from '@/store/data'
 
 export default {
   name: 'OptionsAutocomplete',
-  mixins: [
-    AdminMixin,
-  ],
   props: {
     type: {
       type: String,
@@ -57,6 +55,13 @@ export default {
         return (value.id && value.name && value.group && value.type)
       },
     },
+  },
+  emits: [
+    'select',
+  ],
+  setup() {
+    const dataStore = useDataStore()
+    return { dataStore }
   },
   data () {
     return {
@@ -113,36 +118,42 @@ export default {
       let options = []
       switch (this.type) {
         case 'state':
-          options = this.arrStatesWithEquipmentName
+          options = this.dataStore.arrStatesWithEquipmentName
             .slice()
             .map((option) => {
-              option.name = `${option.equipmentName} > ${option.name}`
-              return option
+              return {
+                ...option,
+                name: `${option.equipmentName} > ${option.name}`,
+              }
             })
           break
         case 'action':
-          options = this.arrActionsWithEquipmentName
+          options = this.dataStore.arrActionsWithEquipmentName
             .slice()
             .map((option) => {
-              option.name = `${option.equipmentName} > ${option.name}`
-              return option
+              return {
+                ...option,
+                name: `${option.equipmentName} > ${option.name}`,
+              }
             })
           break
         case 'ask':
-          options = this.arrActionsWithEquipmentName
+          options = this.dataStore.arrActionsWithEquipmentName
             .slice()
             .filter((action) => action.isAsk)
             .map((option) => {
-              option.name = `${option.equipmentName} > ${option.name}`
-              return option
+              return {
+                ...option,
+                name: `${option.equipmentName} > ${option.name}`,
+              }
             })
           break
         case 'channel':
-          options = this.arrChannels
+          options = this.dataStore.arrChannels
             .slice()
           break
         case 'equipment':
-          options = this.arrEquipmentsWithRoomName
+          options = this.dataStore.arrEquipmentsWithRoomName
             .slice()
           break
         default:
@@ -165,15 +176,34 @@ export default {
       return options
     },
     filteredOptions () {
-      return this.options.filter((option) => {
-        if (!Object.prototype.hasOwnProperty.call(option, 'name') || !option.name) {
-          return false
-        }
-        return option.name
-          .toString()
-          .toLowerCase()
-          .indexOf(this.searchInput.toLowerCase()) >= 0
-      })
+      // produce a group objects array ({name: '', items: []})
+      return Object.entries(this.options
+        .filter((option) => {
+          if (!Object.prototype.hasOwnProperty.call(option, 'name') || !option.name) {
+            return false
+          }
+          return option.name
+            .toString()
+            .toLowerCase()
+            .indexOf(this.searchInput.toLowerCase()) >= 0
+        })
+        .reduce((result, item) => ({
+          ...result,
+          [item[this.groupField]]: [
+            ...(result[item[this.groupField]] || []),
+            item,
+          ],
+        }),
+        [],
+        ),
+      )
+        .map(group => {
+          const groupObj = {
+            name: group[0],
+            items: group[1],
+          }
+          return groupObj
+        })
     },
   },
   watch: {

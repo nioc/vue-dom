@@ -35,7 +35,7 @@
 import { version, license, homepage, vueDom } from '../../package.json'
 import axios from 'axios'
 import spdxLicenseList from 'spdx-license-list'
-import Breadcrumb from '@/components/Breadcrumb'
+import Breadcrumb from '@/components/Breadcrumb.vue'
 
 export default {
   name: 'About',
@@ -51,7 +51,7 @@ export default {
         latestLink: null,
       },
       // eslint-disable-next-line no-undef
-      gitVersion,
+      gitVersion: GITVERSION,
       description: vueDom.description,
       license: {
         id: license,

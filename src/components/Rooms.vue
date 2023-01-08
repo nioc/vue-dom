@@ -18,11 +18,10 @@
 </template>
 
 <script>
-import { RoomsMixin } from '@/mixins/Rooms'
-import { SummaryMixin } from '@/mixins/Summary'
-import { RoomsTreeMixin } from '@/mixins/RoomsTree'
-import Breadcrumb from '@/components/Breadcrumb'
-import RoomsTree from '@/components/RoomsTree'
+import { useRoomsTree } from '@/composables/useRoomsTree.js'
+import { useDataStore } from '@/store/data'
+import Breadcrumb from '@/components/Breadcrumb.vue'
+import RoomsTree from '@/components/RoomsTree.vue'
 
 export default {
   name: 'Rooms',
@@ -30,19 +29,23 @@ export default {
     Breadcrumb,
     RoomsTree,
   },
-  mixins: [
-    RoomsMixin,
-    SummaryMixin,
-    RoomsTreeMixin,
-  ],
+  setup() {
+    const dataStore = useDataStore()
+    const { getRoomsTree } = useRoomsTree()
+    return { dataStore, getRoomsTree }
+  },
   data () {
     return {
       search: '',
     }
   },
   computed: {
-    summary () { return this.getRoomSummaryById(0) },
-    roomsTree () { return this.getRoomsTree(this.roomsRaw.filter((room) => room.isVisible), this.search) },
+    summary () {
+      return this.dataStore.getRoomSummaryById(0)
+    },
+    roomsTree () {
+      return this.getRoomsTree(this.dataStore.roomsRaw.filter((room) => room.isVisible), this.search)
+    },
   },
 }
 </script>
