@@ -4,6 +4,7 @@ const custom = window.custom
 
 const getDefaultState = () => ({
   login: null,
+  id: null,
   isAuthenticated: false,
   roles: [],
 })

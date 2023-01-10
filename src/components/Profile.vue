@@ -13,6 +13,12 @@
             </p>
           </header>
           <section class="card-content">
+            <label class="is-inline-block field is-relative is-clickable" title="Cliquer pour modifier l'avatar">
+              <input ref="avatar" class="file-input" type="file" accept="image/*" @change="selectAvatar">
+              <span class="image is-128x128">
+                <img class="is-rounded" :src="user.avatarSrc">
+              </span>
+            </label>
             <div class="field">
               <div class="control has-icons-left">
                 <input v-model="user.login" class="input" type="text" placeholder="Nom d'utilisateur">
@@ -129,6 +135,7 @@ import Breadcrumb from '@/components/Breadcrumb.vue'
 import UserAgent from '@/components/UserAgent.vue'
 import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
 import { useAppStore } from '@/store/app'
+import { useAuthStore } from '@/store/auth'
 import { useDialog } from '@/composables/useDialog'
 import { dtFormat } from '@/services/Datetime'
 import { provider } from '@/services/Provider'
@@ -141,13 +148,20 @@ export default {
   },
   setup() {
     const appStore = useAppStore()
+    const authStore = useAuthStore()
     const { confirmDelete } = useDialog()
     const { addUnsavedChangesGuard } = useUnsavedChangesGuard()
-    return { appStore, confirmDelete, addUnsavedChangesGuard }
+    return { appStore, authStore, confirmDelete, addUnsavedChangesGuard }
   },
   data () {
     return {
-      user: {},
+      user: {
+        login: null,
+        email: null,
+        password: null,
+        avatarSrc: null,
+      },
+      currentAvatar: null,
       tokens: [],
       refreshTokenUsesForModal: null,
     }
@@ -160,6 +174,7 @@ export default {
     async getProfile () {
       try {
         this.user = await provider.getMyProfile()
+        this.user.avatarSrc = provider.getAvatarUri(this.authStore.id)
         this.addUnsavedChangesGuard(this.user)
       } catch (error) {
         this.appStore.setInformation({ type: 'is-danger', message: `Erreur lors de la récupération du profil<br/>${error.message}` })
@@ -182,11 +197,18 @@ export default {
       }
     },
     async updateProfile () {
-      const _user = Object.assign({}, this.user)
-      delete _user.password
-      delete _user.modificationDate
+      const user = {
+        login: this.user.login,
+        email: this.user.email,
+      }
       try {
-        this.user = await provider.updateMyProfile(_user)
+        this.user = {
+          ...this.user,
+          ...await provider.updateMyProfile(user),
+        }
+        if (this.currentAvatar) {
+          await this.uploadAvatar()
+        }
         this.addUnsavedChangesGuard(this.user)
       } catch (error) {
         this.appStore.setInformation({ type: 'is-danger', message: error.message })
@@ -211,6 +233,18 @@ export default {
           this.appStore.setInformation({ type: 'is-danger', message: error.message })
         }
         this.isLoading = false
+      }
+    },
+    selectAvatar () {
+      this.currentAvatar = this.$refs.avatar.files[0]
+      this.user.avatarSrc = URL.createObjectURL(this.currentAvatar)
+    },
+    async uploadAvatar () {
+      try {
+        await provider.uploadMyAvatar(this.currentAvatar)
+        this.currentAvatar = null
+      } catch (error) {
+        this.appStore.setInformation({ type: 'is-danger', message: `Erreur lors de l'envoi de l'avatar : ${error.message}` })
       }
     },
     formatDate (date, format) {

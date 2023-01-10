@@ -6,6 +6,12 @@
     <div class="hero-body px-3">
       <div class="container box">
         <o-loading v-model:active="isLoading" :full-page="false" />
+        <label class="is-inline-block field is-relative is-clickable" title="Cliquer pour modifier l'avatar">
+          <input ref="avatar" class="file-input" type="file" accept="image/*" @change="selectAvatar">
+          <span class="image is-128x128">
+            <img class="is-rounded" :src="user.avatarSrc">
+          </span>
+        </label>
         <div class="field is-required">
           <label class="label">Login</label>
           <div class="control has-icons-left">
@@ -85,6 +91,7 @@ export default {
     return {
       user: {},
       roles: provider.getAllRoles(),
+      currentAvatar: null,
       isLoading: false,
     }
   },
@@ -95,6 +102,7 @@ export default {
     async getUser () {
       this.isLoading = true
       this.user = await provider.getUser(this.id)
+      this.user.avatarSrc = provider.getAvatarUri(this.id)
       if (!this.user.roles) {
         this.user.roles = []
       }
@@ -105,6 +113,9 @@ export default {
       this.isLoading = true
       try {
         await provider.updateUser(this.user)
+        if (this.currentAvatar) {
+          await this.uploadAvatar()
+        }
         this.addUnsavedChangesGuard(this.user)
       } catch (error) {
         this.appStore.setInformation({ type: 'is-danger', message: error.message })
@@ -122,6 +133,18 @@ export default {
           this.appStore.setInformation({ type: 'is-danger', message: error.message })
         }
         this.isLoading = false
+      }
+    },
+    selectAvatar () {
+      this.currentAvatar = this.$refs.avatar.files[0]
+      this.user.avatarSrc = URL.createObjectURL(this.currentAvatar)
+    },
+    async uploadAvatar () {
+      try {
+        await provider.uploadUserAvatar(this.id, this.currentAvatar)
+        this.currentAvatar = null
+      } catch (error) {
+        this.appStore.setInformation({ type: 'is-danger', message: `Erreur lors de l'envoi de l'avatar : ${error.message}` })
       }
     },
     async requestToken () {

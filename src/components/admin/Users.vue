@@ -16,6 +16,7 @@
           <table class="table is-striped is-fullwidth is-vertical-centered">
             <thead>
               <tr>
+                <th style="width: 40px;" />
                 <th>Login</th>
                 <th>Adresse mail</th>
                 <th>Rôles</th>
@@ -24,6 +25,11 @@
             </thead>
             <tbody>
               <tr v-for="user in filtered" :key="user.id" @click="editUser(user.id)">
+                <td>
+                  <span class="image is-24x24">
+                    <img class="is-rounded" :src="user.avatarSrc">
+                  </span>
+                </td>
                 <td>{{ user.login }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.roles }}</td>
@@ -77,6 +83,7 @@ export default {
         if (user.roles) {
           user.roles = user.roles.join(', ')
         }
+        user.avatarSrc = provider.getAvatarUri(user.id)
         return user
       })
       this.isLoading = false
