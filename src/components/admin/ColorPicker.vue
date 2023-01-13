@@ -30,6 +30,9 @@ export default {
   },
   methods: {
     rgbToHex (rgbString) {
+      if (!rgbString) {
+        return '#000000'
+      }
       const [r, g, b] = rgbString.match(/(0?\.?\d{1,3})%?\b/g).map(component => Number(component))
       return '#' + [r, g, b].map(x => {
         const hex = x.toString(16)

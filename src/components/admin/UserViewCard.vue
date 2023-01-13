@@ -107,7 +107,7 @@ export default {
         id: null,
         dataType: 'numeric',
         label: null,
-        color: null,
+        color: 'rgb(150, 201, 39)',
         isMainYAxis: true,
       })
     },
