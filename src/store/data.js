@@ -246,7 +246,7 @@ export const useDataStore = defineStore('data', {
         return 0
       })
     },
-    arrActionsWithEquipmentName (pstate) {
+    arrActionsWithEquipmentName: (pstate) => {
       return pstate.arrActions.map((action) => {
         const _action = {
           id: action.id,
@@ -256,6 +256,7 @@ export const useDataStore = defineStore('data', {
           isAsk: action.isAsk,
           isVisible: action.isVisible,
           stateFeedbackId: action.stateFeedbackId,
+          type: action.type,
           equipmentName: null,
           equipmentIsVisible: null,
           equipmentIsActive: null,
@@ -283,7 +284,7 @@ export const useDataStore = defineStore('data', {
         return 0
       })
     },
-    arrEquipmentsWithRoomName (pstate) {
+    arrEquipmentsWithRoomName: (pstate) => {
       return pstate.arrEquipments.map((equipment) => {
         const _equipment = {
           id: equipment.id,

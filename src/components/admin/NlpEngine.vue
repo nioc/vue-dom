@@ -134,7 +134,7 @@
               </thead>
               <tbody>
                 <tr v-for="(action, index) in test.result.actions" :key="index">
-                  <td>{{ getActionLabel(action.action) }}</td>
+                  <td>{{ actionOptions[action.action].label }}</td>
                   <td class="is-family-code mr-3">{{ action.parameters.join(', ') }}</td>
                   <td class="has-text-centered" :title="action.msg"><i class="fas fa-fw" :class="action.isSuccessful ? 'fa-check has-text-success' : 'fa-times has-text-danger'" /></td>
                 </tr>
@@ -204,10 +204,6 @@ export default {
     },
     async getIntentActions () {
       this.actionOptions = await provider.getIntentActions()
-    },
-    getActionLabel (optionValue) {
-      const option = this.actionOptions.find((option) => option.value === optionValue)
-      return option ? option.label : optionValue
     },
   },
 }

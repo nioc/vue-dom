@@ -232,17 +232,15 @@
                 <tbody>
                   <tr v-for="(action, index) in intent.actions" :key="index">
                     <td>
-                      <editable :value="action.key" type="select" :options="actionOptions" icon-class="fa fa-check" @update="(value) => action.key = value" />
+                      <editable :value="action.key" type="select" :options="selectActionOptions" icon-class="fa fa-check" @update="(value) => updateActionKey(action, value)" />
                     </td>
                     <td>
                       <div v-for="(parameter, indexParameter) in action.parameters" :key="indexParameter">
                         <div>
-                          <editable :value="parameter.value" tag="code" icon-class="fa fa-code" read-only-class="py-2" :placeholder="getIntentActionParameters(action.key, indexParameter)" :title="titleActionParameter" is-removable @remove="() => updateParameter(action, indexParameter, '')" @update="(value) => updateParameter(action, indexParameter, value)" />
+                          <options-autocomplete v-if="actionOptions[action.key].parameters[indexParameter].inputType === 'OptionsAutocomplete'" :placeholder="actionOptions[action.key].parameters[indexParameter].placeholder" :type="actionOptions[action.key].parameters[indexParameter].type" :value="parameter.value" @select="(selected) => parameter.value = selected ? selected.id : null" />
+                          <editable v-else :value="parameter.value" tag="code" icon-class="fa fa-code" read-only-class="py-2" :placeholder="actionOptions[action.key].parameters[indexParameter].placeholder" :title="actionOptions[action.key].parameters[indexParameter].placeholder" @update="(value) => parameter.value = value" />
                         </div>
                       </div>
-                      <button class="button is-primary is-light" title="Ajouter un paramètre" @click="addParameter(action)">
-                        <span class="icon"><i class="fa fa-plus-circle" /></span>
-                      </button>
                     </td>
                     <td>
                       <div class="buttons">
@@ -266,26 +264,29 @@
                       <div class="field is-narrow">
                         <div class="control">
                           <div class="select">
-                            <select v-model="newAction.key">
-                              <option v-for="option in actionOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+                            <select v-model="newActionKey">
+                              <option v-for="(option, value) in actionOptions" :key="value" :value="value">{{ option.label }}</option>
                             </select>
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td title="Les paramètres passés à la fonction dépendent ce celle-ci, ils peuvent indiquer le nom de l'entité à exploiter, la clé de résumé à lire, ...">
-                      <div v-for="(parameter, index) in newAction.parameters" :key="index" class="field is-required">
-                        <div class="control has-icons-left">
-                          <input v-model="parameter.value" class="input" type="text" :placeholder="getIntentActionParameters(newAction.key, index)" @keyup.enter="addAction" @input="handleActionParameters(parameter.value, index)">
-                          <span class="icon is-small is-left">
-                            <i class="fa fa-code" />
-                          </span>
+                    <td>
+                      <div v-if="newActionKey">
+                        <div v-for="(parameter, index) in actionOptions[newActionKey].parameters" :key="index" class="field is-required">
+                          <options-autocomplete v-if="parameter.inputType === 'OptionsAutocomplete'" :placeholder="parameter.placeholder" :type="parameter.type" :value="parameter.value" @select="(selected) => parameter.value = selected ? selected.id : null" />
+                          <div v-else class="control has-icons-left">
+                            <input v-model="parameter.value" class="input" type="text" :placeholder="parameter.placeholder" @keyup.enter="addAction">
+                            <span class="icon is-small is-left">
+                              <i class="fa fa-code" />
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td />
                     <td>
-                      <button type="submit" :disabled="newAction.key === ''" class="button is-primary is-light" title="Ajouter un traitement" @click="addAction">
+                      <button type="submit" :disabled="newActionKey === ''" class="button is-primary is-light" title="Ajouter un traitement" @click="addAction">
                         <span class="icon"><i class="fa fa-plus-circle" /></span>
                       </button>
                     </td>
@@ -305,6 +306,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import Editable from '@/components/admin/Editable.vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
 import { useAppStore } from '@/store/app'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
@@ -316,6 +318,7 @@ export default {
   components: {
     Breadcrumb,
     Editable,
+    OptionsAutocomplete,
   },
   props: {
     id: {
@@ -353,10 +356,7 @@ export default {
         template: '',
         opts: '',
       },
-      newAction: {
-        key: '',
-        parameters: [{ value: '' }],
-      },
+      newActionKey: '',
       actionOptions: [],
       isLoading: false,
     }
@@ -364,6 +364,15 @@ export default {
   computed: {
     isNew () {
       return this.id === 'new'
+    },
+    selectActionOptions () {
+      return Object.entries(this.actionOptions)
+        .map(option => {
+          return {
+            value: option[0],
+            label: option[1].label,
+          }
+        })
     },
   },
   mounted () {
@@ -377,6 +386,7 @@ export default {
         try {
           this.intent = await provider.getIntent(this.id)
           this.addUnsavedChangesGuard(this.intent)
+          this.intent.actions.forEach(this.setActionParameters)
         } catch (error) {
           this.appStore.setInformation({ type: 'is-danger', message: error.message })
         }
@@ -493,41 +503,15 @@ export default {
       this.intent.actions.splice(index, 1)
     },
     addAction () {
-      if (this.newAction.key === '') {
+      if (this.newActionKey === '') {
         return
       }
-      const action = Object.assign({}, this.newAction)
-      action.parameters = action.parameters
-        .filter((parameter) => parameter.value !== '')
-      this.intent.actions.push(action)
-      this.newAction = {
-        key: '',
-        parameters: [
-          { value: '' },
-        ],
-      }
-    },
-    updateParameter (action, index, value) {
-      if (value === undefined || value === '') {
-        action.parameters.splice(index, 1)
-        return
-      }
-      action.parameters[index].value = value
-    },
-    addParameter (action) {
-      const value = this.getIntentActionParameters(action.key, action.parameters.length)
-      action.parameters.push({ value })
-    },
-    handleActionParameters (parameter, index) {
-      if (parameter !== '') {
-        if (index === this.newAction.parameters.length - 1) {
-          this.newAction.parameters.push({ value: '' })
-        }
-      } else {
-        if (this.newAction.parameters[this.newAction.parameters.length - 1].value === '') {
-          this.newAction.parameters.splice(index, 1)
-        }
-      }
+      this.intent.actions.push({
+        key: this.newActionKey,
+        parameters: this.actionOptions[this.newActionKey].parameters.map(parameter => ({ value: parameter.value }))
+          .filter((parameter) => parameter.value !== ''),
+      })
+      this.newActionKey = ''
     },
     up (index) {
       this.intent.actions.splice(index - 1, 0, this.intent.actions.splice(index, 1)[0])
@@ -535,15 +519,21 @@ export default {
     down (index) {
       this.intent.actions.splice(index + 1, 0, this.intent.actions.splice(index, 1)[0])
     },
-    getIntentActionParameters (action, index) {
-      const actionOption = this.actionOptions.find((actionOption) => actionOption.value === action)
-      if (!actionOption || !actionOption.parametersPlaceholder) {
-        return '-- Paramètre non défini --'
+    updateActionKey (action, key) {
+      action.key = key
+      this.setActionParameters(action)
+    },
+    setActionParameters (action) {
+      const delta = this.actionOptions[action.key].parameters.length - action.parameters.length
+      if (delta !== 0) {
+        if (delta > 0) {
+          for(let i=0; i < delta; i++) {
+            action.parameters.push({ value: '' })
+          }
+        } else {
+          action.parameters.splice(delta)
+        }
       }
-      if (!actionOption.parametersPlaceholder[index]) {
-        return '-- Paramètre non défini pour cette action --'
-      }
-      return `Paramètre #${index + 1} : ${actionOption.parametersPlaceholder[index]}`
     },
   },
 }

@@ -20,6 +20,7 @@
     <template #default="props">
       <span v-if="type==='equipment'" :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.isActive || !props.option.roomIsVisible}">{{ props.option.name }}</span>
       <span v-else-if="type==='channel'" :class="{'has-text-grey is-italic': !props.option.isActive}">{{ props.option.name }}</span>
+      <span v-else-if="type==='scenario'" :class="{'has-text-grey is-italic': !props.option.isActive}">{{ props.option.name }}</span>
       <span v-else :class="{'has-text-grey is-italic': !props.option.isVisible || !props.option.equipmentIsVisible || !props.option.equipmentIsActive}">{{ props.option.name }}</span>
     </template>
     <template #empty>Aucune correspondance</template>
@@ -48,6 +49,12 @@ export default {
       type: String,
       default: null,
     },
+    filter: {
+      type: Function,
+      default() {
+        return () => 1
+      },
+    },
     additionnalValue: {
       type: Object,
       default: null,
@@ -74,6 +81,8 @@ export default {
       switch (this.type) {
         case 'equipment':
           return 'roomName'
+        case 'scenario':
+          return 'group'
         case 'channel':
           return null
         case 'state':
@@ -95,6 +104,8 @@ export default {
           return 'Équipement à utiliser'
         case 'channel':
           return 'Canal de communication à utiliser'
+        case 'scenario':
+          return 'Scénario à utiliser'
         case 'state':
         default:
           return 'Etat à utiliser'
@@ -109,6 +120,8 @@ export default {
         case 'channel':
         case 'ask':
           return 'comments'
+        case 'scenario':
+          return 'book'
         case 'state':
         default:
           return 'eye'
@@ -120,6 +133,7 @@ export default {
         case 'state':
           options = this.dataStore.arrStatesWithEquipmentName
             .slice()
+            .filter(this.filter)
             .map((option) => {
               return {
                 ...option,
@@ -130,6 +144,7 @@ export default {
         case 'action':
           options = this.dataStore.arrActionsWithEquipmentName
             .slice()
+            .filter(this.filter)
             .map((option) => {
               return {
                 ...option,
@@ -141,6 +156,7 @@ export default {
           options = this.dataStore.arrActionsWithEquipmentName
             .slice()
             .filter((action) => action.isAsk)
+            .filter(this.filter)
             .map((option) => {
               return {
                 ...option,
@@ -151,10 +167,17 @@ export default {
         case 'channel':
           options = this.dataStore.arrChannels
             .slice()
+            .filter(this.filter)
           break
         case 'equipment':
           options = this.dataStore.arrEquipmentsWithRoomName
             .slice()
+            .filter(this.filter)
+          break
+        case 'scenario':
+          options = this.dataStore.getScenarios()
+            .slice()
+            .filter(this.filter)
           break
         default:
           return []
@@ -189,8 +212,8 @@ export default {
         })
         .reduce((result, item) => ({
           ...result,
-          [item[this.groupField]]: [
-            ...(result[item[this.groupField]] || []),
+          [this.groupField ? item[this.groupField] ? item[this.groupField] : 'Non classés' : '']: [
+            ...(result[this.groupField ? item[this.groupField] ? item[this.groupField] : 'Non classés': ''] || []),
             item,
           ],
         }),

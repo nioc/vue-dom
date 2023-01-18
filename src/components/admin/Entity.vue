@@ -198,7 +198,7 @@
             </div>
             <div class="field">
               <label class="label">Résultats</label>
-              <o-tooltip v-if="summaryResult.length > 0" position="bottom" variant="dark" class="control" dashed>
+              <o-tooltip v-if="summaryResult.length > 0" position="bottom" variant="dark" class="control is-dashed">
                 <span>{{ summaryResult.length }}</span>
                 <template #content>
                   <div v-for="summary in summaryResult" :key="summary.id">
@@ -209,6 +209,55 @@
               <div v-else class="control">0</div>
             </div>
             <button class="button is-primary" :disabled="summaryResult.length === 0" title="Générer les options" @click="generateOptionsFromSummary">
+              <span class="icon"><i class="fa fa-cog" /></span>
+              <span>Générer</span>
+            </button>
+          </section>
+        </o-collapse>
+
+        <o-collapse class="card mb-4" animation="slide" aria-id="actionOptionsQuery" :open="false">
+          <template #trigger="props">
+            <header class="card-header" role="button" aria-controls="actionOptionsQuery">
+              <p class="card-header-title">
+                <span class="icon"><i class="fas fa-cogs" /></span><span>Générer des options depuis la liste de valeurs d'une action</span>
+              </p>
+              <a class="card-header-icon">
+                <i class="fa" :class="props.open ? 'fa-caret-down' : 'fa-caret-up'" />
+              </a>
+            </header>
+          </template>
+          <section class="card-content">
+            <div class="field is-required">
+              <label class="label">Action</label>
+              <div class="control has-icons-left">
+                <options-autocomplete placeholder="Action à utiliser" type="action" :value="actionOptionsQuery.actionId" :filter="(a) => a.type === 'select'" @select="(selected) => actionOptionsQuery.actionId = selected ? selected.id : null" />
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <label class="label">Utiliser le libellé de l'option de l'action en tant qu'option</label>
+                <o-switch v-model="actionOptionsQuery.useLabel">{{ actionOptionsQuery.useLabel ? 'Libellé' : 'Valeur' }}</o-switch>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <label class="label">Créer un alias de l'option avec {{ actionOptionsQuery.useLabel ? 'la valeur' : 'le libellé' }} de l'option de l'action</label>
+                <o-switch v-model="actionOptionsQuery.createAliases">{{ actionOptionsQuery.createAliases ? 'Oui' : 'Non' }}</o-switch>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Résultats</label>
+              <o-tooltip v-if="actionOptionsResult.length > 0" position="bottom" variant="dark" class="control is-dashed">
+                <span>{{ actionOptionsResult.length }}</span>
+                <template #content>
+                  <div v-for="option in actionOptionsResult" :key="option">
+                    {{ option.key }}{{ actionOptionsQuery.createAliases ? ` (alias : ${option.aliases.map(a => a.value).join('')})` : '' }}
+                  </div>
+                </template>
+              </o-tooltip>
+              <div v-else class="control">0</div>
+            </div>
+            <button class="button is-primary" :disabled="actionOptionsResult.length === 0" title="Générer les options" @click="generateOptionsFromactionOptions">
               <span class="icon"><i class="fa fa-cog" /></span>
               <span>Générer</span>
             </button>
@@ -274,7 +323,7 @@
             </div>
             <div class="field">
               <label class="label">Résultats</label>
-              <o-tooltip v-if="statesResult.length > 0" variant="dark" class="control" dashed>
+              <o-tooltip v-if="statesResult.length > 0" variant="dark" class="control is-dashed">
                 <span>{{ statesResult.length }}</span>
                 <template #content>
                   <div v-for="state in statesResult" :key="state.id">
@@ -299,6 +348,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import Editable from '@/components/admin/Editable.vue'
+import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
 import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
 import { useSummary } from '@/composables/useSummary'
 import { useAppStore } from '@/store/app'
@@ -311,6 +361,7 @@ export default {
   components: {
     Breadcrumb,
     Editable,
+    OptionsAutocomplete,
   },
   props: {
     id: {
@@ -351,6 +402,11 @@ export default {
         stateName: '',
         stateOnlyIsVisible: true,
       },
+      actionOptionsQuery: {
+        actionId: null,
+        useLabel: false,
+        createAliases: false,
+      },
       isLoading: false,
     }
   },
@@ -382,6 +438,22 @@ export default {
             (!this.statesQuery.equipmentOnlyIsVisible || state.equipmentIsVisible) &&
             (!this.statesQuery.stateOnlyIsVisible || state.isVisible)
           )
+        })
+    },
+    actionOptionsResult () {
+      if (!this.actionOptionsQuery.actionId) {
+        return []
+      }
+      const action = this.dataStore.getActionById(this.actionOptionsQuery.actionId)
+      if (!action || !Array.isArray(action.options)) {
+        return []
+      }
+      return action.options
+        .map(option => {
+          return {
+            key: this.actionOptionsQuery.useLabel ? option.label : option.value,
+            aliases: this.actionOptionsQuery.createAliases ? [{ value: option.value }, { value: option.label }] : [],
+          }
         })
     },
   },
@@ -517,6 +589,14 @@ export default {
         .forEach((candidate) => {
           if (!this.entity.options.some((option) => option.key === candidate)) {
             this.entity.options.push({ key: candidate, aliases: [] })
+          }
+        })
+    },
+    generateOptionsFromactionOptions () {
+      this.actionOptionsResult
+        .forEach((candidate) => {
+          if (!this.entity.options.some((option) => option.key === candidate.key)) {
+            this.entity.options.push({ key: candidate.key, aliases: candidate.aliases })
           }
         })
     },
