@@ -48,7 +48,7 @@
     "pinia-plugin-persistedstate": "^2.2.0",
     "spdx-license-list": "^6.6.0",
     "tinyduration": "^3.2.2",
-    "ua-parser-js": "^1.0.2",
+    "ua-parser-js": "^1.0.33",
     "video.js": "^7.19.2",
     "vue": "^3.2.45",
     "vue-router": "^4.0.16",
