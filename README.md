@@ -2,7 +2,10 @@
 
 [![license: AGPLv3](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![GitHub release](https://img.shields.io/github/release/nioc/vue-dom.svg)](https://github.com/nioc/vue-dom/releases/latest)
-[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/nioc/vue-dom)](https://hub.docker.com/r/nioc/vue-dom/builds)
+[![GitHub downloads](https://img.shields.io/github/downloads/nioc/vue-dom/total?label=github%20downloads)](https://github.com/nioc/vue-dom/releases/latest)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nioc/vue-dom/build-release.yml?label=build%20status)](https://github.com/nioc/vue-dom/actions/workflows/build-release.yml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nioc/vue-dom)](https://hub.docker.com/r/nioc/vue-dom/tags)
+[![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/nioc/vue-dom?sort=date)](https://hub.docker.com/r/nioc/vue-dom/tags)
 
 Vue-dom is a web front end for home automation software (currently only support [Jeedom](https://www.jeedom.com)).
 
