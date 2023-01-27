@@ -9,6 +9,7 @@ import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScal
 import 'chartjs-adapter-date-fns'
 import { fr } from 'date-fns/locale'
 import cloneDeep from 'lodash.clonedeep'
+import { markRaw } from 'vue'
 
 Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation)
 
@@ -80,6 +81,14 @@ export default {
               },
             },
           },
+          animation: {
+            numbers: false,
+            colors: {
+              type: 'color',
+              duration: 1000,
+              from: 'transparent',
+            },
+          },
         }
       },
     },
@@ -116,10 +125,22 @@ export default {
   },
   methods: {
     render () {
-      const ctx = this.$refs.canvas.getContext('2d')
       if (this.chart) {
-        this.chart.destroy()
+        this.handleMultiDatasets()
+        this.chart.data = this.chartData
+        this.chart.options = this.localOptions
+        this.chart.update()
+        return
       }
+      this.handleMultiDatasets()
+      const ctx = this.$refs.canvas.getContext('2d')
+      this.chart = markRaw(new Chart(ctx, {
+        type: 'line',
+        data: this.chartData,
+        options: this.localOptions,
+      }))
+    },
+    handleMultiDatasets() {
       if (this.chartData.datasets.length > 1) {
         this.localOptions.plugins.legend.display = true
         this.localOptions.elements.line.fill = false
@@ -134,11 +155,6 @@ export default {
           }
         }
       }
-      this.chart = new Chart(ctx, {
-        type: 'line',
-        data: this.chartData,
-        options: this.localOptions,
-      })
     },
   },
 }
