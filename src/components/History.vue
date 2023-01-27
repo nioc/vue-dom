@@ -26,16 +26,17 @@
           <o-datetimepicker v-model="endDate" :max-datetime="today" size="small" />
         </div>
         <div class="field">
-          <button class="button is-primary is-rounded is-small" @click="getHistory"><span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span></button>
+          <button class="button is-primary is-rounded is-small" :class="{'is-loading': isLoading}" :disabled="isLoading" @click="getHistory"><span class="icon"><i class="fa fa-sync-alt" /></span><span>Rafraichir</span></button>
         </div>
       </div>
     </div>
-    <chart v-if="loaded" :chart-data="history" :tooltip-callbacks="tooltipCallbacks" />
+    <chart v-if="isLoaded" :chart-data="history" :tooltip-callbacks="tooltipCallbacks" />
   </div>
 </template>
 
 <script>
 import Chart from '@/components/Chart.vue'
+import { useAppStore } from '@/store/app'
 import { dtSub, durParse, durToMinutes, dtFormatDuration } from '@/services/Datetime'
 import { provider } from '@/services/Provider'
 
@@ -50,6 +51,10 @@ export default {
       default: undefined,
     },
   },
+  setup() {
+    const appStore = useAppStore()
+    return { appStore }
+  },
   data () {
     return {
       startDate: null,
@@ -58,7 +63,8 @@ export default {
       history: {
         datasets: [],
       },
-      loaded: false,
+      isLoaded: false,
+      isLoading: false,
       tooltipCallbacks: undefined,
     }
   },
@@ -84,48 +90,54 @@ export default {
         return
       }
       const datasets = []
-      await Promise.all(this.series.map(async (serie) => {
-        const history = await provider.getHistory(serie.id, this.startDate, this.endDate)
-        let format = (point) => {
-          return {
-            x: point.date,
-            y: point.value,
-          }
-        }
-        switch (serie.dataType) {
-          case 'boolean': {
-            this.tooltipCallbacks = {
-              label: (context) => `${serie.name}: ${context.raw.y ? 'Actif' : 'Inactif'}`,
+      this.isLoading = true
+      try {
+        await Promise.all(this.series.map(async (serie) => {
+          const history = await provider.getHistory(serie.id, this.startDate, this.endDate)
+          let format = (point) => {
+            return {
+              x: point.date,
+              y: point.value,
             }
-            break
           }
-          case 'duration': {
-            format = (point) => {
-              return {
-                x: point.date,
-                y: durToMinutes(point.value),
-                label: dtFormatDuration(durParse(point.value)),
+          switch (serie.dataType) {
+            case 'boolean': {
+              this.tooltipCallbacks = {
+                label: (context) => `${serie.name}: ${context.raw.y ? 'Actif' : 'Inactif'}`,
               }
+              break
             }
-            this.tooltipCallbacks = {
-              label: (context) => `${serie.name}: ${context.raw.label}`,
+            case 'duration': {
+              format = (point) => {
+                return {
+                  x: point.date,
+                  y: durToMinutes(point.value),
+                  label: dtFormatDuration(durParse(point.value)),
+                }
+              }
+              this.tooltipCallbacks = {
+                label: (context) => `${serie.name}: ${context.raw.label}`,
+              }
+              break
             }
-            break
           }
+          datasets.push({
+            label: serie.name,
+            data: history.map(format),
+            stepped: serie.dataType === 'boolean',
+            backgroundColor: serie.backgroundColor,
+            borderColor: serie.borderColor,
+            yAxisID: serie.yAxisID || 'yLeft',
+          })
+        }))
+        this.history = {
+          datasets,
         }
-        datasets.push({
-          label: serie.name,
-          data: history.map(format),
-          stepped: serie.dataType === 'boolean',
-          backgroundColor: serie.backgroundColor,
-          borderColor: serie.borderColor,
-          yAxisID: serie.yAxisID || 'yLeft',
-        })
-      }))
-      this.history = {
-        datasets,
+        this.isLoaded = true
+      } catch (error) {
+        this.appStore.setInformation({ type: 'is-danger', message: error.message })
       }
-      this.loaded = true
+      this.isLoading = false
     },
     updateDates () {
       if (this.duration !== '') {
