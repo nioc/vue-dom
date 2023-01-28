@@ -6,7 +6,7 @@ on:
       - '*'
 
 jobs:
-  docker:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Read metadata
@@ -21,6 +21,15 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog from git commits
+        id: git-changelog
+        run: |
+          echo 'changelog<<EOF' >> $GITHUB_OUTPUT
+          git log $(git tag |tail -2 | head -1).. --pretty=format:"- %s %n%w(150,2,2)%b" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Setup Node.js 18
         uses: actions/setup-node@v3
@@ -30,7 +39,7 @@ jobs:
           cache-dependency-path: 'package-lock.json'
 
       - name: Build front
-        run: npm install && npm run build
+        run: npm ci && npm run build
 
       - name: Create release archive
         shell: bash
@@ -44,6 +53,10 @@ jobs:
           draft: true
           files: vue-dom-${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}.tar.gz
           body: |
+            ### Commits
+
+            ${{ steps.git-changelog.outputs.changelog }}
+
             ### Features
 
             - newFeature
