@@ -14,6 +14,7 @@ import { useAuthStore } from '@/store/auth'
 import Navbar from '@/components/Navbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import UpdatePwa from '@/components/UpdatePwa.vue'
+var toto = "coucou"
 
 export default {
   name: 'App',
