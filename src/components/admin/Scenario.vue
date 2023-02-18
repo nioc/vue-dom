@@ -78,10 +78,10 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(trigger, index) in scenario.triggers" :key="trigger.id">
+                      <tr v-for="(trigger, index) in scenario.triggers" :key="index">
                         <td>{{ (trigger.type === 'state') ? 'Etat' : 'Date' }}</td>
                         <td v-if="trigger.type === 'state'">{{ dataStore.getStateFullName(trigger.value) }}</td>
-                        <td v-else>{{ trigger.value }}</td>
+                        <td v-else><span class="is-family-code">{{ trigger.value }}</span><span class="ml-4 has-text-grey">{{ getHumanCronTime(trigger.value) }}</span></td>
                         <td>
                           <button class="button is-danger is-light" title="Supprimer le déclencheur" @click="removeTrigger(index)">
                             <span class="icon"><i class="fa fa-trash" /></span>
@@ -104,11 +104,14 @@
                         <td>
                           <div class="field is-required">
                             <options-autocomplete v-if="newTrigger.type === 'state'" placeholder="Etat de déclenchement" :value="newTrigger.value" @select="selectState" />
-                            <div v-else class="control has-icons-left">
-                              <input v-model="newTrigger.dateValue" class="input" type="text" placeholder="ss mm hh jj MMM JJJ">
-                              <span class="icon is-small is-left">
-                                <i class="fa fa-bell" />
-                              </span>
+                            <div v-else>
+                              <div class="control has-icons-left">
+                                <input v-model="newTrigger.dateValue" class="input" type="text" placeholder="ss mm hh jj MMM JJJ" @input="checkTriggerCronTime">
+                                <span class="icon is-small is-left">
+                                  <i class="fa fa-bell" />
+                                </span>
+                              </div>
+                              <span class="help" :class="newTrigger.isCronValid ? 'is-success' : 'is-danger'">{{ newTrigger.cronResult }}</span>
                             </div>
                           </div>
                         </td>
@@ -202,6 +205,7 @@ import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
 import { useAppStore } from '@/store/app'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
+import { useConversions } from '@/composables/useConversions'
 import { useScenarioHelper } from '@/composables/useScenarioHelper'
 import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
 import { dtFormat } from '@/services/Datetime'
@@ -225,8 +229,9 @@ export default {
     const dataStore = useDataStore()
     const { addUnsavedChangesGuard, removeUnsavedChangesGuard } = useUnsavedChangesGuard()
     const { confirmDelete } = useDialog()
+    const { getHumanCronTime, checkCronTime } = useConversions()
     const { createScenarioElement } = useScenarioHelper()
-    return { appStore, dataStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirmDelete, createScenarioElement }
+    return { appStore, dataStore, addUnsavedChangesGuard, removeUnsavedChangesGuard, confirmDelete, getHumanCronTime, checkCronTime, createScenarioElement }
   },
   data () {
     return {
@@ -242,6 +247,8 @@ export default {
         type: 'state',
         value: null,
         dateValue: '0 * * * * *',
+        isCronValid: true,
+        cronResult: '',
       },
     }
   },
@@ -361,6 +368,9 @@ export default {
     },
     removeTrigger (index) {
       this.scenario.triggers.splice(index, 1)
+    },
+    checkTriggerCronTime () {
+      ({ result: this.newTrigger.cronResult, isValid: this.newTrigger.isCronValid } = this.checkCronTime(this.newTrigger.dateValue))
     },
   },
 }

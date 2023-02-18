@@ -1,3 +1,6 @@
+import cronstrue from 'cronstrue'
+import 'cronstrue/locales/fr'
+
 export function useConversions() {
 
   const getHumanSizeCei = (size, unit = 'o', precision = 0) => {
@@ -14,7 +17,31 @@ export function useConversions() {
     return `${size} ${unit}`
   }
 
+  const getHumanCronTime = (cron) => {
+    try {
+      return cronstrue.toString(cron, { locale: 'fr' })
+    } catch (error) {
+      return cron
+    }
+  }
+
+  const checkCronTime = (cron) => {
+    try {
+      return {
+        result: cronstrue.toString(cron, { locale: 'fr' }),
+        isValid: true,
+      }
+    } catch (error) {
+      return {
+        result: error.toString(),
+        isValid: false,
+      }
+    }
+  }
+
   return {
     getHumanSizeCei,
+    getHumanCronTime,
+    checkCronTime,
   }
 }

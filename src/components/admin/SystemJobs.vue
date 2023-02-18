@@ -19,7 +19,7 @@
           {{ props.row.name }}
         </o-table-column>
         <o-table-column v-slot="props" field="cronTime" label="Cron">
-          {{ props.row.cronTime }}
+          {{ getHumanCronTime(props.row.cronTime) }}
         </o-table-column>
         <o-table-column v-slot="props" field="isRunning" label="Statut" position="centered">
           <span class="icon"><i class="fa" :class="props.row.isRunning ? 'fa-play-circle has-text-success' : 'fa-stop-circle has-text-danger'" /></span>
@@ -49,6 +49,7 @@
 <script>
 import TimeAgo from '@/components/TimeAgo.vue'
 import { useAppStore } from '@/store/app'
+import { useConversions } from '@/composables/useConversions'
 import { provider } from '@/services/Provider'
 
 export default {
@@ -58,7 +59,8 @@ export default {
   },
   setup() {
     const appStore = useAppStore()
-    return { appStore }
+    const { getHumanCronTime } = useConversions()
+    return { appStore, getHumanCronTime }
   },
   data () {
     return {

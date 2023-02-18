@@ -1,7 +1,11 @@
 module.exports = {
   root: true,
   env: {
+    es2022: true,
     node: true,
+  },
+  parserOptions: {
+    ecmaVersion: 13,
   },
   extends: [
     'plugin:vue/vue3-recommended',
