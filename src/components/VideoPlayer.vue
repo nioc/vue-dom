@@ -65,3 +65,8 @@ export default {
 </script>
 
 <style src="video.js/dist/video-js.css"></style>
+<style>
+.video-js {
+  display: block;
+}
+</style>

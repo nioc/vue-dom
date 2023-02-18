@@ -50,7 +50,7 @@
     "spdx-license-list": "^6.6.0",
     "tinyduration": "^3.2.2",
     "ua-parser-js": "^1.0.33",
-    "video.js": "^7.19.2",
+    "video.js": "^8.0.4",
     "vue": "^3.2.45",
     "vue-router": "^4.0.16",
     "vuedraggable": "^4.1.0"
