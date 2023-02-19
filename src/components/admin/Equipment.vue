@@ -6,6 +6,9 @@
     <div class="hero-body px-3">
       <div class="container">
         <o-loading v-model:active="isLoading" :full-page="false" />
+
+        <related-collapsable :id="id" type="equipment" />
+
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -228,6 +231,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import TimeAgo from '@/components/TimeAgo.vue'
+import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
 import { useDataStore } from '@/store/data'
 import { useEquipmentsHelper } from '@/composables/useEquipmentsHelper'
 import { useDialog } from '@/composables/useDialog'
@@ -240,6 +244,7 @@ export default {
   components: {
     Breadcrumb,
     TimeAgo,
+    RelatedCollapsable,
   },
   props: {
     id: {

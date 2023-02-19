@@ -42,6 +42,7 @@ For basic use, you just have to:
                       allow from all
               </Directory>
       ```
+
 -   set your back end (Jeedom) url in `/var/www/vue-dom/local.js`.
 
 ### As docker container
@@ -101,6 +102,7 @@ This project is powered by the following components:
 - [date-fns](https://date-fns.org/) (MIT)
 - [TinyDuration](https://github.com/MelleB/tinyduration/) (MIT)
 - [Video.js](https://videojs.com/) (Apache License)
+- [D3.js](https://d3js.org/) (ISC)
 - [Vue.Draggable](https://github.com/SortableJS/vue.draggable.next/) (MIT)
 
 ## License

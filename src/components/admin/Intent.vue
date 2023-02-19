@@ -7,6 +7,9 @@
     <div class="hero-body px-3">
       <div class="container">
         <o-loading v-model:active="isLoading" :full-page="false" />
+
+        <related-collapsable :id="id" type="intent" />
+
         <div class="card mb-4">
 
           <header class="card-header">
@@ -307,6 +310,7 @@
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import Editable from '@/components/admin/Editable.vue'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
 import { useAppStore } from '@/store/app'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
@@ -319,6 +323,7 @@ export default {
     Breadcrumb,
     Editable,
     OptionsAutocomplete,
+    RelatedCollapsable,
   },
   props: {
     id: {

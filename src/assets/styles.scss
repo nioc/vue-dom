@@ -52,6 +52,36 @@ $slider-thumb-border: 1px solid $primary;
   max-height: 3.5rem;
 }
 
+.tree-link {
+  stroke: #999;
+  stroke-width: 2;
+}
+.tree-link-legend {
+  font-size: 10px;
+  text-anchor: middle;
+  fill: #4a4a4a;
+  fill-opacity: 0.6;
+}
+.tree-node-circle {
+  fill: #fff;
+}
+.tree-node-icon {
+  text-anchor: middle;
+  font-size: 28px;
+  fill: #4a4a4a;
+}
+.tree-node-legend {
+  font-size: 11px;
+  text-anchor: middle;
+  fill: #4a4a4a;
+}
+.tree-node-legend-clickable {
+  :hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
 @import "/node_modules/bulma/bulma";
 @import '/node_modules/@oruga-ui/theme-bulma/dist/scss/bulma';
 
@@ -371,6 +401,21 @@ $slider-thumb-border: 1px solid $primary;
       background-color: findDarkColor(rgba($primary, 1));
       color: $grey-lightest
     }
+  }
+  .tree-link {
+    stroke: #888;
+  }
+  .tree-link-legend {
+    fill: #c8c8c8;
+  }
+  .tree-node-circle {
+    fill: #171717;
+  }
+  .tree-node-icon {
+    fill: #c8c8c8;
+  }
+  .tree-node-legend {
+    fill: #c8c8c8;
   }
 }
 

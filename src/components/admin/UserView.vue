@@ -6,6 +6,9 @@
     <div class="hero-body px-3">
       <div class="container">
         <o-loading v-model:active="isLoading" :full-page="false" />
+
+        <related-collapsable :id="id" type="view" />
+
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -165,6 +168,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import IconPicker from '@/components/admin/IconPicker.vue'
+import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
 import UserViewCard from '@/components/admin/UserViewCard.vue'
 import UserViewCardElement from '@/components/admin/UserViewCardElement.vue'
 import draggable from 'vuedraggable'
@@ -180,6 +184,7 @@ export default {
     IconPicker,
     UserViewCard,
     UserViewCardElement,
+    RelatedCollapsable,
     draggable,
   },
   props: {

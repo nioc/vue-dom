@@ -6,6 +6,9 @@
     <div class="hero-body px-3">
       <div class="container">
         <o-loading v-model:active="isLoading" :full-page="false" />
+
+        <related-collapsable :id="id" type="channel" />
+
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -109,6 +112,7 @@
 <script>
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
 import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
@@ -119,6 +123,7 @@ export default {
   components: {
     Breadcrumb,
     OptionsAutocomplete,
+    RelatedCollapsable,
   },
   props: {
     id: {

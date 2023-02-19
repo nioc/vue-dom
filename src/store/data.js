@@ -143,6 +143,10 @@ export const useDataStore = defineStore('data', {
     getActionById: (state) => (id) => {
       return (state.actions[id]) || { }
     },
+    // return scenario by id or empty object
+    getScenarioById: (state) => (id) => {
+      return (state.scenarios[id]) || { }
+    },
 
     // return state statistics by id or null
     getStateStatisticsById: (state) => (id) => {

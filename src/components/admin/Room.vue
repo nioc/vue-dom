@@ -6,6 +6,9 @@
     <div class="hero-body px-3">
       <div class="container">
         <o-loading v-model:active="isLoading" :full-page="false" />
+
+        <related-collapsable :id="id" type="room" />
+
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -181,6 +184,7 @@ import Breadcrumb from '@/components/Breadcrumb.vue'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
 import TimeAgo from '@/components/TimeAgo.vue'
 import IconPicker from '@/components/admin/IconPicker.vue'
+import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
 import { useAppStore } from '@/store/app'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
@@ -195,6 +199,7 @@ export default {
     TimeAgo,
     OptionsAutocomplete,
     IconPicker,
+    RelatedCollapsable,
   },
   props: {
     id: {

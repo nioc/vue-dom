@@ -6,6 +6,9 @@
     <div class="hero-body px-3">
       <div class="container">
         <o-loading v-model:active="isLoading" :full-page="false" />
+
+        <related-collapsable :id="id" type="state" />
+
         <div class="card mb-4">
           <header class="card-header">
             <p class="card-header-title">
@@ -249,6 +252,7 @@
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import IconPicker from '@/components/admin/IconPicker.vue'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
+import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
 import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
@@ -261,6 +265,7 @@ export default {
     Breadcrumb,
     IconPicker,
     OptionsAutocomplete,
+    RelatedCollapsable,
   },
   props: {
     id: {
