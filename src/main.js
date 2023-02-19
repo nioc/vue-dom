@@ -14,6 +14,12 @@ import '@fortawesome/fontawesome-free/css/brands.css'
 import '@/assets/styles.scss'
 
 async function main() {
+
+  if (import.meta.env.DEV) {
+    const { openTelemetry } = await import ('@/services/OpenTelemetry')
+    openTelemetry('vue-dom')
+  }
+
   const app = createApp(App)
 
   await initProvider()
