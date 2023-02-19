@@ -50,8 +50,7 @@ export default {
         latest: null,
         latestLink: null,
       },
-      // eslint-disable-next-line no-undef
-      gitVersion: GITVERSION,
+      gitVersion: import.meta.env.VITE_GIT_VERSION,
       description: vueDom.description,
       license: {
         id: license,
