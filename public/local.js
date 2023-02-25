@@ -17,4 +17,17 @@ var custom = {
   components: {
   },
   // end components config
+  // start opentelemetry config
+  ot: {
+    enabled: false,
+    apiUrlRegExps: [/.+/g],
+    zipkinUrl: 'http://localhost:9411/api/v2/spans',
+    traceDocumentLoad: false,
+    traceUserInteraction: false,
+    traceXhr: true,
+    traceNavigation: true,
+    traceStoreState: false,
+    traceStoreAction: true,
+  },
+  // end opentelemetry config
 }

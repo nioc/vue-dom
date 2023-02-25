@@ -12,14 +12,9 @@ import '@fortawesome/fontawesome-free/css/regular.css'
 import '@fortawesome/fontawesome-free/css/solid.css'
 import '@fortawesome/fontawesome-free/css/brands.css'
 import '@/assets/styles.scss'
+import { initialize } from '@/services/OpenTelemetry'
 
 async function main() {
-
-  if (import.meta.env.DEV) {
-    const { openTelemetry } = await import ('@/services/OpenTelemetry')
-    openTelemetry('vue-dom')
-  }
-
   const app = createApp(App)
 
   await initProvider()
@@ -27,6 +22,11 @@ async function main() {
   const pinia = createPinia()
   pinia.use(piniaPluginPersistedstate)
   app.use(pinia)
+
+  await initialize('vue-dom', {
+    router,
+    pinia,
+  })
 
   app.use(Oruga, {
     ...bulmaConfig,

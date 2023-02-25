@@ -33,6 +33,14 @@ update_localjs() {
     }; /$TAIL/d; d }" $LOCALJS
   fi
 
+  # set custom OpenTelemetry configuration
+  if [ "$OPENTELEMETRY" != "" ]; then
+    LEAD='start opentelemetry config$'
+    TAIL='end opentelemetry config$'
+    sed -i -e "/$LEAD/,/$TAIL/{ /$LEAD/{a ot: {$(echo $OPENTELEMETRY | sed "s%\\\%\\\\\\\\%g")},
+    }; /$TAIL/d; d }" $LOCALJS
+  fi
+
   # set events listener fallback read delay
   if [ "$EVENTS_READ_DELAY" != "" ]; then
     sed -i "s|readDelay: 5000|readDelay: $EVENTS_READ_DELAY|g" $LOCALJS
