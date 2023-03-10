@@ -26,7 +26,6 @@ var custom = {
     traceUserInteraction: false,
     traceXhr: true,
     traceNavigation: true,
-    traceStoreState: false,
     traceStoreAction: true,
   },
   // end opentelemetry config

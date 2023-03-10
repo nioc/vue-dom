@@ -1,6 +1,5 @@
-import { trace } from '@opentelemetry/api'
+import { trace, SpanStatusCode } from '@opentelemetry/api'
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base'
-// import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
 import { Resource } from '@opentelemetry/resources'
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web'
@@ -18,7 +17,6 @@ const otConfig = Object.assign({}, {
   traceUserInteraction: false,
   traceXhr: true,
   traceNavigation: true,
-  traceStoreState: false,
   traceStoreAction: true,
 }, window.custom.ot)
 
@@ -73,7 +71,7 @@ const initialize = (serviceName = 'vue-dom', options = {}) => {
         // enhance trace name with url
         if (span.attributes && span.attributes['http.url']) {
           const url = new URL(span.attributes['http.url'])
-          span.updateName(`HTTP ${span.attributes['http.method']} ${url.pathname}`)
+          span.updateName(`HTTP ${span.attributes['http.method']} ${url.pathname.replace(/\d+/g, '{id}')}`)
         }
       },
     }))
@@ -101,51 +99,46 @@ const initialize = (serviceName = 'vue-dom', options = {}) => {
       }
     })
   }
-  if (options.pinia && (otConfig.traceStoreState || otConfig.traceStoreAction)) {
+  if (options.pinia && (otConfig.traceStoreAction)) {
     options.pinia.use(openTelemetryPiniaPlugin)
   }
 }
 
-const openTelemetryPiniaPlugin = ({ store }) => {
-  // watch the state
-  if (otConfig.traceStoreState) {
-    store.$subscribe((mutation) => {
-      const attributes = {
-        'store.id': mutation.storeId,
-        'store.type': mutation.type,
-      }
-      if (import.meta.env.DEV) {
-        attributes['store.key'] = mutation.events.key
-      }
-      tracer.startActiveSpan(`store.${mutation.storeId} updated ${mutation.type}`, {
-        attributes,
-      }, span => {
-        span.end()
-      })
-    })
-  }
+const openTelemetryPiniaPlugin = ({ store, options }) => {
+  const traced = {}
   // observe actions
   if (otConfig.traceStoreAction) {
-    store.$onAction(({ name, after, onError }) => {
-      let actionSpan = null
-      tracer.startActiveSpan(`store.action.${name}`, {
-        attributes: {
-          'store.action.name': name,
-        },
-      }, span => {
-        actionSpan = span
-      })
-
-      after(() => {
-        actionSpan.setStatus({ code: 1 })
-        actionSpan.end()
-      })
-      onError((error) => {
-        actionSpan.setStatus({ code: 2, message: error.message })
-        actionSpan.end()
-      })
-    }, true)
+    for (const action in options.actions) {
+      const original = store[action]
+      traced[action] = function (...args) {
+        return new Promise(function (resolve, reject) {
+          tracer.startActiveSpan(`store.action ${action}`, {
+            attributes: {
+              'store.action.name': action,
+            },
+          }, async (span) => {
+            try {
+              const result = await original.apply(this, args)
+              span.setStatus({
+                code: SpanStatusCode.OK,
+              })
+              span.end()
+              resolve(result)
+            } catch (error) {
+              span.recordException(error)
+              span.setStatus({
+                code: SpanStatusCode.ERROR,
+                message: error.message,
+              })
+              span.end()
+              reject(error)
+            }
+          })
+        })
+      }
+    }
   }
+  return traced
 }
 
 export {
