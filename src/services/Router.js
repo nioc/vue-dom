@@ -332,24 +332,22 @@ const router = createRouter({
 })
 
 // apply navigation guards
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   // check authentication
   const appStore = useAppStore()
   const authStore = useAuthStore()
   if (!authStore.isAuthenticated && to.name !== 'login') {
-    next({
+    return {
       name: 'login',
       query: { redirect: to.fullPath },
       replace: true,
-    })
-    return
+    }
   }
   if (authStore.isAuthenticated && to.name === 'login') {
-    next({
+    return {
       name: 'home',
       replace: true,
-    })
-    return
+    }
   }
   // change title attribute
   if (to.meta.title) {
@@ -364,7 +362,6 @@ router.beforeEach((to, from, next) => {
   if (appStore.hasSidebarOpened) {
     appStore.setSidebarStatus(false)
   }
-  next()
 })
 
 export default router
