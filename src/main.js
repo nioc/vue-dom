@@ -33,9 +33,9 @@ async function main() {
     iconPack: 'fas',
   })
 
-  app.use(router)
-
   await useAuthStore().restoreUser()
+
+  app.use(router)
 
   app.mount('#body')
 }

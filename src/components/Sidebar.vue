@@ -188,7 +188,7 @@ export default {
     },
     async logout () {
       this.appStore.setEventsListener(false)
-      await this.authStore.logout()
+      await this.authStore.logout(true)
       this.$router.replace({ name: 'login' })
     },
   },

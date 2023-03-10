@@ -48,11 +48,13 @@ export const useAuthStore = defineStore('auth', {
     },
 
     // clear local storage and store
-    async logout () {
-      try {
-        await provider.logout()
-      } catch (error) {
-        console.error(error.message)
+    async logout (hasToLogout = true) {
+      if (hasToLogout) {
+        try {
+          await provider.logout()
+        } catch (error) {
+          console.error(error.message)
+        }
       }
       // clear local storage
       const storageKey = `${custom.provider.system}-user`
@@ -68,7 +70,7 @@ export const useAuthStore = defineStore('auth', {
         const storageKey = `${custom.provider.system}-user`
         const user = JSON.parse(localStorage.getItem(storageKey))
         if (user) {
-          this.loginWithPreviousAuthentication(user.login, user.authentication, true)
+          await this.loginWithPreviousAuthentication(user.login, user.authentication, true)
         }
       } catch (e) {
         console.error('Error during restore user', e)
