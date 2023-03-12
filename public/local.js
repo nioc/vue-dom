@@ -3,7 +3,7 @@ var custom = {
   title: 'VueDom',
   // start provider config
   provider: {
-    system: 'jeedom',
+    system: 'Jeedom',
     jsonRpcApiUrl: 'https://10.0.0.0/core/api/jeeApi.php',
     websocketUrl: null,
     // websocketUrl: 'wss://10.0.0.0/socket/',

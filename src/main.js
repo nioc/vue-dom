@@ -17,7 +17,12 @@ import { initialize } from '@/services/OpenTelemetry'
 async function main() {
   const app = createApp(App)
 
-  await initProvider()
+  try {
+    await initProvider()
+  } catch (error) {
+    console.error(error.message)
+    return
+  }
 
   const pinia = createPinia()
   pinia.use(piniaPluginPersistedstate)

@@ -1,29 +1,21 @@
+import { AbstractProvider } from '@/services/providers/AbstractProvider'
+
 const providerConfig = window.custom.provider
 
-export let provider = null
+export let provider = new AbstractProvider()
 
 export async function initProvider() {
-  if (provider) {
+  if (provider && provider.constructor !== AbstractProvider) {
     return provider
   }
   if (providerConfig === undefined || !('system' in providerConfig)) {
     throw new Error('No system provider set, check your local.js')
   }
-  switch (providerConfig.system) {
-    case 'jeedom': {
-      const { JeedomApi } = await import ('@/services/providers/JeedomApi')
-      provider = JeedomApi(
-        providerConfig.jsonRpcApiUrl,
-        providerConfig.websocketUrl,
-        providerConfig.readDelay,
-        providerConfig.statisticsPeriod,
-        providerConfig.trendPeriod,
-        providerConfig.trendThreshold,
-      )
-      break
-    }
-    default:
-      throw new Error(`System provider "${providerConfig.system}" is not handled`)
+  try {
+    const { Provider } = await import (`@/services/providers/${providerConfig.system}/Provider.js`)
+    provider = new Provider(providerConfig)
+  } catch (error) {
+    throw new Error(`Provider "${providerConfig.system}" is not found, check your local.js`)
   }
   return provider
 }

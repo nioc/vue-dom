@@ -45,11 +45,11 @@ nioc/vue-dom:node-alpine-dev
 
 ##### 1. Create provider wrapper
 
-You can add your own provider by creating a file in `src/services/providers/` folder.
+You can add your own provider by creating a folder in `src/services/providers/` and adding a `Provider.js` file there.
 
-This file should be named following this pattern `<provider name>Api.js`, for example, creating a wrapper for a software named _Automotic_, filename should be `AutomoticApi.js`.
+This folder should be named with the `provider.system` you will set in `local.js`, for example, creating a wrapper for a software named _Automotic_, file should be created as `src/services/providers/Automotic/Provider.js`.
 
-This file must expose an object with required functions:
+This file must expose a class named `Provider` with required methods:
 - authenticate
 - setAuthentication
 - getRoles
@@ -67,125 +67,43 @@ This file must expose an object with required functions:
 - getSentences
 - getNotifications
 - clearNotifications
+...
 
-For example:
+You can consult the [`AbstractProvider` class](src/services/providers/AbstractProvider.js) which is documented.
 
 ``` js
-const AutomoticApi = function (restApiUrl = null, websocketUrl = null, statisticsPeriod = 86400000) {
-  // if you need privates methods, write it before the return
+import { AbstractProvider } from '@/services/providers/AbstractProvider'
 
-  return {
-    async authenticate (login, password) {
-      // login to provider with user credentials and return an object that contains the result (API key / JWT / whatever), throw error in case of authentication failed
-      return authentication
-    },
-
-    setAuthentication (_authentication) {
-      // store authentication to provider code (required for restoring session)
-      authentication = _authentication
-    },
-
-    getRoles () {
-      // return user roles as an array, should be read from authentication (scope in JWT) or read from API call
-      return ['user', 'admin']
-    },
-
-    openEventsListener (resetCounter, forceRefresh = false) {
-      // suscribe to provider events throught websocket / long polling or whatever provider implements
-    },
-
-    closeEventsListener () {
-      // close events recuperation (websocket connection or long polling timer)
-    },
-
-    async getRooms () {
-      // get rooms, adapt format and return array, can throw errors
-      return [{}]
-    },
-
-    async getSummary () {
-      // request and return global summary, can throw errors
-      return [{}]
-    },
-
-    async getRoomSummary (roomId, key) {
-      // request and return room summary, can throw errors
-      return [{}]
-    },
-
-    async executeAction (actionId, options) {
-      // execute a command with prodivded options, return result, can throw errors
-      return {}
-    },
-
-    async getScenarios () {
-      // request all scenarios and returns only visible ones, can throw errors
-      return [{}]
-    },
-
-    async changeScenarioState (id, state) {
-      // change scenario state, return result, can throw errors
-      return {}
-    },
-
-    async getStatistics (stateId, startTime = null, endTime = null) {
-      // request state statistics and return min, max and average, can throw errors
-      return {min, avg, max}
-    },
-
-    async getHistory (stateId, startTime = null, endTime = null) {
-      // request state history and return values/dates array, can throw errors
-      return [{date, value}]
-    },
-
-    async askQuestion (query, replyAction = null) {
-      // try to ask a question, return provider answer, can throw errors
-      return {}
-    },
-
-    async getSentences () {
-      // request and return defined interactions, can throw errors
-      return [{}]
-    },
-
-    async getNotifications () {
-      // request and return system notifications, can throw errors
-      return [{}]
-    },
-
-    async clearNotifications () {
-      // delete system notifications, return result, can throw errors
-      return {}
-    },
+class Provider extends AbstractProvider {
+  constructor (options = {}) {
+    super('Automotic')
+    // use the provided options (as an API endpoint or otherwise)
+    this.endpoint = options.endpoint
   }
+
+  #myPrivateMethod () {
+    // if you need privates methods, write it with a # before the name (see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields)
+  }
+
+  async authenticate (login, password) {
+    // ...
+    return authentication
+  }
+
+  // add all required methods...
 }
 
-export { AutomoticApi }
+// export the Provider class
+export { Provider }
 ```
 
-##### 2. Declare provider wrapper
+##### 2. Configure Vue-dom for using this provider
 
-Add your newly created provider in `src/services/Provider.js`:
-
-```js
-      case 'automotic': {
-        const { AutomoticApi } = await import ('@/services/providers/AutomoticApi')
-        provider = AutomoticApi(
-          provider.restApiUrl,
-          provider.websocketUrl,
-          provider.statisticsPeriod,
-        )
-        break
-      }
-```
-
-##### 3. Configure Vue-dom for using this provider
-
-Finally, configure `local.js` with your newly created provider:
+Configure `local.js` with your newly created provider:
 
 ```js
   provider: {
-    system: 'automotic',
+    system: 'Automotic',
     restApiUrl: 'http://localhost/api/',
     websocketUrl: 'ws://localhost/websocket',
     statisticsPeriod: 86400000,
