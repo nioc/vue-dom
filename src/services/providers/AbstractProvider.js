@@ -1005,6 +1005,17 @@ export class AbstractProvider {
   }
 
   /**
+   * Request system links (monitoring, ...).
+   * @async
+   * @throws {Error}
+   * @return {Promise<Object[]>} Links `[{ name, links: [{ name, icon, url, description }] }]`
+   */
+  async getSystemLinks () {
+    console.warn(this.#getErrorMessage('getSystemLinks'))
+    return []
+  }
+
+  /**
    * Request all system notifications.
    * @async
    * @throws {Error}

@@ -8,6 +8,7 @@
         <system-jobs />
         <system-logs />
         <system-metrics />
+        <system-links />
         <system-database />
       </div>
     </div>
@@ -19,6 +20,7 @@ import Breadcrumb from '@/components/Breadcrumb.vue'
 import SystemJobs from '@/components/admin/SystemJobs.vue'
 import SystemLogs from '@/components/admin/SystemLogs.vue'
 import SystemMetrics from '@/components/admin/SystemMetrics.vue'
+import SystemLinks from '@/components/admin/SystemLinks.vue'
 import SystemDatabase from '@/components/admin/SystemDatabase.vue'
 
 export default {
@@ -28,6 +30,7 @@ export default {
     SystemJobs,
     SystemLogs,
     SystemMetrics,
+    SystemLinks,
     SystemDatabase,
   },
 }
