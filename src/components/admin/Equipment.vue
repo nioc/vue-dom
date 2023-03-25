@@ -56,6 +56,12 @@
               </div>
             </div>
             <div class="field">
+              <div class="control">
+                <label class="label">Déplié par défaut</label>
+                <o-switch v-model="isExpanded">{{ isExpanded ? 'Déplié' : 'Replié' }}</o-switch>
+              </div>
+            </div>
+            <div class="field">
               <label class="label">Emplacement</label>
               <div class="control">
                 <div class="field has-addons">
@@ -277,6 +283,14 @@ export default {
     },
     equipmentLastCommunication () {
       return this.equipment.lastCommunication ? dtFormat(this.equipment.lastCommunication, 'PPPPpp') : null
+    },
+    isExpanded: {
+      get: function () {
+        return !this.equipment.isCollapsed
+      },
+      set: function (isExpanded) {
+        this.equipment.isCollapsed = !isExpanded
+      },
     },
     alertNoCommunicationDelay: {
       get: function () {
