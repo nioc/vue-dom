@@ -120,8 +120,8 @@
               <o-inputitems
                 v-model="equipment.tags"
                 :data="filteredTags"
-                autocomplete
-                allow-new
+                :allow-new="true"
+                :allow-autocomplete="true"
                 open-on-focus
                 icon="tags"
                 placeholder="Nouveau tag"

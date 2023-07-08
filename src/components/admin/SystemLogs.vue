@@ -116,8 +116,8 @@
         <o-table-column v-slot="props" field="level" label="Niveau">
           {{ props.row.level }}
         </o-table-column>
-        <o-table-column v-slot="props" field="message" label="Message" cell-class="message-cell">
-          {{ props.row.message }}
+        <o-table-column v-slot="props" field="message" label="Message">
+          <span class="message-cell">{{ props.row.message }}</span>
         </o-table-column>
         <template #detail="props">
           <ul class="is-selectable">
