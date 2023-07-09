@@ -69,6 +69,10 @@ export default {
     },
   },
   async created () {
+    // handle connectivity
+    this.appStore.setNetworkStatus(window.navigator.onLine)
+    window.addEventListener('offline', this.notifyConnectivity)
+    window.addEventListener('online', this.notifyConnectivity)
     // set user homepage
     const homepage = localStorage.getItem('homepage')
     await this.$router.isReady()
@@ -86,10 +90,6 @@ export default {
       this.dataStore.vxLoadRooms()
       this.dataStore.vxRefreshUserViews()
     }
-    // handle connectivity
-    this.appStore.setNetworkStatus(window.navigator.onLine)
-    window.addEventListener('offline', this.notifyConnectivity)
-    window.addEventListener('online', this.notifyConnectivity)
     // listen events
     this.openEventsListener()
     this.isReady = true
