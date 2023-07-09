@@ -103,7 +103,7 @@ This project is powered by the following components:
 - [TinyDuration](https://github.com/MelleB/tinyduration/) (MIT)
 - [Video.js](https://videojs.com/) (Apache License)
 - [D3.js](https://d3js.org/) (ISC)
-- [Vue.Draggable](https://github.com/SortableJS/vue.draggable.next/) (MIT)
+- [vue-draggable-next](https://github.com/anish2690/vue-draggable-next/) (MIT)
 
 ## License
 

@@ -132,32 +132,30 @@
                       <th />
                     </tr>
                   </thead>
-                  <draggable v-model="action.options" tag="tbody" handle=".handle" draggable=".dr" item-key="value">
-                    <template #item="{element: option, index}">
-                      <tr class="dr">
-                        <td><span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span></td>
-                        <td><input v-model="option.value" class="input is-static" type="text" readonly></td>
-                        <td><input v-model="option.label" class="input is-static" type="text" readonly></td>
-                        <td>
-                          <button class="button is-danger is-light" title="Supprimer l'option" @click="removeOption(index)">
-                            <span class="icon"><i class="fa fa-trash" /></span>
-                          </button>
-                        </td>
-                      </tr>
-                    </template>
-                    <template #footer>
-                      <tr>
-                        <td />
-                        <td><input v-model="newOption.value" class="input" type="text" placeholder="Valeur"></td>
-                        <td><input v-model="newOption.label" class="input" type="text" placeholder="Libellé"></td>
-                        <td>
-                          <button :disabled="newOption.value === ''" class="button is-primary is-light" title="Ajouter l'option" @click="addOption">
-                            <span class="icon"><i class="fa fa-plus-circle" /></span>
-                          </button>
-                        </td>
-                      </tr>
-                    </template>
+                  <draggable v-model="action.options" tag="tbody" handle=".handle" draggable=".dr">
+                    <tr v-for="option, index in action.options" :key="index" class="dr">
+                      <td><span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span></td>
+                      <td><input v-model="option.value" class="input is-static" type="text" readonly></td>
+                      <td><input v-model="option.label" class="input is-static" type="text" readonly></td>
+                      <td>
+                        <button class="button is-danger is-light" title="Supprimer l'option" @click="removeOption(index)">
+                          <span class="icon"><i class="fa fa-trash" /></span>
+                        </button>
+                      </td>
+                    </tr>
                   </draggable>
+                  <tfoot>
+                    <tr>
+                      <td />
+                      <td><input v-model="newOption.value" class="input" type="text" placeholder="Valeur"></td>
+                      <td><input v-model="newOption.label" class="input" type="text" placeholder="Libellé"></td>
+                      <td>
+                        <button :disabled="newOption.value === ''" class="button is-primary is-light" title="Ajouter l'option" @click="addOption">
+                          <span class="icon"><i class="fa fa-plus-circle" /></span>
+                        </button>
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>
@@ -244,7 +242,7 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable'
+import { VueDraggableNext } from 'vue-draggable-next'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import IconPicker from '@/components/admin/IconPicker.vue'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
@@ -258,7 +256,7 @@ export default {
   name: 'Action',
   components: {
     Breadcrumb,
-    draggable,
+    draggable: VueDraggableNext,
     IconPicker,
     OptionsAutocomplete,
     RelatedCollapsable,

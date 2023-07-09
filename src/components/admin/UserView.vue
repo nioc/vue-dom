@@ -92,46 +92,42 @@
           </header>
           <section class="card-content">
 
-            <draggable v-model="userView.cards" tag="div" handle=".handle" draggable=".dr" item-key="title">
-              <template #item="{element: card, index: cardIndex}">
-                <div class="dr">
-                  <div class="field is-horizontal">
-                    <div class="field-body">
-                      <div class="field is-narrow">
-                        <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
-                      </div>
-                      <user-view-card :card="card" />
+            <draggable v-model="userView.cards" tag="div" handle=".handle" draggable=".dr">
+              <div v-for="card, cardIndex in userView.cards" :key="cardIndex" class="dr">
+                <div class="field is-horizontal">
+                  <div class="field-body">
+                    <div class="field is-narrow">
+                      <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
+                    </div>
+                    <user-view-card :card="card" />
 
-                      <div class="field is-narrow">
-                        <button class="button is-danger is-light" title="Supprimer la carte" @click="removeCard(cardIndex)">
-                          <span class="icon"><i class="fa fa-trash" /></span>
-                        </button>
+                    <div class="field is-narrow">
+                      <button class="button is-danger is-light" title="Supprimer la carte" @click="removeCard(cardIndex)">
+                        <span class="icon"><i class="fa fa-trash" /></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <draggable v-model="card.elements" tag="div" handle=".handle" draggable=".dr" class="px-6">
+                  <div v-for="element, elementIndex in card.elements" :key="elementIndex" class="dr field mb-3">
+                    <div class="field is-horizontal">
+                      <div class="field-body">
+                        <div class="field is-narrow">
+                          <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
+                        </div>
+                        <user-view-card-element :element="element" />
+
+                        <div class="field is-narrow">
+                          <button class="button is-danger is-light" title="Supprimer l'élément" @click="removeCardElement(cardIndex, elementIndex)">
+                            <span class="icon"><i class="fa fa-trash" /></span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <draggable v-model="card.elements" tag="div" handle=".handle" draggable=".dr" class="px-6" item-key="id">
-                    <template #item="{element, index: elementIndex}">
-                      <div class="dr field mb-3">
-                        <div class="field is-horizontal">
-                          <div class="field-body">
-                            <div class="field is-narrow">
-                              <span class="input is-static is-clickable" title="Glisser-déposer pour ordonner"><span class="icon has-text-grey-light"><i class="fa fa-grip-vertical handle" /></span></span>
-                            </div>
-                            <user-view-card-element :element="element" />
-
-                            <div class="field is-narrow">
-                              <button class="button is-danger is-light" title="Supprimer l'élément" @click="removeCardElement(cardIndex, elementIndex)">
-                                <span class="icon"><i class="fa fa-trash" /></span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </template>
-                  </draggable>
-                  <hr>
-                </div>
-              </template>
+                </draggable>
+                <hr>
+              </div>
             </draggable>
 
             <div class="field is-grouped">
@@ -171,7 +167,7 @@ import IconPicker from '@/components/admin/IconPicker.vue'
 import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
 import UserViewCard from '@/components/admin/UserViewCard.vue'
 import UserViewCardElement from '@/components/admin/UserViewCardElement.vue'
-import draggable from 'vuedraggable'
+import { VueDraggableNext } from 'vue-draggable-next'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
 import { useUnsavedChangesGuard } from '@/composables/useUnsavedChangesGuard'
@@ -185,7 +181,7 @@ export default {
     UserViewCard,
     UserViewCardElement,
     RelatedCollapsable,
-    draggable,
+    draggable: VueDraggableNext,
   },
   props: {
     id: {
