@@ -7,11 +7,14 @@
 <script>
 import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation } from 'chart.js'
 import 'chartjs-adapter-date-fns'
+import zoomPlugin from 'chartjs-plugin-zoom'
 import { fr } from 'date-fns/locale'
 import cloneDeep from 'lodash.clonedeep'
 import { markRaw } from 'vue'
 
-Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation)
+Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation, zoomPlugin)
+
+let timerTimeChangedEvent
 
 export default {
   name: 'Chart',
@@ -45,6 +48,32 @@ export default {
               algorithm: 'lttb',
               samples: 300,
               threshold: 300,
+            },
+            zoom: {
+              limits: {
+                x: {
+                  max: new Date(),
+                },
+              },
+              pan: {
+                enabled: true,
+                mode: 'x',
+                modifierKey: 'ctrl',
+                onPanComplete: undefined,
+              },
+              zoom: {
+                wheel: {
+                  enabled: true,
+                },
+                drag: {
+                  enabled: true,
+                },
+                pinch: {
+                  enabled: true,
+                },
+                mode: 'x',
+                onZoomComplete: undefined,
+              },
             },
           },
           maintainAspectRatio: false,
@@ -101,6 +130,9 @@ export default {
       default: 400,
     },
   },
+  emits: [
+    'timeChanged',
+  ],
   data () {
     return {
       chart: null,
@@ -116,6 +148,8 @@ export default {
     },
   },
   mounted () {
+    this.localOptions.plugins.zoom.pan.onPanComplete = this.handleZoom
+    this.localOptions.plugins.zoom.zoom.onZoomComplete = this.handleZoom
     this.render()
   },
   beforeUnmount () {
@@ -155,6 +189,15 @@ export default {
           }
         }
       }
+    },
+    handleZoom({ chart }) {
+      if (timerTimeChangedEvent) {
+        clearTimeout(timerTimeChangedEvent)
+      }
+      const { min, max } = chart.scales.x
+      timerTimeChangedEvent = setTimeout(() => {
+        this.$emit('timeChanged', { min, max })
+      }, 100)
     },
   },
 }

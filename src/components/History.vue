@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <chart v-if="isLoaded" :chart-data="history" :tooltip-callbacks="tooltipCallbacks" />
+    <chart v-if="isLoaded" :chart-data="history" :tooltip-callbacks="tooltipCallbacks" @time-changed="updateDates" />
   </div>
 </template>
 
@@ -139,7 +139,15 @@ export default {
       }
       this.isLoading = false
     },
-    updateDates () {
+    updateDates ({ min, max }) {
+      if (min && max) {
+        // use new range received from chart
+        this.duration = ''
+        this.startDate = new Date(Math.floor(min))
+        this.endDate = new Date(Math.ceil(max))
+        this.getHistory()
+        return
+      }
       if (this.duration !== '') {
         this.getHistory()
       }
