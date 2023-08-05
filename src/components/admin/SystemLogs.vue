@@ -106,7 +106,7 @@
         </div>
       </div>
 
-      <o-table ref="LogsTable" v-model:current-page="currentPage" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" @click="showLogDetails">
+      <o-table ref="LogsTable" v-model:current-page="currentPage" :data="logsFiltered" striped hoverable :mobile-cards="false" :paginated="logsFiltered.length>20" :per-page="20" detailed :show-detail-icon="false" :row-class="getLogClass" @click="showLogDetails">
         <o-table-column v-slot="props" field="service" label="">
           <i class="fas fa-fw" :class="props.row.serviceIcon" :title="props.row.service" />
         </o-table-column>
