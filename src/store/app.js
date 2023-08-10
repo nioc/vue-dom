@@ -10,7 +10,7 @@ const getDefaultState = () => ({
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    hasNetwork: false,
+    hasNetwork: navigator.onLine,
     isEventsListenerOpening: false,
     hasEventsListenerOpen: false,
     hasPollingEventsListener: false,
