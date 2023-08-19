@@ -24,6 +24,24 @@ $navbar-breakpoint: 300px;
 $slider-thumb-background: findLightColor($primary);
 $slider-thumb-border: 1px solid $primary;
 
+::-webkit-scrollbar {
+  width:10px;
+  height:8px;
+}
+::-webkit-scrollbar-button {
+  display:none;
+}
+::-webkit-scrollbar-thumb {
+  background: #97979754;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #97979769;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #979797;
+}
+
 .navbar .router-link-active :not(.notification-counter) {
   color: $primary !important
 }
