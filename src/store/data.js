@@ -350,7 +350,7 @@ export const useDataStore = defineStore('data', {
         }
       })
       if (Object.keys(roomsUpdated).length > 0) {
-        this.rooms = Object.assign({}, this.rooms, roomsUpdated)
+        Object.assign(this.rooms, roomsUpdated)
       }
       // remove deleted rooms from store (not present in update)
       const roomIds = payload.map((room) => room.id)
@@ -414,14 +414,14 @@ export const useDataStore = defineStore('data', {
       // normalized[payload.key] = payload.summary
       const arr = []
       arr[payload.id] = normalized
-      this.roomsSummary = Object.assign({}, this.roomsSummary, arr)
+      Object.assign(this.roomsSummary, arr)
     },
 
     // store state statistics
     saveStateStatistics (payload) {
       const updated = {}
       updated[payload.id] = payload.statistics
-      this.statesStatistics = Object.assign({}, this.statesStatistics, updated)
+      Object.assign(this.statesStatistics, updated)
     },
 
     // store updated equipments (batch)
@@ -498,7 +498,7 @@ export const useDataStore = defineStore('data', {
         }
       })
       if (Object.keys(equipmentsUpdated).length > 0) {
-        this.equipments = Object.assign({}, this.equipments, equipmentsUpdated)
+        Object.assign(this.equipments, equipmentsUpdated)
       }
     },
 
@@ -567,7 +567,7 @@ export const useDataStore = defineStore('data', {
         }
       })
       if (Object.keys(statesUpdated).length > 0) {
-        this.states = Object.assign({}, this.states, statesUpdated)
+        Object.assign(this.states, statesUpdated)
       }
     },
 
@@ -618,7 +618,7 @@ export const useDataStore = defineStore('data', {
         }
       })
       if (Object.keys(actionsUpdated).length > 0) {
-        this.actions = Object.assign({}, this.actions, actionsUpdated)
+        Object.assign(this.actions, actionsUpdated)
       }
     },
 
@@ -648,13 +648,13 @@ export const useDataStore = defineStore('data', {
         }
       })
       if (Object.keys(statesUpdated).length > 0) {
-        this.states = Object.assign({}, this.states, statesUpdated)
+        Object.assign(this.states, statesUpdated)
       }
       if (Object.keys(actionsUpdated).length > 0) {
-        this.actions = Object.assign({}, this.actions, actionsUpdated)
+        Object.assign(this.actions, actionsUpdated)
       }
       if (Object.keys(equipmentsUpdated).length > 0) {
-        this.equipments = Object.assign({}, this.equipments, equipmentsUpdated)
+        Object.assign(this.equipments, equipmentsUpdated)
       }
     },
 
@@ -673,7 +673,7 @@ export const useDataStore = defineStore('data', {
         }
       })
       if (Object.keys(channelsUpdated).length > 0) {
-        this.channels = Object.assign({}, this.channels, channelsUpdated)
+        Object.assign(this.channels, channelsUpdated)
       }
     },
 
@@ -716,7 +716,7 @@ export const useDataStore = defineStore('data', {
         }
       })
       if (Object.keys(viewsUpdated).length > 0) {
-        this.userViews = Object.assign({}, this.userViews, viewsUpdated)
+        Object.assign(this.userViews, viewsUpdated)
       }
       this.userViewsList = Object.values(this.userViews)
     },
