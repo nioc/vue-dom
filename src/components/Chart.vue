@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation } from 'chart.js'
+import { Chart, LineElement, PointElement, LineController, LinearScale, TimeScale, CategoryScale, Tooltip, Filler, Legend, Decimation } from 'chart.js'
 import 'chartjs-adapter-date-fns'
 import zoomPlugin from 'chartjs-plugin-zoom'
 import { fr } from 'date-fns/locale'
 import cloneDeep from 'lodash.clonedeep'
 import { markRaw } from 'vue'
 
-Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, Tooltip, Filler, Legend, Decimation, zoomPlugin)
+Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, CategoryScale, Tooltip, Filler, Legend, Decimation, zoomPlugin)
 
 let timerTimeChangedEvent
 
@@ -148,8 +148,14 @@ export default {
     },
   },
   mounted () {
-    this.localOptions.plugins.zoom.pan.onPanComplete = this.handleZoom
-    this.localOptions.plugins.zoom.zoom.onZoomComplete = this.handleZoom
+    if (this.localOptions.plugins.zoom) {
+      if (this.localOptions.plugins.zoom.pan) {
+        this.localOptions.plugins.zoom.pan.onPanComplete = this.handleZoom
+      }
+      if (this.localOptions.plugins.zoom.zoom) {
+        this.localOptions.plugins.zoom.zoom.onZoomComplete = this.handleZoom
+      }
+    }
     this.render()
   },
   beforeUnmount () {
