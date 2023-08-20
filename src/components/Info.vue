@@ -20,7 +20,7 @@
         </ul>
         <i v-if="statistics && statistics.trend !== null" class="fas fa-long-arrow-alt-right has-text-grey-light mx-2" :class="trendClass" />
         <i v-if="state.genericType === 'WIND_DIRECTION'" class="fa fa-location-arrow mr-2" :style="`transform: rotate(${135+parseInt(state.currentValue)}deg);`" />
-        <span class="has-text-weight-semi-bold info-value" :class="{'has-text-danger': state.isTooHigh || state.isTooLow}">{{ state.currentValue }}{{ unit }}</span>
+        <span class="has-text-weight-semi-bold info-value" :class="{'has-text-danger': state.isTooHigh || state.isTooLow}">{{ state.currentValue }}<span class="has-text-weight-light">{{ unit }}</span></span>
       </span>
     </div>
     <div v-if="hasHistoryDisplayed" class="message is-light">
