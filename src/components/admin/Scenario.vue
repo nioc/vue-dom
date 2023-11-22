@@ -83,7 +83,10 @@
                       <tr v-for="(trigger, index) in scenario.triggers" :key="index">
                         <td>{{ (trigger.type === 'state') ? 'Etat' : 'Date' }}</td>
                         <td v-if="trigger.type === 'state'">{{ dataStore.getStateFullName(trigger.value) }}</td>
-                        <td v-else><span class="is-family-code">{{ trigger.value }}</span><span class="ml-4 has-text-grey">{{ getHumanCronTime(trigger.value) }}</span></td>
+                        <td v-else>
+                          <editable :value="trigger.value" tag="code" icon-class="fas fa-bell" placeholder="ss mm hh jj MMM JJJ" @update="(value) => trigger.value = value" />
+                          <span class="help" :class="checkCronTime(trigger.value).isValid ? 'is-success' : 'is-danger'">{{ checkCronTime(trigger.value).result }}</span>
+                        </td>
                         <td>
                           <button class="button is-danger is-light" title="Supprimer le déclencheur" @click="removeTrigger(index)">
                             <span class="icon"><i class="fa fa-trash" /></span>
@@ -205,6 +208,7 @@ import Breadcrumb from '@/components/Breadcrumb.vue'
 import ScenarioElement from '@/components/admin/ScenarioElement.vue'
 import OptionsAutocomplete from '@/components/admin/OptionsAutocomplete.vue'
 import RelatedCollapsable from '@/components/admin/RelatedCollapsable.vue'
+import Editable from '@/components/admin/Editable.vue'
 import { useAppStore } from '@/store/app'
 import { useDataStore } from '@/store/data'
 import { useDialog } from '@/composables/useDialog'
@@ -221,6 +225,7 @@ export default {
     ScenarioElement,
     OptionsAutocomplete,
     RelatedCollapsable,
+    Editable,
   },
   props: {
     id: {
