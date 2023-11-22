@@ -14,7 +14,7 @@
     <section class="card-content is-relative">
       <o-loading v-model:active="isLoading" :full-page="false" />
 
-      <o-table ref="scheduledJobsTable" :data="scheduledJobs" striped hoverable :mobile-cards="false" :paginated="scheduledJobs.length>1" :per-page="10">
+      <o-table ref="scheduledJobsTable" :data="scheduledJobs" striped hoverable :mobile-cards="false" :paginated="scheduledJobs.length>10" :per-page="10">
         <o-table-column v-slot="props" field="name" label="Nom">
           {{ props.row.name }}
         </o-table-column>
