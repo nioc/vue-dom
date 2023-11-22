@@ -12,16 +12,16 @@
     <div id="navbar-menu" class="navbar-menu">
       <div class="navbar-start">
         <router-link class="navbar-item" :to="{name: 'rooms'}" title="Pièces"><i class="fa fa-home fa-fw fa-mr" /><span class="is-navbar-label">Pièces</span></router-link>
-        <div v-if="dataStore.activeUserViews.length" class="navbar-item has-dropdown" :class="{'is-active': hasDropdownViewsDisplayed}" @click="hasDropdownViewsDisplayed = !hasDropdownViewsDisplayed">
+        <div v-if="dataStore.activeUserViews.length" class="navbar-item has-dropdown" :class="{'is-active': activeDropdown === 'views'}" @click="toggleActiveDropdown('views')">
           <router-link v-slot="{href, isActive}" :to="{name: 'views'}" custom><a :href="href" class="navbar-link is-arrowless" :class="{'router-link-active': isActive}" @click.prevent=""><i class="fa fa-binoculars fa-fw fa-mr" /><span class="is-navbar-label">Vues</span></a></router-link>
           <div class="navbar-dropdown">
-            <router-link v-for="userView in dataStore.activeUserViews" :key="userView.code" :to="{name: 'view', params: {code: userView.code}}" class="navbar-item"><span><i class="fa-fw fa-mr" :class="userView.icon" />{{ userView.title }}</span></router-link>
+            <router-link v-for="userView in dataStore.activeUserViews" :key="userView.code" :to="{name: 'view', params: {code: userView.code}}" class="navbar-item" @click.stop=""><span><i class="fa-fw fa-mr" :class="userView.icon" />{{ userView.title }}</span></router-link>
           </div>
         </div>
-        <div v-if="dataStore.tagsList.length" class="navbar-item has-dropdown" :class="{'is-active': hasDropdownTagsDisplayed}" @click="hasDropdownTagsDisplayed = !hasDropdownTagsDisplayed">
+        <div v-if="dataStore.tagsList.length" class="navbar-item has-dropdown" :class="{'is-active': activeDropdown === 'tags'}" @click="toggleActiveDropdown('tags')">
           <router-link v-slot="{href, isActive}" :to="{name: 'tags'}" custom><a :href="href" class="navbar-link is-arrowless" :class="{'router-link-active': isActive}" @click.prevent=""><i class="fa fa-tags fa-fw fa-mr" /><span class="is-navbar-label">Catégories</span></a></router-link>
           <div class="navbar-dropdown">
-            <router-link v-for="tag in dataStore.tagsList" :key="tag" :to="{name: 'tag', params: {tag}}" class="navbar-item"><span>{{ tag }}</span></router-link>
+            <router-link v-for="tag in dataStore.tagsList" :key="tag" :to="{name: 'tag', params: {tag}}" class="navbar-item" @click.stop=""><span>{{ tag }}</span></router-link>
           </div>
         </div>
         <router-link class="navbar-item" :to="{name: 'scenarios'}" title="Scénarios"><i class="fa fa-book fa-fw fa-mr" /><span class="is-navbar-label">Scénarios</span></router-link>
@@ -61,18 +61,12 @@ export default {
   data () {
     return {
       title: custom.title,
-      hasDropdownTagsDisplayed: false,
-      hasDropdownViewsDisplayed: false,
+      activeDropdown: null,
     }
   },
   watch: {
-    $route (to) {
-      if (to.name !== 'tag') {
-        this.hasDropdownTagsDisplayed = false
-      }
-      if (to.name !== 'view') {
-        this.hasDropdownViewsDisplayed = false
-      }
+    $route () {
+      this.activeDropdown = null
     },
   },
   mounted () {
@@ -82,6 +76,15 @@ export default {
     openSidebar (e) {
       e.preventDefault()
       this.appStore.setSidebarStatus(true)
+    },
+    toggleActiveDropdown(element) {
+      if (this.activeDropdown === element) {
+        // close dropdown
+        this.activeDropdown = null
+        return
+      }
+      // open dropdown
+      this.activeDropdown = element
     },
   },
 }
