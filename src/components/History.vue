@@ -9,6 +9,7 @@
                 <option value="PT1H">1 heure</option>
                 <option value="PT6H">6 heures</option>
                 <option value="PT24H">24 heures</option>
+                <option value="PT48H">48 heures</option>
                 <option value="P7D">7 jours</option>
                 <option value="P30D">30 jours</option>
                 <option value="">Personnalisé</option>
