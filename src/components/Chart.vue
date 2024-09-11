@@ -171,11 +171,24 @@ export default {
     render () {
       if (this.chart) {
         this.handleMultiDatasets()
+        // store previous hidden datasets
+        const hiddenDatasets = []
+        this.chart.data.datasets.forEach((dataset, index) => {
+          if (!this.chart.isDatasetVisible(index)) {
+            hiddenDatasets.push(dataset.label)
+          }
+        })
         this.chart.data = this.chartData
         this.chart.options = this.localOptions
         isResetChart = true
         this.chart.resetZoom()
         isResetChart = false
+        hiddenDatasets.forEach((datasetLabel) => {
+          const index = this.chart.data.datasets.findIndex((dataset) => dataset.label === datasetLabel)
+          if (index !== -1) {
+            this.chart.setDatasetVisibility(index, false)
+          }
+        })
         this.chart.update()
         return
       }
