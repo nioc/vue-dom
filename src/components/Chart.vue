@@ -15,6 +15,7 @@ import { markRaw } from 'vue'
 Chart.register(LineElement, PointElement, LineController, LinearScale, TimeScale, CategoryScale, Tooltip, Filler, Legend, Decimation, zoomPlugin)
 
 let timerTimeChangedEvent
+let isResetChart = false
 
 export default {
   name: 'Chart',
@@ -89,6 +90,9 @@ export default {
               backgroundColor: 'rgba(150, 201, 39, 0.8)',
               radius: 2,
             },
+          },
+          interaction: {
+            intersect: false,
           },
           scales: {
             x: {
@@ -169,6 +173,9 @@ export default {
         this.handleMultiDatasets()
         this.chart.data = this.chartData
         this.chart.options = this.localOptions
+        isResetChart = true
+        this.chart.resetZoom()
+        isResetChart = false
         this.chart.update()
         return
       }
@@ -197,6 +204,10 @@ export default {
       }
     },
     handleZoom({ chart }) {
+      if (isResetChart) {
+        // do not emit event as we are reseting the chart
+        return
+      }
       if (timerTimeChangedEvent) {
         clearTimeout(timerTimeChangedEvent)
       }
