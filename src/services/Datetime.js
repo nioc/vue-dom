@@ -23,6 +23,9 @@ function tryParse (date) {
   if (typeof date.getMonth === 'function') {
     return date
   }
+  if (typeof date === 'number') {
+    return new Date(date)
+  }
   return _parseJSON(date)
 }
 
