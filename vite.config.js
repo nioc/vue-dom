@@ -3,10 +3,9 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { VitePWA } from 'vite-plugin-pwa'
+import { execSync } from 'child_process'
 
-process.env.VITE_GIT_VERSION = require('child_process')
-  .execSync('git describe --tags --dirty')
-  .toString().trimEnd()
+process.env.VITE_GIT_VERSION = execSync('git describe --tags --dirty').toString().trimEnd()
 
 export default defineConfig({
   server: {
