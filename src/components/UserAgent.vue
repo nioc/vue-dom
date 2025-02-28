@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import UAParser from 'ua-parser-js'
+import { UAParser } from 'ua-parser-js'
 import { provider } from '@/services/Provider'
 
 export default {
