@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { normalize, schema } from 'normalizr'
 import { useAppStore } from '@/store/app'
-import { dtFormat } from '@/services/Datetime'
+import { dtFormat, dtSub, durParse } from '@/services/Datetime'
 import { provider } from '@/services/Provider'
 
 const custom = window.custom
@@ -748,6 +748,11 @@ export const useDataStore = defineStore('data', {
       this.scenarios = Object.assign({}, this.scenarios, updated)
     },
 
+    purgeNotifications () {
+      const min = dtSub(new Date(), durParse('PT12H'))
+      this.notifications = this.notifications.filter((notification) => new Date(notification.date) > min)
+    },
+
     // store all notifications
     saveNotifications (payload) {
       this.notifications = payload
@@ -1045,6 +1050,7 @@ export const useDataStore = defineStore('data', {
     // call API and store notifications
     async vxLoadNotifications () {
       try {
+        this.purgeNotifications()
         const notifications = await provider.getNotifications()
         if (notifications === undefined) {
           return
