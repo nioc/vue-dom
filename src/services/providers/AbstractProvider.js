@@ -16,6 +16,7 @@ export class AbstractProvider {
         'getUserId',
         'openEventsListener',
         'closeEventsListener',
+        'hasOidc',
       ]
       const missingMethods = requiredMethods.filter((methodName) => typeof this[methodName] !== 'function')
       if (missingMethods.length > 0) {
@@ -110,6 +111,29 @@ export class AbstractProvider {
    */
   closeEventsListener () {
     throw new Error (this.#getErrorMessage('closeEventsListener'))
+  }
+
+  /**
+   * Check if provider handleOpenIDC Connect
+   */
+  async hasOidc () {
+    throw new Error (this.#getErrorMessage('hasOidc'))
+  }
+
+  /**
+   * Initiates the OpenIDC Connect authorization request
+   */
+  async oidcAuthorize () {
+    throw new Error (this.#getErrorMessage('oidcAuthorize'))
+  }
+
+  /**
+   * Provide OpenIDC Connect information to authenticate with the provider
+   * @param {string} state
+   * @param {string} redirectUrl
+   */
+  async oidcCallback (state, redirectUrl) {
+    throw new Error (this.#getErrorMessage('oidcCallback'))
   }
 
   /**

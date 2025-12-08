@@ -87,6 +87,34 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    // perform an OpenID Connect authentication callback and save the returned api key
+    async oidcCallback(url, query, remember = false) {
+      if (!url) {
+        return false
+      }
+      const state = query.get('state')
+      const error = query.get('error')
+      const errorDescription = query.get('error_description')
+      if (errorDescription) {
+        throw new Error(errorDescription)
+      }
+      if (error) {
+        throw new Error(error)
+      }
+      let authentication = await provider.oidcCallback(state, url)
+      if (!authentication) {
+        return false
+      }
+      const login = authentication.login
+      delete authentication.login
+      authentication = await this.setAuthentication(login, authentication)
+      if (remember) {
+        const storageKey = `${custom.provider.system}-user`
+        localStorage.setItem(storageKey, JSON.stringify({ login, authentication }))
+      }
+      return true
+    },
+
     // store user login and authentication status
     setUser (payload) {
       this.login = payload.login

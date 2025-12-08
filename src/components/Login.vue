@@ -31,6 +31,9 @@
               <div class="field">
                 <button type="submit" class="button is-block is-primary is-medium is-fullwidth" :class="{'is-loading': isLoading}" :disabled="isDisabled"><span class="fa fa-sign-in-alt fa-fw mr-3" aria-hidden="true" />Login</button>
               </div>
+              <div v-if="oidc" class="field">
+                <button type="button" class="button is-block is-primary is-medium is-fullwidth" :class="{'is-loading': isLoading}" :disabled="isLoading" @click="oidcAuthorize()"><span class="fab fa-openid fa-fw mr-3" aria-hidden="true" />OpenID Connect</button>
+              </div>
               <div v-if="error" class="message is-danger">
                 <div class="message-body has-text-danger">{{ error }}</div>
               </div>
@@ -45,6 +48,7 @@
 <script>
 import { useAppStore } from '@/store/app'
 import { useAuthStore } from '@/store/auth'
+import { provider } from '@/services/Provider'
 const custom = window.custom
 
 export default {
@@ -62,6 +66,7 @@ export default {
         password: '',
         remember: false,
       },
+      oidc: false,
       isLoading: false,
       error: '',
     }
@@ -77,9 +82,35 @@ export default {
       loginWithAuthentication: (login, authentication, remember) => this.loginWithAuthentication(login, authentication, remember),
     }
   },
-  mounted () {
+  async mounted() {
     // remove navbar spacing
     document.body.classList.remove('has-navbar-fixed-top')
+    this.oidc = await provider.hasOidc()
+    // handle oidc callback
+    const query = new URLSearchParams(document.location.search)
+    if (query.has('state')) {
+      this.isLoading = true
+      const redirectUrl = window.location.href.split("#")[0]
+      // clear the browser URL and restore session info
+      history.replaceState(null, '', window.location.pathname)
+      const redirect = sessionStorage.getItem('oidcOriginalRedirect')
+      const remember = sessionStorage.getItem('oidcRemember') === 'true'
+      sessionStorage.removeItem('oidcOriginalRedirect')
+      sessionStorage.removeItem('oidcRemember')
+      try {
+        await this.authStore.oidcCallback(redirectUrl, query, remember)
+        // Auth successful, redirect to requested page of home by default
+        if (redirect) {
+          this.$router.replace(redirect)
+          return
+        }
+        this.$router.replace({ name: 'home' })
+      } catch (error) {
+        // Auth failed, display error message
+        this.error = error.message
+      }
+      this.isLoading = false
+    }
   },
   methods: {
     async login () {
@@ -99,7 +130,7 @@ export default {
         this.$router.replace({ name: 'home' })
       } catch (error) {
         // Auth failed, display error message
-        this.appStore.setInformation({ type: 'is-danger', message: error.message })
+        this.error = error.message
       }
       this.isLoading = false
     },
@@ -115,10 +146,26 @@ export default {
         this.$router.replace({ name: 'home' })
       } catch (error) {
         // Auth failed, display error message
-        this.appStore.setInformation({ type: 'is-danger', message: error.message })
+        this.error = error.message
       }
       this.isLoading = false
     },
+    async oidcAuthorize() {
+      this.isLoading = true
+      try {
+        const redirectUrl = await provider.oidcAuthorize()
+        // store session info before OIDC flow
+        if (this.$route.query.redirect !== undefined) {
+          sessionStorage.setItem('oidcOriginalRedirect', this.$route.query.redirect)
+        }
+        sessionStorage.setItem('oidcRemember', this.credentials.remember)
+        document.location.assign(redirectUrl)
+      } catch (error) {
+        // Auth failed, display error message
+        this.error = error.message
+      }
+      this.isLoading = false
+    }
   },
 }
 </script>

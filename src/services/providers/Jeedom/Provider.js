@@ -319,6 +319,11 @@ class Provider extends AbstractProvider {
     }
   }
 
+  // check if provider handleOpenIDC Connect
+  async hasOidc () {
+    return false
+  }
+
   // request all rooms and returns only visible ones
   async getRooms () {
     try {
