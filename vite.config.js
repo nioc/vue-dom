@@ -11,6 +11,14 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  // suppress boring warning for now
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ['legacy-js-api', 'color-functions', 'global-builtin', 'import', 'if-function'],
+      }
+    }
+  },
   base: './',
   plugins: [
     vue(),
